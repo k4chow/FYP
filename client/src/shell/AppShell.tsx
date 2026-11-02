@@ -42,6 +42,17 @@ export default function AppShell() {
             </NavLink>
           ))}
         </nav>
+        <div className="quick-add">
+          <p className="quick-add-label">Quick add</p>
+          <NavLink to="/app/films?add=1">
+            <span aria-hidden>＋</span>
+            <span className="label">Add a film</span>
+          </NavLink>
+          <NavLink to="/app/import">
+            <span aria-hidden>⇪</span>
+            <span className="label">Import from Letterboxd</span>
+          </NavLink>
+        </div>
         <div className="sidebar-footer">
           <button
             className="btn ghost full"
@@ -56,7 +67,7 @@ export default function AppShell() {
       </aside>
       <main className="content">
         <header className="topbar">
-          <div className="search">Search your films… (coming in Phase 2)</div>
+          <div className="search">Search films, themes, directors… (arrives with Discover in Phase 6)</div>
           <div className="avatar" title={user?.email}>
             {initial}
           </div>

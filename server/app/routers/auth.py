@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from ..deps import get_current_user
-from ..supabase_client import supabase
+from ..supabase_client import auth_client, supabase
 
 router = APIRouter()
 
@@ -27,6 +27,11 @@ class LoginBody(BaseModel):
 
 class ForgotBody(BaseModel):
     email: str
+
+
+class ChangePasswordBody(BaseModel):
+    current_password: str
+    new_password: str = Field(min_length=8)
 
 
 def _get_display_name(user_id: str) -> str | None:
@@ -54,7 +59,7 @@ def _session_response(user_id: str, email: str, access_token: str) -> dict:
 @router.post("/signup")
 def signup(body: SignUpBody) -> dict:
     try:
-        created = supabase.auth.admin.create_user(
+        created = auth_client.auth.admin.create_user(
             {
                 "email": body.email,
                 "password": body.password,
@@ -69,7 +74,7 @@ def signup(body: SignUpBody) -> dict:
         {"id": user.id, "display_name": body.display_name}
     ).execute()
 
-    session = supabase.auth.sign_in_with_password(
+    session = auth_client.auth.sign_in_with_password(
         {"email": body.email, "password": body.password}
     )
     return _session_response(user.id, user.email, session.session.access_token)
@@ -78,7 +83,7 @@ def signup(body: SignUpBody) -> dict:
 @router.post("/login")
 def login(body: LoginBody) -> dict:
     try:
-        res = supabase.auth.sign_in_with_password(
+        res = auth_client.auth.sign_in_with_password(
             {"email": body.email, "password": body.password}
         )
     except Exception:
@@ -92,9 +97,26 @@ def login(body: LoginBody) -> dict:
 def forgot_password(body: ForgotBody) -> dict:
     # Always return ok — never reveal whether an account exists.
     try:
-        supabase.auth.reset_password_for_email(body.email)
+        auth_client.auth.reset_password_for_email(body.email)
     except Exception:
         pass
+    return {"ok": True}
+
+
+@router.post("/change-password")
+def change_password(
+    body: ChangePasswordBody, current: dict = Depends(get_current_user)
+) -> dict:
+    # Verify the current password before allowing the change.
+    try:
+        auth_client.auth.sign_in_with_password(
+            {"email": current["email"], "password": body.current_password}
+        )
+    except Exception:
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    auth_client.auth.admin.update_user_by_id(
+        current["id"], {"password": body.new_password}
+    )
     return {"ok": True}
 
 

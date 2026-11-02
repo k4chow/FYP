@@ -1,12 +1,20 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
+import { getMyFilms } from '../lib/films'
+import type { LibraryFilm } from '../lib/films'
 
-// Placeholder poster tiles until TMDB integration (Phase 2).
-const PLACEHOLDER_FILMS = ['Past Lives', 'Interstellar', 'Her', 'Dune']
 const PLACEHOLDER_THEMES = ['Connection', 'Time', 'Identity', 'Loneliness']
 
 export default function Home() {
   const { user } = useAuth()
+  const [recent, setRecent] = useState<LibraryFilm[]>([])
+
+  useEffect(() => {
+    getMyFilms()
+      .then((res) => setRecent(res.films.slice(0, 4)))
+      .catch(() => setRecent([]))
+  }, [])
 
   return (
     <div>
@@ -28,17 +36,32 @@ export default function Home() {
 
       <div className="home-grid">
         <section className="card">
-          <h2>Picked for you</h2>
-          <p className="muted">
-            Recommendations arrive in Phase 6 — these are placeholders.
-          </p>
-          <div className="film-row">
-            {PLACEHOLDER_FILMS.map((title) => (
-              <div key={title} className="film-tile">
-                {title}
-              </div>
-            ))}
-          </div>
+          <h2>Recently added</h2>
+          {recent.length === 0 ? (
+            <p className="muted">
+              Your library is empty —{' '}
+              <Link className="link" to="/app/films?add=1">
+                add a film
+              </Link>{' '}
+              or{' '}
+              <Link className="link" to="/app/import">
+                import from Letterboxd
+              </Link>
+              .
+            </p>
+          ) : (
+            <div className="film-row">
+              {recent.map((film) => (
+                <div key={film.id} className="film-poster home-poster" title={film.title}>
+                  {film.poster_url ? (
+                    <img src={film.poster_url} alt={film.title} loading="lazy" />
+                  ) : (
+                    <span className="no-poster">{film.title}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </section>
         <aside className="card">
           <h2>Your profile themes</h2>

@@ -18,6 +18,8 @@ reusable as thesis justification material.
 | D11 | Append-only messages; derived profile in separate table | In-place summarisation of history | Source of truth must be auditable; enables "why am I seeing this" traceability via `source_message_ids` |
 | D12 | Proposed→confirmed memory lifecycle | Auto-save insights | Central requirement: the user owns their reflective profile; auto-saving would undermine trust |
 | D13 | Dev accounts auto-confirmed (`email_confirm: true` on signup) | Require email verification from day 1 | No SMTP configured in the dev Supabase project; mandatory verification would block all testing. Must be switched on before any public deployment |
+| D14 | Two Supabase clients: `supabase` (DB only) + `auth_client` (auth API only) | Single shared client; raw REST auth calls | supabase-py propagates sign-in state into the client's PostgREST headers, silently downgrading later DB calls from service-role to a user JWT (surfaced as an RLS 500 on `films` upsert during Phase 2). Separate instances make the correct behaviour structural, not order-dependent |
+| D15 | Import matching: local catalogue first, then TMDB title+year first result (title-only fallback); upserts make re-import idempotent; unmatched rows reported, not dropped | Fuzzy matching; per-row manual review UI (as in the onboarding mockup) | Deterministic and explainable for thesis evaluation; catalogue-first avoids repeat TMDB calls; the mockup's review-before-confirm step is deferred to the onboarding flow (Phase 5), keeping the Settings/Import path simple |
 
 ## UI variation decisions (from mockup review)
 

@@ -7,6 +7,9 @@ import SignUp from './pages/SignUp'
 import ForgotPassword from './pages/ForgotPassword'
 import AppShell from './shell/AppShell'
 import Home from './pages/Home'
+import MyFilms from './pages/MyFilms'
+import Import from './pages/Import'
+import Settings from './pages/Settings'
 import Placeholder from './pages/Placeholder'
 
 function RequireAuth({ children }: { children: ReactElement }) {
@@ -35,10 +38,11 @@ export default function App() {
           >
             <Route index element={<Home />} />
             <Route path="discover" element={<Placeholder title="Discover" phase={6} />} />
-            <Route path="films" element={<Placeholder title="My Films" phase={2} />} />
+            <Route path="films" element={<MyFilms />} />
+            <Route path="import" element={<Import />} />
             <Route path="reflections" element={<Placeholder title="My Reflections" phase={3} />} />
             <Route path="profile" element={<Placeholder title="My Profile" phase={5} />} />
-            <Route path="settings" element={<Placeholder title="Settings" phase={2} />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

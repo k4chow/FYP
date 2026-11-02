@@ -2,9 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
-from .routers import auth
+from .routers import auth, films, imports
 
-app = FastAPI(title="NOACF API", version="0.1.0")
+app = FastAPI(title="NOACF API", version="0.2.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -15,6 +15,8 @@ app.add_middleware(
 )
 
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(films.router, prefix="/films", tags=["films"])
+app.include_router(imports.router, prefix="/import", tags=["import"])
 
 
 @app.get("/health")
