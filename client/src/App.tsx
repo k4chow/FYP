@@ -11,6 +11,9 @@ import MyFilms from './pages/MyFilms'
 import Import from './pages/Import'
 import Settings from './pages/Settings'
 import Placeholder from './pages/Placeholder'
+import Reflections from './pages/Reflections'
+import ReflectionNew from './pages/ReflectionNew'
+import ReflectionChat from './pages/ReflectionChat'
 
 function RequireAuth({ children }: { children: ReactElement }) {
   const { user, loading } = useAuth()
@@ -40,7 +43,9 @@ export default function App() {
             <Route path="discover" element={<Placeholder title="Discover" phase={6} />} />
             <Route path="films" element={<MyFilms />} />
             <Route path="import" element={<Import />} />
-            <Route path="reflections" element={<Placeholder title="My Reflections" phase={3} />} />
+            <Route path="reflections" element={<Reflections />} />
+            <Route path="reflections/new" element={<ReflectionNew />} />
+            <Route path="reflections/:id" element={<ReflectionChat />} />
             <Route path="profile" element={<Placeholder title="My Profile" phase={5} />} />
             <Route path="settings" element={<Settings />} />
           </Route>

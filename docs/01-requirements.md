@@ -8,11 +8,11 @@ the UI screen(s) that surface it. Update the "Status" column per phase.
 
 | # | Requirement (from notes) | Implementation | UI screen(s) | Status |
 |---|---|---|---|---|
-| F1 | Persistent conversation history; verbatim, never overwritten | `messages` table (layer 1) | Reflection chat | Phase 3 |
+| F1 | Persistent conversation history; verbatim, never overwritten | `messages` table (layer 1) | Reflection chat | ✅ Done |
 | F2 | Reflective profile built from conversations | `memories` table (layer 2) | My Profile | Phase 5 |
 | F3 | User controls every stored insight (confirm / edit / reject) | `memories.status` = proposed/confirmed/rejected + review endpoints | Review & Edit, Compare and refine | Phase 4 |
-| F4 | Bounded LLM context (recent N messages + small set of confirmed memories), never full history | Server-side context assembler | — | Phase 3 |
-| F5 | Swappable LLM provider (mock first) | `server/app/llm/` provider interface | — | Phase 3 |
+| F4 | Bounded LLM context (recent N messages + small set of confirmed memories), never full history | Server-side context assembler | — | ✅ Done |
+| F5 | Swappable LLM provider (mock first) | `server/app/llm/` provider interface | — | ✅ Done |
 | F6 | Letterboxd CSV import (no Netflix) | Import pipeline + TMDB matching | Import screen, Settings | ✅ Done |
 | F7 | Film catalogue with metadata/posters | TMDB API + `films`/`user_films` tables | My Films, Add a film | ✅ Done |
 | F8 | Reflection-informed recommendations | Recommendation service over confirmed memories | Discover | Phase 6 |

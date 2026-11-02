@@ -34,10 +34,10 @@
 | Home dashboard | 15 | 1 (placeholder data) → 5 (live) |
 | Discover grid + why-explanations | 17 | 6 |
 | Film Assistant chat + thinking states | 18, 19 | 6 |
-| Add a Reflection | 21+22 hybrid | 5 |
+| Add a Reflection | 21+22 hybrid | 3 |
 | My Films grid / Add-a-film modal | 23, 24 | 2 |
 | My Profile (themes, insight toggles) | 25 | 5 |
-| My Reflections list + detail tabs | 26 | 5 |
+| My Reflections list + detail tabs | 26 | 3 (list) → 5 (detail tabs) |
 | Settings (Letterboxd, style slider, password) | 27 | 1 (shell) → 2/6 (features) |
 | States: resume banner, feedback, search/empty/loading/error, film-added | 28 | per-flow |
 

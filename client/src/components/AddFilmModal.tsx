@@ -70,7 +70,7 @@ export default function AddFilmModal({ onClose }: AddFilmModalProps) {
     try {
       const added = await addFilm(detail.tmdb_id, status)
       onClose(added)
-      if (then === 'reflect') navigate('/app/reflections')
+      if (then === 'reflect') navigate(`/app/reflections/new?tmdb=${detail.tmdb_id}`)
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Could not save film')
       setSaving(false)

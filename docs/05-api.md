@@ -119,12 +119,68 @@ with `Name`+`Year` columns). Status is `watchlist` when the filename contains
 title+year (first result; title-only fallback), upserted with
 `source='letterboxd'` — re-importing updates ratings and never duplicates.
 
+## Phase 3
+
+Reflection and discovery chat. `LLM_PROVIDER=mock` selects the deterministic
+provider (no API key); every user and assistant message, including the opening,
+is stored verbatim in `messages` (D11). All routes require auth and are scoped
+to the caller. A conversation's `film` is `null` or contains
+`id/tmdb_id/title/year/genres/runtime/overview/poster_url`.
+
+### `POST /conversations`
+```json
+→ {"type": "reflection", "tmdb_id": 329865, "watch_type": "seen"}
+← 201 {"conversation": {"id": "…", "type": "reflection", "status": "active",
+       "watch_type": "seen", "title": "Reflection on Arrival",
+       "created_at": "…", "updated_at": "…", "ended_at": null, "film": {...}},
+       "messages": [{"id": "…", "role": "assistant", "content": "…",
+                     "metadata": {"kind": "opening"}, "created_at": "…"}]}
+```
+Use `film_id` for an existing catalogue row or `tmdb_id` to fetch/cache it.
+`type` defaults to `reflection`; `watch_type` is optional `seen|planning` but
+requires a film (400 otherwise). For a film-free prompt reflection send
+`{"type":"reflection","title":"What film character would you want as a friend?"}`.
+The response includes the persisted assistant opening.
+
+### `GET /conversations?status=active|completed&type=reflection|discovery`
+```json
+← 200 {"conversations": [{<conversation with film>}…]}
+```
+Ordered by `updated_at` desc; both filters are optional.
+
+### `GET /conversations/{id}`
+```json
+← 200 {"conversation": {<conversation with film>},
+       "messages": [{"id": "…", "role": "assistant|user",
+                     "content": "…", "metadata": {}, "created_at": "…"}…]}
+← 404 {"detail": "Conversation not found"}
+```
+Messages are chronological. Full history is returned for display; only the LLM
+context is bounded (last 12 messages + 5 confirmed memories by default).
+
+### `POST /conversations/{id}/messages`
+```json
+→ {"content": "I loved the quiet atmosphere and the way it handled grief."}
+← 201 {"user_message": {<stored message>}, "assistant_message": {<stored message>}}
+← 409 {"detail": "This conversation has ended"}
+```
+Stores the user message verbatim, assembles bounded context, generates and
+stores the assistant reply, and touches the conversation's `updated_at`.
+Content is required (1–4000 chars).
+
+### `POST /conversations/{id}/end`
+```json
+← 200 {"conversation": {<conversation>, "status": "completed",
+                       "ended_at": "2026-11-03T…"}}
+```
+Idempotent. Phase 4 adds proposed-memory extraction to this endpoint; it never
+auto-confirms memories (D12).
+
 ## Planned (grown per phase)
 
 | Phase | Endpoint | Purpose |
 |---|---|---|
-| 3 | `POST /conversations`, `GET /conversations/{id}`, `POST /conversations/{id}/messages` | Reflection/discovery chat |
-| 4 | `POST /conversations/{id}/end` → proposed memories; `PATCH /memories/{id}` (confirm/edit/reject) | Guided review |
+| 4 | `POST /conversations/{id}/end` gains proposed-memory extraction; `PATCH /memories/{id}` (confirm/edit/reject) | Guided review |
 | 5 | `GET /memories?status=`, `GET /profile/summary` | Reflective profile views |
 | 6 | `POST /recommendations`, `POST /recommendations/{id}/feedback` | Reflection-informed recs + feedback loop |
 

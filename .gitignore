@@ -16,3 +16,6 @@ dist/
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Runtime logs
+*.log

@@ -44,6 +44,10 @@ export default function AppShell() {
         </nav>
         <div className="quick-add">
           <p className="quick-add-label">Quick add</p>
+          <NavLink to="/app/reflections/new">
+            <span aria-hidden>✎</span>
+            <span className="label">Start a reflection</span>
+          </NavLink>
           <NavLink to="/app/films?add=1">
             <span aria-hidden>＋</span>
             <span className="label">Add a film</span>

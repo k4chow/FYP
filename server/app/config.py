@@ -11,5 +11,11 @@ class Settings(BaseSettings):
     supabase_service_role_key: str = ""
     cors_origins: list[str] = ["http://localhost:5173"]
 
+    # LLM provider seam (F5/D5): "mock" = deterministic, no API key needed.
+    llm_provider: str = "mock"
+    # Bounded context assembly (F4): last N messages + K confirmed memories.
+    llm_context_messages: int = 12
+    llm_context_memories: int = 5
+
 
 settings = Settings()

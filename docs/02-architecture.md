@@ -43,12 +43,14 @@ Confirmed memories + film history drive:
 
 The server builds a **bounded** JSON payload per turn:
 `system prompt + film metadata (if any) + last N messages + K confirmed memories`
-— never the full history and never proposed/rejected memories. This keeps
+— never the full history and never proposed/rejected memories. Defaults are
+N=12 and K=5 (`LLM_CONTEXT_MESSAGES` / `LLM_CONTEXT_MEMORIES`). This keeps
 token cost predictable and honours user control.
 
 ## Provider seam
 
-`server/app/llm/` exposes a `LLMProvider` protocol (`chat(messages, context)`,
-`extract_insights(conversation)`). `MockLLMProvider` returns deterministic
-scripted responses so all flows are testable without an API key; an
-`OpenAIProvider` drops in behind the same interface later.
+`server/app/llm/` exposes an `LLMProvider` interface (`opening(context)`,
+`chat(messages, context)`, `extract_insights(messages, context)`).
+`MockLLMProvider` returns deterministic reflective responses so all flows are
+testable without an API key; an `OpenAIProvider` drops in behind the same
+interface later. Select the provider with `LLM_PROVIDER` (default `mock`).

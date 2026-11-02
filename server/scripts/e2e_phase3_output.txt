@@ -1,0 +1,37 @@
+[PASS] login — status=200
+[PASS] unauthenticated request rejected — status=401
+  using film: Arrival (tmdb 329865)
+[PASS] create conversation (201) — status=201
+[PASS] film attached
+[PASS] opening is assistant + persisted
+[PASS] opening references film title — Let's talk about Arrival, Kiwi. Take your time — there are no right or wrong answers here.
+[PASS] watch_type stored
+[PASS] second conversation created
+[PASS] opening deterministic across conversations
+[PASS] post message (201) — status=201
+[PASS] user message stored verbatim
+[PASS] assistant replied — That's a thoughtful observation. It's interesting that "loved" is what surfaced for you. Did any character in 
+[PASS] reply deterministic for same input/turn
+[PASS] quick reply: I'm not sure — That's completely okay — there's no right answer here, and uncertainty is a fine place to 
+[PASS] quick reply: different question — Of course — let's try a different angle. If you could step inside one moment of Arrival, w
+[PASS] empty message rejected (422) — status=422
+[PASS] free reflection created (201)
+[PASS] free reflection opening quotes the prompt — You wanted to reflect on this: “What film character would you want as a friend?” What's co
+[PASS] planning conversation created
+[PASS] planning opening references intent — Interstellar is one you're planning to watch — a different kind of reflection, Kiwi. What 
+[PASS] planning reply asks about intent — That's a thoughtful observation. It's interesting that "friend" is what surfaced for you. Where did 
+[PASS] watch_type without film rejected (400) — status=400
+[PASS] recent_messages honours limit — got 3
+[PASS] recent_messages newest last
+[PASS] confirmed memories only (none confirmed yet)
+[PASS] get conversation (200)
+[PASS] history in order
+[PASS] unknown conversation is 404 — status=404
+[PASS] end conversation (200) — status=200
+[PASS] status completed + ended_at set
+[PASS] end is idempotent
+[PASS] messaging an ended conversation rejected (409) — status=409
+[PASS] completed filter includes ended conversation
+[PASS] active filter excludes ended conversation
+
+RESULT: 34/34 checks passed

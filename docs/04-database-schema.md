@@ -1,6 +1,7 @@
 # 04 — Database Schema
 
-Defined in `supabase/migrations/0001_init.sql`. All PKs are UUIDs
+Defined in `supabase/migrations/0001_init.sql`; Phase 3 conversation fields
+are added by `0002_conversation_context.sql`. All PKs are UUIDs
 (`gen_random_uuid()`). Every user-owned table has RLS enabled with
 owner-only policies; `films` is a shared read-only catalogue (writes via
 service role only).
@@ -39,8 +40,10 @@ service role only).
 | user_id | uuid FK | owner (RLS) |
 | film_id | uuid FK, nullable | set for reflection sessions |
 | type | text | `reflection` \| `discovery` |
+| watch_type | text, nullable | `seen` \| `planning`; set for film reflections (0002) |
 | status | text | `active` \| `completed` |
-| title | text | |
+| title | text | Film reflection title or free-reflection prompt |
+| ended_at | timestamptz, nullable | Set when the reflection is ended (0002) |
 
 ### messages (append-only, layer 1)
 | Column | Type | Notes |

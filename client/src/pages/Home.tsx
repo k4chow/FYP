@@ -6,6 +6,20 @@ import type { LibraryFilm } from '../lib/films'
 
 const PLACEHOLDER_THEMES = ['Connection', 'Time', 'Identity', 'Loneliness']
 
+// Rotating reflection prompts; one per day, deterministic (no backend needed).
+const PROMPTS = [
+  'What film do you find yourself thinking about for no obvious reason?',
+  'Which character’s decision would you have made differently?',
+  'What did a film once help you understand about yourself?',
+  'Which film world would you actually want to live in — and which would you avoid?',
+  'What feeling do you keep going back to the cinema to find?',
+  'Which film ending still doesn’t sit right with you?',
+  'What film character would you want as a friend?',
+]
+
+const dayOfYear = (d: Date) =>
+  Math.floor((d.getTime() - new Date(d.getFullYear(), 0, 0).getTime()) / 86_400_000)
+
 export default function Home() {
   const { user } = useAuth()
   const [recent, setRecent] = useState<LibraryFilm[]>([])
@@ -33,6 +47,17 @@ export default function Home() {
           <p>Start a guided reflection on something you've watched.</p>
         </Link>
       </div>
+
+      <Link
+        className="prompt-card"
+        to={`/app/reflections/new?prompt=${encodeURIComponent(PROMPTS[dayOfYear(new Date()) % PROMPTS.length])}`}
+      >
+        <div style={{ flex: 1 }}>
+          <p className="eyebrow">Prompt of the day</p>
+          <p className="prompt-text">“{PROMPTS[dayOfYear(new Date()) % PROMPTS.length]}”</p>
+        </div>
+        <span className="prompt-cta">Reflect on this →</span>
+      </Link>
 
       <div className="home-grid">
         <section className="card">
