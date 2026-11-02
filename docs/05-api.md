@@ -11,11 +11,46 @@ Liveness check.
 { "status": "ok", "service": "noacf-api", "version": "0.1.0" }
 ```
 
+## Phase 1
+
+All auth endpoints are server-mediated (D9): the client only talks to
+FastAPI; the server uses the Supabase service-role key. Signup/login return
+a Supabase JWT that the client sends as `Authorization: Bearer <jwt>`.
+
+### `POST /auth/signup`
+```json
+→ {"email": "a@b.com", "password": "min8chars", "display_name": "Kiwi"}
+← 200 {"access_token": "<jwt>", "user": {"id": "...", "email": "...", "display_name": "Kiwi"}}
+```
+Creates the Supabase Auth user (auto-confirmed in dev — no SMTP configured)
+and the `public.users` profile row, then logs in and returns the session.
+
+### `POST /auth/login`
+```json
+→ {"email": "a@b.com", "password": "..."}
+← 200 {"access_token": "<jwt>", "user": {...}}
+← 401 {"detail": "Invalid email or password"}
+```
+
+### `POST /auth/forgot-password`
+```json
+→ {"email": "a@b.com"}
+← 200 {"message": "If that email exists, a reset link has been sent."}
+```
+Same response whether or not the account exists (no user enumeration).
+Requires SMTP configured in Supabase to actually deliver.
+
+### `GET /auth/me`
+```json
+← 200 {"id": "...", "email": "...", "display_name": "Kiwi"}
+← 401 {"detail": "Invalid or expired token"}
+```
+Self-heals the `public.users` profile row if it is missing.
+
 ## Planned (grown per phase)
 
 | Phase | Endpoint | Purpose |
 |---|---|---|
-| 1 | `POST /auth/signup`, `POST /auth/login`, `POST /auth/logout`, `GET /me` | Supabase Auth wrapper + profile |
 | 2 | `POST /import/letterboxd` (multipart CSV) | Parse export, match TMDB, upsert `films`/`user_films` |
 | 2 | `GET /films/search?q=` | TMDB search proxy |
 | 2 | `GET /films/mine`, `POST /films/mine`, `PATCH /films/mine/{id}` | Library management |

@@ -17,6 +17,7 @@ reusable as thesis justification material.
 | D10 | Monorepo (`client/` + `server/` + `supabase/`) | Separate repos | FYP scale; one commit history maps cleanly onto phases; mirrors previous project structure |
 | D11 | Append-only messages; derived profile in separate table | In-place summarisation of history | Source of truth must be auditable; enables "why am I seeing this" traceability via `source_message_ids` |
 | D12 | Proposed→confirmed memory lifecycle | Auto-save insights | Central requirement: the user owns their reflective profile; auto-saving would undermine trust |
+| D13 | Dev accounts auto-confirmed (`email_confirm: true` on signup) | Require email verification from day 1 | No SMTP configured in the dev Supabase project; mandatory verification would block all testing. Must be switched on before any public deployment |
 
 ## UI variation decisions (from mockup review)
 

@@ -32,7 +32,7 @@ docs/                Project documentation (thesis material)
 ```powershell
 cd server
 pip install -r requirements.txt
-copy .env.example .env   # then put your TMDB key in .env
+copy .env.example .env   # then fill in your Supabase + TMDB keys
 python -m uvicorn app.main:app --reload --port 8000
 # -> http://localhost:8000/health
 ```

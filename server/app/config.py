@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     )
 
     tmdb_api_key: str = ""
+    supabase_url: str = ""
+    supabase_service_role_key: str = ""
     cors_origins: list[str] = ["http://localhost:5173"]
 
 

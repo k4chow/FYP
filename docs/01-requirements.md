@@ -19,7 +19,7 @@ the UI screen(s) that surface it. Update the "Status" column per phase.
 | F9 | Every recommendation explains *why* | "why" strings generated from source memories | Discover cards, "Why am I seeing this?" | Phase 6 |
 | F10 | Conversational discovery assistant | Film Assistant chat (`conversations.type='discovery'`) | Discover chat | Phase 6 |
 | F11 | Recommendation feedback loop | "More like this" / "Not for me" → profile signals | Discover cards | Phase 6 |
-| F12 | Auth (email/password) | Supabase Auth | Sign in / Sign up / Forgot password | Phase 1 |
+| F12 | Auth (email/password) | Supabase Auth | Sign in / Sign up / Forgot password | ✅ Done |
 
 ## Non-functional requirements
 
