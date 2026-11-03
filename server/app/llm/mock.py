@@ -16,7 +16,7 @@ _WORD_RE = re.compile(r"[a-z']+")
 _STOPWORDS = {
     "about", "after", "again", "because", "before", "being", "between",
     "could", "every", "felt", "feels", "going", "maybe", "might", "movie",
-    "much", "never", "really", "scene", "should", "still", "that", "their",
+    "loved", "love", "much", "never", "really", "scene", "should", "still", "that", "their",
     "them", "there", "these", "they", "thing", "think", "this", "those",
     "through", "watch", "watched", "watching", "were", "what", "when",
     "where", "which", "while", "with", "would", "your",
@@ -83,6 +83,44 @@ def _genre_hit(text: str, genres: list[str]) -> str | None:
         if genre.lower() in lowered:
             return genre
     return None
+
+
+_QUICK_REPLIES = _NOT_SURE | _NEW_QUESTION | _MAYBE_LATER
+
+# Observable film/reflection language only — deliberately no mental-health
+# or personality inference. Values are phrased as qualities of the work.
+_SIGNALS = (
+    ("loved", "emotional connection"),
+    ("love", "emotional connection"),
+    ("moving", "emotional impact"),
+    ("quiet", "quiet atmosphere"),
+    ("atmosphere", "atmosphere"),
+    ("grief", "treatment of grief"),
+    ("loneliness", "treatment of loneliness"),
+    ("connection", "treatment of connection"),
+    ("honest", "honest relationships"),
+    ("hopeful", "hopeful tone"),
+    ("ending", "ending"),
+)
+
+
+def _normalised(text: str) -> str:
+    return text.lower().strip().rstrip("?!.")
+
+
+def _excerpt(text: str, limit: int = 110) -> str:
+    clean = " ".join(text.split())
+    return clean if len(clean) <= limit else clean[: limit - 1].rstrip() + "…"
+
+
+def _substantive_user_messages(messages: list[dict]) -> list[dict]:
+    return [
+        message
+        for message in messages
+        if message.get("role") == "user"
+        and len(str(message.get("content", "")).split()) >= 3
+        and _normalised(str(message.get("content", ""))) not in _QUICK_REPLIES
+    ]
 
 
 class MockLLMProvider(LLMProvider):
@@ -182,5 +220,115 @@ class MockLLMProvider(LLMProvider):
     def extract_insights(
         self, messages: list[dict], context: ChatContext
     ) -> list[dict]:
-        # Phase 4: deterministic mock extraction for the Review & Edit flow.
-        return []
+        """Extract at most three deterministic, source-grounded proposals.
+
+        The mock intentionally summarises observations about the film and the
+        user's stated attention/preferences; it does not diagnose the user.
+        """
+        user_messages = _substantive_user_messages(messages)
+        if not user_messages:
+            return []
+
+        film = context.film or {}
+        film_title = film.get("title") or "this film"
+        existing = {memory.strip().casefold() for memory in context.memories}
+        proposals: list[dict] = []
+
+        def source_ids(rows: list[dict]) -> list[str]:
+            return [str(row.get("id", "")) for row in rows if row.get("id")]
+
+        def add(content: str, kind: str, sources: list[dict], explanation: str) -> None:
+            key = content.strip().casefold()
+            if not content or not sources or key in existing:
+                return
+            if any(p["content"].strip().casefold() == key for p in proposals):
+                return
+            proposals.append(
+                {
+                    "content": content,
+                    "kind": kind,
+                    "explanation": explanation,
+                    "source_message_ids": source_ids(sources),
+                }
+            )
+
+        # 1. A theme is strongest when the user's own content words recur.
+        occurrences: dict[str, list[dict]] = {}
+        for message in user_messages:
+            for word in set(_keywords(str(message.get("content", "")), limit=8)):
+                occurrences.setdefault(word, []).append(message)
+        recurring = [word for word, rows in occurrences.items() if len(rows) > 1]
+        if recurring:
+            rows = occurrences[recurring[0]][:2]
+            if len(recurring) > 1:
+                seen_ids = {row.get("id") for row in rows}
+                rows += [
+                    row
+                    for row in occurrences[recurring[1]][:1]
+                    if row.get("id") not in seen_ids
+                ]
+                content = (
+                    f"You kept returning to {recurring[0]} and {recurring[1]} "
+                    "in this reflection."
+                )
+            else:
+                content = f"You kept returning to {recurring[0]} in this reflection."
+            add(
+                content,
+                "theme",
+                rows,
+                "Proposed because this idea appears in more than one of your messages.",
+            )
+        else:
+            first = user_messages[0]
+            words = _keywords(str(first.get("content", "")), limit=2)
+            if words:
+                phrase = " and ".join(words)
+                add(
+                    f"You were drawn to {phrase} while reflecting on {film_title}.",
+                    "theme",
+                    [first],
+                    f"Proposed because you wrote: “{_excerpt(str(first.get('content', '')))}”.",
+                )
+
+        # 2. One observable emotional/stylistic quality that shaped the reflection.
+        signal_hits: list[tuple[str, dict]] = []
+        for message in user_messages:
+            lowered = str(message.get("content", "")).lower()
+            for token, label in _SIGNALS:
+                if re.search(rf"\b{re.escape(token)}\b", lowered):
+                    signal_hits.append((label, message))
+                    break
+        if signal_hits:
+            label, source = signal_hits[0]
+            subject = f"{film_title}'s" if film else "This reflection's"
+            add(
+                f"{subject} {label} shaped what stayed with you.",
+                "insight",
+                [source],
+                f"Proposed because you wrote: “{_excerpt(str(source.get('content', '')))}”.",
+            )
+
+        # 3. A cautious preference/attention observation, never one per message.
+        if len(user_messages) > 1:
+            remaining = [
+                (label, source)
+                for label, source in signal_hits
+                if not any(p["source_message_ids"] == source_ids([source]) for p in proposals)
+            ]
+            if remaining:
+                label, source = remaining[0]
+                content = f"You respond to films with {label}."
+            else:
+                source = user_messages[-1]
+                words = _keywords(str(source.get("content", "")), limit=2)
+                label = " and ".join(words)
+                content = f"In this reflection, you paid particular attention to {label}."
+            add(
+                content,
+                "preference",
+                [source],
+                f"Proposed because you wrote: “{_excerpt(str(source.get('content', '')))}”.",
+            )
+
+        return proposals[:3]

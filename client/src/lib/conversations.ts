@@ -1,4 +1,5 @@
 import { api } from './api'
+import type { Memory } from './memories'
 
 export interface ConversationFilm {
   id: string
@@ -64,7 +65,10 @@ export const sendMessage = (id: string, content: string) =>
   )
 
 export const endConversation = (id: string) =>
-  api<{ conversation: Conversation }>(`/conversations/${id}/end`, {
-    method: 'POST',
-    auth: true,
-  })
+  api<{ conversation: Conversation; proposed_memories: Memory[] }>(
+    `/conversations/${id}/end`,
+    {
+      method: 'POST',
+      auth: true,
+    },
+  )

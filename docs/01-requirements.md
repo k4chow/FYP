@@ -9,8 +9,8 @@ the UI screen(s) that surface it. Update the "Status" column per phase.
 | # | Requirement (from notes) | Implementation | UI screen(s) | Status |
 |---|---|---|---|---|
 | F1 | Persistent conversation history; verbatim, never overwritten | `messages` table (layer 1) | Reflection chat | ✅ Done |
-| F2 | Reflective profile built from conversations | `memories` table (layer 2) | My Profile | Phase 5 |
-| F3 | User controls every stored insight (confirm / edit / reject) | `memories.status` = proposed/confirmed/rejected + review endpoints | Review & Edit, Compare and refine | Phase 4 |
+| F2 | Reflective profile built from conversations | `memories` table (layer 2); extraction now feeds Review & Edit | My Profile | Phase 5 (data lifecycle done; profile UI remains) |
+| F3 | User controls every stored insight (confirm / edit / reject) | `memories.status` = proposed/confirmed/rejected + review endpoints | Review & Edit, Compare and refine | ✅ Done |
 | F4 | Bounded LLM context (recent N messages + small set of confirmed memories), never full history | Server-side context assembler | — | ✅ Done |
 | F5 | Swappable LLM provider (mock first) | `server/app/llm/` provider interface | — | ✅ Done |
 | F6 | Letterboxd CSV import (no Netflix) | Persistent resumable import jobs + TMDB matching | Import screen, Settings | ✅ Done |
@@ -29,7 +29,7 @@ the UI screen(s) that surface it. Update the "Status" column per phase.
 | N2 | No secrets in version control | `.env` gitignored, `.env.example` placeholders | ✅ Phase 0 |
 | N3 | JSONB only for genuinely flexible metadata | `metadata`, `source_message_ids`, `genres` columns | ✅ Phase 0 |
 | N4 | pgvector only if plain SQL retrieval proves insufficient | Deferred decision (documented in 03-design-decisions) | Deferred |
-| N5 | Film preferences ≠ mental-health inference; contradictions flagged, never silently overwritten | Memory lifecycle rules (Phase 4–5) | Phase 4 |
+| N5 | Film preferences ≠ mental-health inference; contradictions flagged, never silently overwritten | Deterministic proposals describe observable film/reflection preferences only; review cannot overwrite confirmed memories or source messages | ✅ Phase 4 (side-by-side contradiction UI remains Phase 5) |
 | N6 | User-adjustable recommendation style (similar ↔ exploratory) | Settings slider → recommendation weights | Phase 6 |
 
 ## Onboarding flow (from notes + mockups)

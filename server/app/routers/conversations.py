@@ -9,11 +9,13 @@
 """
 
 from datetime import datetime, timezone
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field, field_validator
 
 from .. import context as context_svc
+from .. import memories as memory_svc
 from ..deps import get_current_user
 from ..llm import ChatContext, get_llm
 from ..supabase_client import supabase
@@ -193,16 +195,27 @@ def list_conversations(
     return {"conversations": [_serialise(r) for r in res.data]}
 
 
+@router.get("/{conversation_id}/memories")
+def get_conversation_memories(
+    conversation_id: UUID, current: dict = Depends(get_current_user)
+) -> dict:
+    """Return every review item linked to one owned reflection, all statuses."""
+    conversation_id_text = str(conversation_id)
+    _get_own(conversation_id_text, current["id"])
+    return {"memories": memory_svc.for_conversation(conversation_id_text, current["id"])}
+
+
 @router.get("/{conversation_id}")
 def get_conversation(
-    conversation_id: str, current: dict = Depends(get_current_user)
+    conversation_id: UUID, current: dict = Depends(get_current_user)
 ) -> dict:
-    conv = _get_own(conversation_id, current["id"])
+    conversation_id_text = str(conversation_id)
+    conv = _get_own(conversation_id_text, current["id"])
     # Full history for display — F4 bounds only the LLM context, not the UI.
     res = (
         supabase.table("messages")
         .select("id,role,content,metadata,created_at")
-        .eq("conversation_id", conversation_id)
+        .eq("conversation_id", conversation_id_text)
         .order("created_at")
         .execute()
     )
@@ -211,11 +224,12 @@ def get_conversation(
 
 @router.post("/{conversation_id}/messages", status_code=201)
 def post_message(
-    conversation_id: str,
+    conversation_id: UUID,
     body: MessageBody,
     current: dict = Depends(get_current_user),
 ) -> dict:
-    conv = _get_own(conversation_id, current["id"])
+    conversation_id_text = str(conversation_id)
+    conv = _get_own(conversation_id_text, current["id"])
     if conv["status"] != "active":
         raise HTTPException(status_code=409, detail="This conversation has ended")
 
@@ -224,7 +238,7 @@ def post_message(
         supabase.table("messages")
         .insert(
             {
-                "conversation_id": conversation_id,
+                "conversation_id": conversation_id_text,
                 "role": "user",
                 "content": body.content,
             }
@@ -234,14 +248,16 @@ def post_message(
     )
 
     # F4: bounded context — recent N messages + confirmed memories only.
-    history = context_svc.recent_messages(conversation_id)
-    ctx = _chat_context(conv, current["id"], turn=_user_turn_count(conversation_id))
+    history = context_svc.recent_messages(conversation_id_text)
+    ctx = _chat_context(
+        conv, current["id"], turn=_user_turn_count(conversation_id_text)
+    )
     reply = get_llm().chat(history, ctx)
     assistant_message = (
         supabase.table("messages")
         .insert(
             {
-                "conversation_id": conversation_id,
+                "conversation_id": conversation_id_text,
                 "role": "assistant",
                 "content": reply,
             }
@@ -252,23 +268,56 @@ def post_message(
 
     supabase.table("conversations").update(
         {"updated_at": datetime.now(timezone.utc).isoformat()}
-    ).eq("id", conversation_id).execute()
+    ).eq("id", conversation_id_text).execute()
 
     return {"user_message": user_message, "assistant_message": assistant_message}
 
 
 @router.post("/{conversation_id}/end")
 def end_conversation(
-    conversation_id: str, current: dict = Depends(get_current_user)
+    conversation_id: UUID, current: dict = Depends(get_current_user)
 ) -> dict:
-    conv = _get_own(conversation_id, current["id"])
+    """End an owned reflection and create user-reviewable proposed memories.
+
+    The message history is read through the same bounded window as chat (F4)
+    and is never updated (D11). Repeat calls return the memories already linked
+    to the completed reflection without extracting again.
+    """
+    conversation_id_text = str(conversation_id)
+    conv = _get_own(conversation_id_text, current["id"])
+    review_memories = memory_svc.for_conversation(conversation_id_text, current["id"])
+
     if conv["status"] != "completed":
+        created_rows: list[dict] = []
+        explanations: dict[str, str] = {}
+        if conv["type"] == "reflection" and not review_memories:
+            # Bounded records include ids solely so extraction can cite sources.
+            records = context_svc.recent_message_records(conversation_id_text)
+            ctx = _chat_context(
+                conv, current["id"], turn=_user_turn_count(conversation_id_text)
+            )
+            try:
+                raw = get_llm().extract_insights(records, ctx)
+            except Exception as exc:
+                raise HTTPException(
+                    status_code=502,
+                    detail="Insight extraction failed; the reflection was not ended",
+                ) from exc
+            proposals = memory_svc.normalise_proposals(raw, records)
+            created_rows = memory_svc.insert_proposals(current["id"], proposals)
+            explanations = {
+                row["id"]: proposal["explanation"]
+                for row, proposal in zip(created_rows, proposals, strict=False)
+            }
+
         now = datetime.now(timezone.utc).isoformat()
         supabase.table("conversations").update(
             {"status": "completed", "ended_at": now, "updated_at": now}
-        ).eq("id", conversation_id).execute()
-        conv = _get_own(conversation_id, current["id"])
-    # Idempotent on repeat calls. Phase 4: proposed-memory extraction (D12)
-    # runs here and the response will carry `proposed_memories` for the
-    # Review & Edit flow.
-    return {"conversation": _serialise(conv)}
+        ).eq("id", conversation_id_text).eq("status", "active").execute()
+        conv = _get_own(conversation_id_text, current["id"])
+        if created_rows:
+            review_memories = memory_svc.serialise_rows(
+                created_rows, current["id"], explanations=explanations
+            )
+
+    return {"conversation": _serialise(conv), "proposed_memories": review_memories}

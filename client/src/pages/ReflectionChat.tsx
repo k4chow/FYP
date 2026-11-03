@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ApiError } from '../lib/api'
 import { endConversation, getConversation, sendMessage } from '../lib/conversations'
 import type { ChatMessage, Conversation } from '../lib/conversations'
@@ -12,6 +12,7 @@ const QUICK_REPLIES = ["I'm not sure", 'Can you ask a different question?', 'May
 // Messages render straight from the server — the history is the source of truth.
 export default function ReflectionChat() {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
@@ -75,6 +76,7 @@ export default function ReflectionChat() {
     try {
       const res = await endConversation(id)
       setConversation(res.conversation)
+      navigate(`/app/reflections/${id}/review`)
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Could not end the reflection.')
     } finally {
@@ -219,7 +221,8 @@ export default function ReflectionChat() {
           </>
         ) : (
           <div className="chat-done">
-            <span>Reflection complete ✓ — guided review of insights arrives in Phase 4.</span>
+            <span>Reflection complete ✓ — your messages remain unchanged.</span>
+            <Link to={`/app/reflections/${id}/review`}>Review proposed insights</Link>
             <Link to="/app/reflections">Back to My Reflections</Link>
           </div>
         )}

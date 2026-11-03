@@ -10,7 +10,7 @@
 [PASS] opening deterministic across conversations
 [PASS] post message (201) — status=201
 [PASS] user message stored verbatim
-[PASS] assistant replied — That's a thoughtful observation. It's interesting that "loved" is what surfaced for you. Did any character in 
+[PASS] assistant replied — That's a thoughtful observation. It's interesting that "quiet" is what surfaced for you. Did any character in 
 [PASS] reply deterministic for same input/turn
 [PASS] quick reply: I'm not sure — That's completely okay — there's no right answer here, and uncertainty is a fine place to 
 [PASS] quick reply: different question — Of course — let's try a different angle. If you could step inside one moment of Arrival, w
@@ -23,7 +23,7 @@
 [PASS] watch_type without film rejected (400) — status=400
 [PASS] recent_messages honours limit — got 3
 [PASS] recent_messages newest last
-[PASS] confirmed memories only (none confirmed yet)
+[PASS] confirmed memories only — got 2 confirmed
 [PASS] get conversation (200)
 [PASS] history in order
 [PASS] unknown conversation is 404 — status=404

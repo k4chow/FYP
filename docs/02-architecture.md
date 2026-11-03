@@ -29,8 +29,9 @@ Insights extracted from conversations become `memories` rows with:
   enabling "Why am I seeing this?" explainability.
 - `kind`: `theme` | `preference` | `insight`.
 
-Contradictions (e.g. a new insight conflicting with a confirmed one) are
-surfaced to the user for resolution — never silently overwritten.
+Contradictions are never silently overwritten: new extraction can only create
+`proposed` rows, while confirmed memories remain untouched. Side-by-side
+comparison/refinement UI is the Phase 5 continuation.
 
 ### Layer 3 — Reflection & discovery
 Confirmed memories + film history drive:
@@ -39,7 +40,7 @@ Confirmed memories + film history drive:
 - the Film Assistant (discovery conversations) which can ask clarifying
   questions before recommending.
 
-## LLM context assembly (Phase 3)
+## LLM context assembly (Phase 3–4)
 
 The server builds a **bounded** JSON payload per turn:
 `system prompt + film metadata (if any) + last N messages + K confirmed memories`
@@ -54,6 +55,12 @@ token cost predictable and honours user control.
 `MockLLMProvider` returns deterministic reflective responses so all flows are
 testable without an API key; an `OpenAIProvider` drops in behind the same
 interface later. Select the provider with `LLM_PROVIDER` (default `mock`).
+
+Phase 4 insight extraction receives the same bounded recent-message window as
+chat, plus message ids for citations. It emits at most three source-grounded
+proposals; the server validates content, kind, explanation, and source ids
+before inserting `proposed` memories. The Review & Edit API is the only path
+that changes review status, and it cannot alter source messages or source ids.
 
 ## Large-import processing
 

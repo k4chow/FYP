@@ -37,5 +37,10 @@ class LLMProvider(ABC):
     def extract_insights(
         self, messages: list[dict], context: ChatContext
     ) -> list[dict]:
-        """Propose memories from a finished conversation (Phase 4, D12).
-        Returns [] until Phase 4 implements extraction."""
+        """Propose memories from a finished conversation (D12).
+
+        `messages` is the same bounded window used for chat, with message ids
+        included so each proposal can name its sources. Each item should use
+        content, kind, explanation, and source_message_ids; the server still
+        validates every field before persisting anything.
+        """

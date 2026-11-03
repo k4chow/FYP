@@ -1,0 +1,43 @@
+[PASS] owner login — status=200
+[PASS] invalid token rejected — status=401
+[PASS] invalid status filter rejected — status=422
+[PASS] second user created for isolation — status=200
+[PASS] create reflection — status=201
+[PASS] three user messages stored — ids=3
+[PASS] history loaded before ending
+[PASS] end reflection — status=200
+[PASS] completion state and ended_at
+[PASS] small set of proposals — 3
+[PASS] all proposals begin proposed with valid kinds
+[PASS] proposal sources are valid and explanatory
+[PASS] repeat ending is idempotent — 3 memories
+[PASS] conversation memory lookup
+[PASS] proposed status lookup scoped to owner
+[PASS] cross-user conversation review rejected — status=404
+[PASS] cross-user memory review rejected — status=404
+[PASS] other user's memory list excludes owner rows
+[PASS] mock produces one example per review action
+[PASS] invalid proposed transition rejected — status=422
+[PASS] reject-with-edit rejected — status=422
+[PASS] unknown memory is 404 — status=404
+[PASS] malformed memory id rejected — status=422
+[PASS] confirm proposal
+[PASS] edit-and-confirm proposal
+[PASS] editing preserves source links
+[PASS] reject proposal
+[PASS] repeat review transition rejected — status=409
+[PASS] confirmed list contains both kept memories
+[PASS] rejected list contains removed memory
+[PASS] reviewed memories leave proposed list
+[PASS] post-review repeat ending returns same rows without extraction
+[PASS] review statuses are stable after repeat ending
+[PASS] messages unchanged after ending and reviewing
+[PASS] message to ended reflection rejected — status=409
+[PASS] missing conversation end is 404 — status=404
+[PASS] malformed conversation id rejected — status=422
+[PASS] empty reflection ends without proposals
+[PASS] malformed provider output cannot create invalid rows
+[PASS] non-list provider output is discarded
+temporary isolation user deleted
+
+RESULT: 40/40 checks passed

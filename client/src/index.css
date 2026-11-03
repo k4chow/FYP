@@ -1523,3 +1523,261 @@ a.prompt-card:hover {
   color: var(--color-text);
 }
 
+
+/* Phase 4: guided insight review (mockup screen 12) */
+.review-header {
+  align-items: flex-start;
+}
+
+.review-header .eyebrow {
+  margin: 0 0 0.2rem;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.review-layout {
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.review-film {
+  padding: 1.2rem;
+  position: sticky;
+  top: 1rem;
+}
+
+.review-film h2 {
+  margin: 0.9rem 0 0.25rem;
+  font-size: 1.45rem;
+}
+
+.review-film .btn {
+  margin-top: 1rem;
+}
+
+.review-poster {
+  display: flex;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  font-weight: 600;
+  text-align: center;
+}
+
+.review-panel {
+  padding: 1.3rem;
+}
+
+.review-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.review-panel-head h2 {
+  margin: 0 0 0.3rem;
+  font-size: 1.45rem;
+}
+
+.review-panel-head p {
+  margin: 0;
+}
+
+.review-complete {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(74, 222, 128, 0.28);
+  border-radius: 0.8rem;
+  background: rgba(74, 222, 128, 0.08);
+  color: #b7f7cd;
+}
+
+.review-empty {
+  padding: 2.5rem 1rem;
+  text-align: center;
+  border: 1px dashed var(--color-border);
+  border-radius: 0.9rem;
+}
+
+.review-empty h3 {
+  margin: 0 0 0.35rem;
+}
+
+.insight-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.insight-card {
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.9rem;
+  background: var(--color-surface-2);
+}
+
+.insight-top {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.55rem;
+}
+
+.insight-icon {
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.6rem;
+  background: var(--color-surface);
+  color: var(--color-accent);
+}
+
+.insight-kind {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.insight-status {
+  margin-left: auto;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.insight-status.confirmed {
+  background: rgba(74, 222, 128, 0.14);
+  color: #9ff0bb;
+}
+
+.insight-status.rejected {
+  background: rgba(248, 113, 113, 0.12);
+  color: #fca5a5;
+}
+
+.insight-text {
+  margin: 0.25rem 0 0.5rem;
+  font-size: 1rem;
+}
+
+.insight-explanation {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+}
+
+.insight-edit {
+  width: 100%;
+  resize: vertical;
+  margin: 0.25rem 0 0.5rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+}
+
+.insight-edit:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.insight-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  margin-top: 0.85rem;
+}
+
+.insight-actions .btn {
+  padding: 0.5rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+.btn.ghost.danger:hover {
+  border-color: #f87171;
+  color: #fca5a5;
+}
+
+.link-button {
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-accent);
+  font: inherit;
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+
+.source-panel {
+  margin-top: 0.85rem;
+  padding: 0.85rem;
+  border-left: 3px solid var(--color-accent);
+  border-radius: 0.65rem;
+  background: var(--color-surface);
+}
+
+.source-panel p {
+  margin: 0.25rem 0 0.7rem;
+  font-size: 0.84rem;
+}
+
+.source-msg {
+  margin: 0.55rem 0 0;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.65rem;
+  color: var(--color-text);
+}
+
+.source-msg span {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.review-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.4rem;
+}
+
+@media (max-width: 900px) {
+  .review-layout {
+    grid-template-columns: 1fr;
+  }
+  .review-film {
+    position: static;
+  }
+  .review-poster {
+    max-width: 180px;
+  }
+}
+

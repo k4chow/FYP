@@ -10,18 +10,28 @@ from .config import settings
 from .supabase_client import supabase
 
 
-def recent_messages(conversation_id: str, limit: int | None = None) -> list[dict]:
-    """Last N messages of a conversation, oldest first, as {role, content}."""
+def recent_message_records(
+    conversation_id: str, limit: int | None = None
+) -> list[dict]:
+    """Last N messages, oldest first, including ids for insight traceability."""
     limit = limit or settings.llm_context_messages
     res = (
         supabase.table("messages")
-        .select("role,content")
+        .select("id,role,content,created_at")
         .eq("conversation_id", conversation_id)
         .order("created_at", desc=True)
         .limit(limit)
         .execute()
     )
     return list(reversed(res.data))
+
+
+def recent_messages(conversation_id: str, limit: int | None = None) -> list[dict]:
+    """Last N messages of a conversation, oldest first, as {role, content}."""
+    return [
+        {"role": row["role"], "content": row["content"]}
+        for row in recent_message_records(conversation_id, limit)
+    ]
 
 
 def confirmed_memories(user_id: str, limit: int | None = None) -> list[str]:

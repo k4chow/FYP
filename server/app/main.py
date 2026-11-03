@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
 from .import_jobs import recover_import_jobs
-from .routers import auth, conversations, films, imports
+from .routers import auth, conversations, films, imports, memories
 
 
 @asynccontextmanager
@@ -14,7 +14,7 @@ async def lifespan(_: FastAPI):
     yield
 
 
-app = FastAPI(title="NOACF API", version="0.3.1", lifespan=lifespan)
+app = FastAPI(title="NOACF API", version="0.4.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -30,6 +30,7 @@ app.include_router(imports.router, prefix="/import", tags=["import"])
 app.include_router(
     conversations.router, prefix="/conversations", tags=["conversations"]
 )
+app.include_router(memories.router, prefix="/memories", tags=["memories"])
 
 
 @app.get("/health")

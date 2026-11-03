@@ -46,9 +46,10 @@ npm.cmd run dev
 ```
 
 ### Database
-Run `supabase/migrations/0001_init.sql` in the Supabase SQL editor. It creates
-`users`, `films`, `user_films`, `conversations`, `messages`, `memories` with
-indexes and Row Level Security policies.
+Run the files in `supabase/migrations/` in numeric order in the Supabase SQL
+editor: `0001_init.sql` creates the tables, indexes and RLS policies;
+`0002_conversation_context.sql` adds reflection context; `0003_import_jobs.sql`
+adds persistent Letterboxd imports.
 
 ## Architecture (summary)
 

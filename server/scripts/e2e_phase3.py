@@ -175,9 +175,25 @@ def main() -> None:
     recent = recent_messages(conv1["id"], limit=3)
     check("recent_messages honours limit", len(recent) == 3, f"got {len(recent)}")
     check("recent_messages newest last", recent[-1]["role"] == "assistant")
+    uid = _uid(token)
+    returned_memories = confirmed_memories(uid)
+    from app.supabase_client import supabase
+
+    memory_rows = (
+        supabase.table("memories")
+        .select("content,status")
+        .eq("user_id", uid)
+        .execute()
+        .data
+    )
+    expected_confirmed = {
+        row["content"] for row in memory_rows if row["status"] == "confirmed"
+    }
     check(
-        "confirmed memories only (none confirmed yet)",
-        confirmed_memories(_uid(token)) == [],
+        "confirmed memories only",
+        len(returned_memories) == len(expected_confirmed)
+        and set(returned_memories) == expected_confirmed,
+        f"got {len(returned_memories)} confirmed",
     )
 
     # --- get conversation + list filters -------------------------------------

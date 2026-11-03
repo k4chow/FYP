@@ -61,7 +61,12 @@ service role only).
 | content | text | the insight, user-editable |
 | kind | text | `theme` \| `preference` \| `insight` |
 | status | text | `proposed` → `confirmed` \| `rejected` (user-only transitions) |
-| source_message_ids | jsonb | traceability for "Why am I seeing this?" |
+| source_message_ids | jsonb | validated source-message UUIDs; provides both "Why am I seeing this?" traceability and the durable reflection linkage |
+
+No separate insight table or conversation column is used: a memory is linked to
+its reflection through the immutable `source_message_ids`, which the server
+validates before insert and resolves back to owned messages when serialising.
+Review edits update only `content`/`status`/`updated_at`, never the source ids.
 
 ### import_jobs (persistent Letterboxd imports, 0003)
 | Column | Type | Notes |

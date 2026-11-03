@@ -14,6 +14,7 @@ import Placeholder from './pages/Placeholder'
 import Reflections from './pages/Reflections'
 import ReflectionNew from './pages/ReflectionNew'
 import ReflectionChat from './pages/ReflectionChat'
+import ReviewReflection from './pages/ReviewReflection'
 
 function RequireAuth({ children }: { children: ReactElement }) {
   const { user, loading } = useAuth()
@@ -45,6 +46,7 @@ export default function App() {
             <Route path="import" element={<Import />} />
             <Route path="reflections" element={<Reflections />} />
             <Route path="reflections/new" element={<ReflectionNew />} />
+            <Route path="reflections/:id/review" element={<ReviewReflection />} />
             <Route path="reflections/:id" element={<ReflectionChat />} />
             <Route path="profile" element={<Placeholder title="My Profile" phase={5} />} />
             <Route path="settings" element={<Settings />} />
