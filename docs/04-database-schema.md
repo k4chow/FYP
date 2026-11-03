@@ -1,7 +1,8 @@
 # 04 — Database Schema
 
 Defined in `supabase/migrations/0001_init.sql`; Phase 3 conversation fields
-are added by `0002_conversation_context.sql`. All PKs are UUIDs
+are added by `0002_conversation_context.sql`, and persistent import jobs by
+`0003_import_jobs.sql`. All PKs are UUIDs
 (`gen_random_uuid()`). Every user-owned table has RLS enabled with
 owner-only policies; `films` is a shared read-only catalogue (writes via
 service role only).
@@ -62,11 +63,32 @@ service role only).
 | status | text | `proposed` → `confirmed` \| `rejected` (user-only transitions) |
 | source_message_ids | jsonb | traceability for "Why am I seeing this?" |
 
+### import_jobs (persistent Letterboxd imports, 0003)
+| Column | Type | Notes |
+|---|---|---|
+| id / user_id | uuid PK / uuid FK | owner (RLS) |
+| source_filename | text | original filename only, not the file |
+| target_status | text | `watched` \| `watchlist` |
+| status | text | `queued` → `processing` → `completed` \| `completed_with_errors` \| `failed` |
+| total_rows / processed_rows | int | upload size / unique rows with an outcome |
+| added_count / updated_count / duplicate_count | int | library outcomes |
+| unmatched_count / failed_count | int | no TMDB match vs temporary failure |
+| next_row | int | highest checkpointed row index + 1 |
+| rows | jsonb | normalized name/year/rating/watched_on only |
+| results | jsonb | per-row outcome + error, for resume |
+| error | text, nullable | job-level failure detail |
+| created_at / updated_at / completed_at | timestamptz | updated_at is the worker heartbeat |
+
+The API never returns `rows` or `results`; it returns counts plus normalized
+unmatched/failure details. RLS owner policies cover select/insert/update/delete.
+
 ## Indexes
 - `user_films(user_id, status)` — library views
 - `conversations(user_id, status, updated_at desc)` — My Reflections list
 - `messages(conversation_id, created_at)` — chat loading + context assembly
 - `memories(user_id, status)` — profile + recommendation lookups
+- `import_jobs(user_id, created_at desc)` — user job history
+- `import_jobs(status, updated_at)` — startup recovery and stale-job checks
 
 ## Future
 - pgvector embedding column on `memories`/`films` **only if** SQL retrieval

@@ -106,18 +106,26 @@ def tmdb_detail(tmdb_id: int, current: dict = Depends(get_current_user)) -> dict
 
 @router.get("/mine")
 def my_films(
-    status: str | None = None, current: dict = Depends(get_current_user)
+    status: str | None = None,
+    limit: int = Query(default=250, ge=1, le=500),
+    offset: int = Query(default=0, ge=0),
+    current: dict = Depends(get_current_user),
 ) -> dict:
     query = (
         supabase.table("user_films")
-        .select(MINE_SELECT)
+        .select(MINE_SELECT, count="exact")
         .eq("user_id", current["id"])
         .order("added_at", desc=True)
     )
     if status in ("watched", "watchlist"):
         query = query.eq("status", status)
-    res = query.execute()
-    return {"films": [_flatten(r) for r in res.data]}
+    res = query.range(offset, offset + limit - 1).execute()
+    return {
+        "films": [_flatten(r) for r in res.data],
+        "total": res.count or 0,
+        "limit": limit,
+        "offset": offset,
+    }
 
 
 @router.post("/mine", status_code=201)

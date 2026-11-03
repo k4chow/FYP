@@ -13,7 +13,7 @@ the UI screen(s) that surface it. Update the "Status" column per phase.
 | F3 | User controls every stored insight (confirm / edit / reject) | `memories.status` = proposed/confirmed/rejected + review endpoints | Review & Edit, Compare and refine | Phase 4 |
 | F4 | Bounded LLM context (recent N messages + small set of confirmed memories), never full history | Server-side context assembler | — | ✅ Done |
 | F5 | Swappable LLM provider (mock first) | `server/app/llm/` provider interface | — | ✅ Done |
-| F6 | Letterboxd CSV import (no Netflix) | Import pipeline + TMDB matching | Import screen, Settings | ✅ Done |
+| F6 | Letterboxd CSV import (no Netflix) | Persistent resumable import jobs + TMDB matching | Import screen, Settings | ✅ Done |
 | F7 | Film catalogue with metadata/posters | TMDB API + `films`/`user_films` tables | My Films, Add a film | ✅ Done |
 | F8 | Reflection-informed recommendations | Recommendation service over confirmed memories | Discover | Phase 6 |
 | F9 | Every recommendation explains *why* | "why" strings generated from source memories | Discover cards, "Why am I seeing this?" | Phase 6 |

@@ -1,0 +1,6 @@
+Fixture film: Lilya 4-ever (2002)
+PASS POST returned 202 in 3.58s with import_id=e04279bb-6e73-461c-aeec-69f6ed9a8e70
+PASS background job completed with truthful counts: {'id': 'e04279bb-6e73-461c-aeec-69f6ed9a8e70', 'source_filename': 'watched.csv', 'target_status': 'watched', 'status': 'completed', 'total_rows': 3, 'processed_rows': 3, 'added': 1, 'updated': 0, 'duplicates': 1, 'unmatched_count': 1, 'failed': 0, 'next_row': 3, 'error': None, 'created_at': '2026-11-03T05:52:37.097521+00:00', 'updated_at': '2026-11-03T05:52:43.957718+00:00', 'completed_at': '2026-11-03T05:52:43.957718+00:00', 'unmatched': [{'row': 3, 'name': 'Noacf Unmatched Qzx 000', 'year': 2099}], 'failures': []}
+PASS auth, ownership 404, and completed-resume validation
+PASS exactly one user_films row persisted for duplicate CSV rows
+Cleanup complete: import job and added fixture removed

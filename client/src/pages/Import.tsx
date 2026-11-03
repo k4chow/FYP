@@ -1,31 +1,88 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ApiError } from '../lib/api'
-import { importLetterboxd } from '../lib/films'
-import type { ImportResult } from '../lib/films'
+import { getImportJob, importLetterboxd, resumeImportJob } from '../lib/films'
+import type { ImportJob } from '../lib/films'
 
-// Letterboxd import (F6): upload a CSV from a Letterboxd export, the server
-// matches rows to TMDB and fills the library. Matched/unmatched summary shown.
+// Letterboxd import (F6): upload returns a job id promptly; persisted job
+// progress is polled so large imports survive timeouts and page refreshes.
 export default function Import() {
   const [file, setFile] = useState<File | null>(null)
-  const [importing, setImporting] = useState(false)
-  const [result, setResult] = useState<ImportResult | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const [resuming, setResuming] = useState(false)
+  const [job, setJob] = useState<ImportJob | null>(null)
   const [error, setError] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
+  const active = job?.status === 'queued' || job?.status === 'processing'
+  const finished = job?.status === 'completed' || job?.status === 'completed_with_errors'
+
+  // Only the job id is kept locally; refreshing the page restores progress.
+  useEffect(() => {
+    const id = window.localStorage.getItem('noacf_import_job')
+    if (!id) return
+    getImportJob(id)
+      .then(setJob)
+      .catch(() => window.localStorage.removeItem('noacf_import_job'))
+  }, [])
+
+  useEffect(() => {
+    if (job?.id) window.localStorage.setItem('noacf_import_job', job.id)
+    else window.localStorage.removeItem('noacf_import_job')
+  }, [job?.id])
+
+  useEffect(() => {
+    const id = job?.id
+    if (!id || !active) return
+    const timer = window.setInterval(() => {
+      getImportJob(id)
+        .then(setJob)
+        .catch((err) =>
+          setError(err instanceof ApiError ? err.message : 'Could not load import progress'),
+        )
+    }, 1000)
+    return () => window.clearInterval(timer)
+  }, [job?.id, active])
+
   async function run() {
     if (!file) return
-    setImporting(true)
+    setUploading(true)
     setError('')
-    setResult(null)
+    setJob(null)
     try {
-      setResult(await importLetterboxd(file))
+      const started = await importLetterboxd(file)
+      setJob(await getImportJob(started.import_id))
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Import failed')
+      setError(err instanceof ApiError ? err.message : 'Could not start the import')
     } finally {
-      setImporting(false)
+      setUploading(false)
     }
   }
+
+  async function resume() {
+    if (!job) return
+    setResuming(true)
+    setError('')
+    try {
+      setJob(await resumeImportJob(job.id))
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Could not resume the import')
+    } finally {
+      setResuming(false)
+    }
+  }
+
+  const heading = !job
+    ? ''
+    : job.status === 'queued'
+      ? 'Import queued…'
+      : job.status === 'processing'
+        ? 'Importing your films…'
+        : job.status === 'completed'
+          ? 'Import complete.'
+          : job.status === 'completed_with_errors'
+            ? 'Import finished with temporary failures.'
+            : 'Import paused after an error.'
 
   return (
     <div>
@@ -54,7 +111,7 @@ export default function Import() {
               hidden
               onChange={(e) => {
                 setFile(e.target.files?.[0] ?? null)
-                setResult(null)
+                setJob(null)
                 setError('')
               }}
             />
@@ -62,49 +119,85 @@ export default function Import() {
               <button className="btn ghost" onClick={() => inputRef.current?.click()}>
                 Choose CSV file
               </button>
-              <button className="btn primary" disabled={!file || importing} onClick={run}>
-                {importing ? 'Importing…' : 'Import'}
+              <button className="btn primary" disabled={!file || uploading || active} onClick={run}>
+                {uploading ? 'Uploading…' : active ? 'Import in progress' : 'Import'}
               </button>
             </div>
           </div>
           {error && <p className="form-error">{error}</p>}
-          {importing && (
-            <p className="muted">Matching your films against TMDB — this can take a moment.</p>
-          )}
-          {result && (
+          {job && (
             <div className="import-result" style={{ marginTop: '1rem' }}>
-              <p style={{ fontWeight: 600 }}>
-                Import complete — matched {result.matched} of {result.total_rows} films.
+              <p style={{ fontWeight: 600 }}>{heading}</p>
+              {active && (
+                <progress
+                  className="import-progress"
+                  value={job.processed_rows}
+                  max={job.total_rows}
+                  aria-label="Import progress"
+                />
+              )}
+              <p className="muted">
+                {job.processed_rows} of {job.total_rows} rows processed
               </p>
-              {result.unmatched.length > 0 && (
+              <div className="import-counts">
+                <span><strong>{job.added}</strong> added</span>
+                <span><strong>{job.updated}</strong> updated</span>
+                <span><strong>{job.duplicates}</strong> duplicates / already current</span>
+                <span><strong>{job.unmatched_count}</strong> unmatched</span>
+                <span><strong>{job.failed}</strong> temporary failures</span>
+              </div>
+
+              {job.error && <p className="form-error">{job.error}</p>}
+              {(job.status === 'failed' || job.status === 'completed_with_errors') && (
+                <button className="btn ghost" disabled={resuming} onClick={resume}>
+                  {resuming ? 'Resuming…' : 'Retry failed and remaining rows'}
+                </button>
+              )}
+
+              {job.unmatched.length > 0 && (
                 <>
                   <p className="muted" style={{ marginBottom: 0 }}>
-                    We couldn't match these (add them manually if you like):
+                    No TMDB match was found for these rows (you can add them manually):
                   </p>
                   <ul>
-                    {result.unmatched.map((u) => (
-                      <li key={`${u.name}-${u.year}`}>
-                        {u.name}
-                        {u.year ? ` (${u.year})` : ''}
+                    {job.unmatched.map((u) => (
+                      <li key={`unmatched-${u.row}`}>
+                        {u.name}{u.year ? ` (${u.year})` : ''}
                       </li>
                     ))}
                   </ul>
                 </>
               )}
-              <div className="row" style={{ marginTop: '1rem' }}>
-                <Link className="btn primary" to="/app/films">
-                  View My Films
-                </Link>
-                <button
-                  className="btn ghost"
-                  onClick={() => {
-                    setFile(null)
-                    setResult(null)
-                  }}
-                >
-                  Import another file
-                </button>
-              </div>
+
+              {job.failures.length > 0 && (
+                <>
+                  <p className="muted" style={{ marginBottom: 0 }}>
+                    Temporary failures — these are not unmatched films and can be retried:
+                  </p>
+                  <ul>
+                    {job.failures.map((f) => (
+                      <li key={`failed-${f.row}`}>
+                        {f.name}{f.year ? ` (${f.year})` : ''} — {f.error}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+
+              {finished && (
+                <div className="row" style={{ marginTop: '1rem' }}>
+                  <Link className="btn primary" to="/app/films">View My Films</Link>
+                  <button
+                    className="btn ghost"
+                    onClick={() => {
+                      setFile(null)
+                      setJob(null)
+                    }}
+                  >
+                    Import another file
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </section>

@@ -1,21 +1,24 @@
-"""Letterboxd CSV import (F6).
+"""Letterboxd CSV import API (F6): persistent background jobs.
 
-Accepts any export file with `Name` and `Year` columns (diary.csv,
-ratings.csv, watched.csv, watchlist.csv). Rows are matched to TMDB by
-title + year (first result), cached in `films`, and upserted into
-`user_films` with source='letterboxd'. Re-importing updates ratings and
-never creates duplicates.
+POST parses and normalizes the file, stores a job, and returns promptly.
+Progress and truthful per-row outcomes are available through GET /import/{id};
+failed or stale jobs can be resumed without repeating successful work.
 """
 
 import csv
 import io
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 
-from .. import tmdb
 from ..deps import get_current_user
+from ..import_jobs import (
+    STALE_PROCESSING_SECONDS,
+    get_own_job,
+    launch_import,
+    serialise_job,
+)
 from ..supabase_client import supabase
-from .films import _ensure_film
 
 router = APIRouter()
 
@@ -35,7 +38,30 @@ def _parse_rating(value: str | None) -> float | None:
     return rating if 0.5 <= rating <= 5 else None
 
 
-@router.post("/letterboxd")
+def _normalise_rows(reader: csv.DictReader, target_status: str) -> list[dict]:
+    """Keep only fields required for matching/resume, never the original CSV."""
+    rows = []
+    for row in reader:
+        name = (row.get("Name") or "").strip()
+        if not name:
+            continue
+        year_text = (row.get("Year") or "").strip()
+        rows.append(
+            {
+                "name": name,
+                "year": int(year_text) if year_text.isdigit() else None,
+                "rating": _parse_rating(row.get("Rating")),
+                "watched_on": (
+                    _parse_date(row.get("Watched Date")) or _parse_date(row.get("Date"))
+                    if target_status == "watched"
+                    else None
+                ),
+            }
+        )
+    return rows
+
+
+@router.post("/letterboxd", status_code=202)
 async def import_letterboxd(
     file: UploadFile, current: dict = Depends(get_current_user)
 ) -> dict:
@@ -61,60 +87,61 @@ async def import_letterboxd(
             ),
         )
 
-    status = (
+    target_status = (
         "watchlist" if "watchlist" in (file.filename or "").lower() else "watched"
     )
-    rows = [r for r in reader if (r.get("Name") or "").strip()]
+    rows = _normalise_rows(reader, target_status)
     if not rows:
         raise HTTPException(status_code=400, detail="No film rows found in the file")
 
-    matched = 0
-    unmatched: list[dict] = []
-    cache: dict[tuple[str, int | None], dict | None] = {}
-
-    for row in rows:
-        name = row["Name"].strip()
-        year_text = (row.get("Year") or "").strip()
-        year = int(year_text) if year_text.isdigit() else None
-        key = (name.lower(), year)
-
-        if key not in cache:
-            film = None
-            # 1. Our own catalogue first — avoids a TMDB call when possible.
-            query = supabase.table("films").select("*").ilike("title", name)
-            if year:
-                query = query.eq("year", year)
-            found = query.limit(1).execute().data
-            if found:
-                film = found[0]
-            else:
-                # 2. TMDB search: title + year, then title only as fallback.
-                results = tmdb.search_movies(name, year) or tmdb.search_movies(name)
-                if results:
-                    film = _ensure_film(results[0]["id"])
-            cache[key] = film
-
-        film = cache[key]
-        if film is None:
-            unmatched.append({"name": name, "year": year})
-            continue
-
-        watched_on = (
-            (_parse_date(row.get("Watched Date")) or _parse_date(row.get("Date")))
-            if status == "watched"
-            else None
-        )
-        supabase.table("user_films").upsert(
+    job = (
+        supabase.table("import_jobs")
+        .insert(
             {
                 "user_id": current["id"],
-                "film_id": film["id"],
-                "status": status,
-                "source": "letterboxd",
-                "rating": _parse_rating(row.get("Rating")),
-                "watched_on": watched_on,
-            },
-            on_conflict="user_id,film_id",
-        ).execute()
-        matched += 1
+                "source_filename": file.filename,
+                "target_status": target_status,
+                "total_rows": len(rows),
+                "rows": rows,
+                "results": {},
+            }
+        )
+        .execute()
+        .data[0]
+    )
+    launch_import(job["id"])
+    return {"import_id": job["id"], "status": job["status"], "total_rows": len(rows)}
 
-    return {"total_rows": len(rows), "matched": matched, "unmatched": unmatched}
+
+@router.get("/{import_id}")
+def get_import(import_id: str, current: dict = Depends(get_current_user)) -> dict:
+    return serialise_job(get_own_job(import_id, current["id"]))
+
+
+@router.post("/{import_id}/resume", status_code=202)
+def resume_import(import_id: str, current: dict = Depends(get_current_user)) -> dict:
+    job = get_own_job(import_id, current["id"])
+    if job["status"] == "completed":
+        raise HTTPException(status_code=400, detail="Import is already complete")
+    if job["status"] == "processing":
+        updated_at = datetime.fromisoformat(job["updated_at"])
+        age = datetime.now(timezone.utc) - updated_at
+        if age < timedelta(seconds=STALE_PROCESSING_SECONDS):
+            raise HTTPException(status_code=409, detail="Import is already processing")
+
+    updated = (
+        supabase.table("import_jobs")
+        .update(
+            {
+                "status": "queued",
+                "error": None,
+                "completed_at": None,
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+            }
+        )
+        .eq("id", import_id)
+        .execute()
+        .data[0]
+    )
+    launch_import(import_id, retry_failed=True)
+    return serialise_job(updated)

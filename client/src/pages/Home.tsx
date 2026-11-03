@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
-import { getMyFilms } from '../lib/films'
+import { getMyFilmsPage } from '../lib/films'
 import type { LibraryFilm } from '../lib/films'
 
 const PLACEHOLDER_THEMES = ['Connection', 'Time', 'Identity', 'Loneliness']
@@ -25,8 +25,8 @@ export default function Home() {
   const [recent, setRecent] = useState<LibraryFilm[]>([])
 
   useEffect(() => {
-    getMyFilms()
-      .then((res) => setRecent(res.films.slice(0, 4)))
+    getMyFilmsPage(undefined, 4, 0)
+      .then((res) => setRecent(res.films))
       .catch(() => setRecent([]))
   }, [])
 

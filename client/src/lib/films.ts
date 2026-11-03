@@ -30,14 +30,72 @@ export interface FilmDetail extends SearchResult {
   in_library: { id: string; status: string; rating: number | null } | null
 }
 
-export interface ImportResult {
-  total_rows: number
-  matched: number
-  unmatched: { name: string; year: number | null }[]
+export interface LibraryPage {
+  films: LibraryFilm[]
+  total: number
+  limit: number
+  offset: number
 }
 
-export const getMyFilms = () =>
-  api<{ films: LibraryFilm[] }>('/films/mine', { auth: true })
+export interface ImportIssue {
+  row: number
+  name: string
+  year: number | null
+  error?: string
+}
+
+export interface ImportJob {
+  id: string
+  source_filename: string | null
+  target_status: 'watched' | 'watchlist'
+  status: 'queued' | 'processing' | 'completed' | 'completed_with_errors' | 'failed'
+  total_rows: number
+  processed_rows: number
+  added: number
+  updated: number
+  duplicates: number
+  unmatched_count: number
+  failed: number
+  next_row: number
+  error: string | null
+  created_at: string
+  updated_at: string
+  completed_at: string | null
+  unmatched: ImportIssue[]
+  failures: ImportIssue[]
+}
+
+export interface ImportStart {
+  import_id: string
+  status: ImportJob['status']
+  total_rows: number
+}
+
+export const getMyFilmsPage = (
+  status?: 'watched' | 'watchlist',
+  limit = 250,
+  offset = 0,
+) => {
+  const params = new URLSearchParams({ limit: String(limit), offset: String(offset) })
+  if (status) params.set('status', status)
+  return api<LibraryPage>(`/films/mine?${params.toString()}`, { auth: true })
+}
+
+// Fetch every page so client-side filters/sorts operate on the full library,
+// not just Supabase's first 1,000 rows.
+export const getMyFilms = async (status?: 'watched' | 'watchlist') => {
+  const films: LibraryFilm[] = []
+  let offset = 0
+  let total = 0
+  do {
+    const page = await getMyFilmsPage(status, 250, offset)
+    films.push(...page.films)
+    total = page.total
+    offset += page.films.length
+    if (page.films.length === 0) break
+  } while (offset < total)
+  return { films }
+}
 
 export const searchFilms = (q: string) =>
   api<{ results: SearchResult[] }>(`/films/search?q=${encodeURIComponent(q)}`, {
@@ -60,12 +118,18 @@ export const removeFilm = (id: string) =>
 export const importLetterboxd = (file: File) => {
   const formData = new FormData()
   formData.append('file', file)
-  return api<ImportResult>('/import/letterboxd', {
+  return api<ImportStart>('/import/letterboxd', {
     method: 'POST',
     auth: true,
     formData,
   })
 }
+
+export const getImportJob = (id: string) =>
+  api<ImportJob>(`/import/${id}`, { auth: true })
+
+export const resumeImportJob = (id: string) =>
+  api<ImportJob>(`/import/${id}/resume`, { method: 'POST', auth: true })
 
 export const formatRuntime = (minutes: number | null | undefined) =>
   minutes ? `${Math.floor(minutes / 60)}h ${minutes % 60}m` : null

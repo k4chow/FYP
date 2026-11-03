@@ -77,16 +77,20 @@ Top 8 TMDB results.
 ← 404 {"detail": "Film not found on TMDB"}
 ```
 
-### `GET /films/mine?status=watched|watchlist`
+### `GET /films/mine?status=watched|watchlist&limit=250&offset=0`
 ```json
 ← 200 {"films": [{"id": "<user_film id>", "film_id": "…", "tmdb_id": 329865,
                   "title": "Arrival", "year": 2016, "genres": ["Drama", …],
                   "runtime": 116, "poster_url": "…",
                   "status": "watched", "source": "manual|letterboxd",
                   "rating": 4.5 | null, "watched_on": "2026-10-20" | null,
-                  "added_at": "…"}]}
+                  "added_at": "…"}],
+       "total": 1600, "limit": 250, "offset": 0}
 ```
-Ordered by `added_at` desc; optional `status` filter.
+Ordered by `added_at` desc; optional `status` filter. `limit` is 1–500
+(default 250), `offset` is zero-based, and `total` is the full filtered count.
+The client follows pages until all rows are loaded, avoiding PostgREST's
+default 1,000-row truncation.
 
 ### `POST /films/mine`
 ```json
@@ -109,15 +113,43 @@ of a film; upserts on `unique(user_id, film_id)` so re-adding updates status.
 
 ### `POST /import/letterboxd` (multipart form, field `file`)
 ```json
-← 200 {"total_rows": 6, "matched": 5,
-       "unmatched": [{"name": "Notarealfilm Xyzqw", "year": 2099}]}
+← 202 {"import_id": "…", "status": "queued", "total_rows": 1600}
 ← 400 {"detail": "Not a Letterboxd export CSV — …"}
 ```
 Accepts `diary.csv`, `ratings.csv`, `watched.csv`, `watchlist.csv` (any file
-with `Name`+`Year` columns). Status is `watchlist` when the filename contains
-"watchlist", otherwise `watched`. Rows are matched catalogue-first, then TMDB
-title+year (first result; title-only fallback), upserted with
-`source='letterboxd'` — re-importing updates ratings and never duplicates.
+with `Name`+`Year` columns). The request only validates/normalizes the CSV and
+creates a persistent job; a background worker processes 20-row batches with
+checkpoints. Status is `watchlist` when the filename contains "watchlist",
+otherwise `watched`. Only name/year/rating/watched date are retained for resume.
+Matching remains catalogue-first, then TMDB title+year (title-only fallback).
+TMDB 429/network/upstream failures receive at most four attempts with bounded
+exponential backoff and jitter; one film's failure does not stop remaining rows.
+
+### `GET /import/{import_id}`
+```json
+← 200 {"id": "…", "status": "processing|completed|completed_with_errors|failed",
+       "total_rows": 1600, "processed_rows": 800,
+       "added": 700, "updated": 20, "duplicates": 50,
+       "unmatched_count": 10, "failed": 20, "next_row": 800,
+       "error": null, "created_at": "…", "updated_at": "…", "completed_at": null,
+       "unmatched": [{"row": 42, "name": "Notarealfilm Xyzqw", "year": 2099}],
+       "failures": [{"row": 84, "name": "Arrival", "year": 2016,
+                     "error": "502: TMDB rate limited after retries"}]}
+← 404 {"detail": "Import job not found"}
+```
+Owner-scoped. `duplicates` covers repeat CSV rows and already-current library
+rows; `failed` means retryable temporary failures, not unmatched titles. The
+stored CSV payload and internal result map are never exposed.
+
+### `POST /import/{import_id}/resume`
+```json
+← 202 {<job queued for resume>}
+← 409 {"detail": "Import is already processing"}
+```
+Retries pending and failed rows from the last checkpoint; successful rows are
+not intentionally rematched. Upserts on `unique(user_id, film_id)` make repeat
+imports and resume idempotent. Fresh `processing` jobs return 409; stale ones
+may be resumed. Queued/processing jobs are also recovered on server startup.
 
 ## Phase 3
 

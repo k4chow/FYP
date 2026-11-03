@@ -1,0 +1,4 @@
+Baseline library total: 8
+Inserted 1600 temporary library fixtures
+PASS total=1608, pages=[500, 500, 500, 108], fixture rows returned=1600
+Cleanup complete: baseline restored to 8

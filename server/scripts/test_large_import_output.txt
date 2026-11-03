@@ -1,0 +1,12 @@
+test_1600_rows_and_repeat_import (__main__.LargeImportTests.test_1600_rows_and_repeat_import) ... ok
+test_duplicates_unmatched_and_existing_update (__main__.LargeImportTests.test_duplicates_unmatched_and_existing_update) ... ok
+test_library_api_paginates_1600_rows (__main__.LargeImportTests.test_library_api_paginates_1600_rows) ... ok
+test_malformed_rows_and_user_isolation (__main__.LargeImportTests.test_malformed_rows_and_user_isolation) ... ok
+test_mid_import_checkpoint_failure_and_resume (__main__.LargeImportTests.test_mid_import_checkpoint_failure_and_resume) ... ok
+test_transient_failure_continues_and_resume_retries (__main__.LargeImportTests.test_transient_failure_continues_and_resume_retries) ... ok
+test_429_backoff_is_bounded_with_jitter (__main__.TmdbBackoffTests.test_429_backoff_is_bounded_with_jitter) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 5.255s
+
+OK

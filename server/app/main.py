@@ -1,10 +1,20 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
+from .import_jobs import recover_import_jobs
 from .routers import auth, conversations, films, imports
 
-app = FastAPI(title="NOACF API", version="0.3.0")
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    recover_import_jobs()
+    yield
+
+
+app = FastAPI(title="NOACF API", version="0.3.1", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,

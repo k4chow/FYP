@@ -54,3 +54,13 @@ token cost predictable and honours user control.
 `MockLLMProvider` returns deterministic reflective responses so all flows are
 testable without an API key; an `OpenAIProvider` drops in behind the same
 interface later. Select the provider with `LLM_PROVIDER` (default `mock`).
+
+## Large-import processing
+
+`POST /import/letterboxd` only validates and normalizes the upload, then returns
+an import id. A background worker processes 20-row batches and persists per-row
+outcomes, counters, and checkpoints in `import_jobs`. TMDB retries are bounded
+with exponential backoff and jitter. Failed rows can be resumed without
+rematching successful rows; queued/processing jobs are recovered on startup.
+Library reads are paginated (`limit`/`offset` + `total`) so 1,600+ film libraries
+are not truncated by PostgREST's default page size.
