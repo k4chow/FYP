@@ -395,6 +395,19 @@ The Settings similar ↔ exploratory slider (N6, D37). 0 = strictly similar to
 the library, 100 = exploratory; it scales the seed-similarity weight and the
 off-profile exploration bonus in the scoring formula.
 
+### `POST /profile/questionnaire` (auth required)
+```json
+→ {"answers": [{"question": "What kinds of stories do you keep coming back to?",
+                "answer": "Quiet science fiction about memory and loss."}]}
+← 201 {"saved": 1}
+→ {"answers": [{"question": "Q", "answer": "<501 chars>"}]} → 422
+```
+The onboarding about-you questionnaire (D38). Each non-blank answer is stored
+as a **confirmed** `preference` memory with no source messages — the answers
+are the user's own words, so no review step applies. Blank answers are
+skipped (`saved` counts only stored rows); the Discover cache is invalidated
+when anything is saved. Max 8 answers, 500 chars each.
+
 ## Conventions
 - Auth: `Authorization: Bearer <supabase access token>`; server verifies JWT.
 - Errors: RFC 7807-style `{ "detail": "..." }` with appropriate status codes.

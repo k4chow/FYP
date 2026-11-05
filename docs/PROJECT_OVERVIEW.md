@@ -60,8 +60,6 @@ not perform such inference.
   of Phase 6 is done: `/app/discover` renders the deterministic recommendation
   engine with why-lines, feedback toggles, and a Film Assistant discovery chat;
   the Settings style slider is live (`/profile/preferences`).
-- The full guided onboarding sequence from the notes; sign-up and import exist,
-  but mandatory film selection and the about-you step are not implemented.
 - Formal usability evaluation and Phase 7 results (`docs/07-evaluation.md`).
 
 ## 3. Main user flows that exist
@@ -82,6 +80,13 @@ without revealing whether the account exists. Actual email delivery requires
 SMTP configuration in Supabase; it is not guaranteed by application code.
 Development sign-up uses `email_confirm=True`, so email confirmation is not
 required in the current development flow.
+
+New accounts (`onboarding_completed = false`) are routed through the guided
+onboarding flow (D38): optional Letterboxd `watched.csv` import → pick ≥5
+"films that stayed with you" → pick one film (suggested from the library, or
+search for another) and run a first reflection in the normal chat view → an
+about-you questionnaire whose answers are stored as confirmed preference
+memories (`POST /profile/questionnaire`) → Home. Every step is skippable.
 
 ### 3.2 Add and browse films
 

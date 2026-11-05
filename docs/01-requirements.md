@@ -34,8 +34,12 @@ the UI screen(s) that surface it. Update the "Status" column per phase.
 
 ## Onboarding flow (from notes + mockups)
 
-1. Sign up → 2. Import Letterboxd (skippable) → 3. Pick ≥5 "films that stayed
-with you" → 4. One "a little about you" question → 5. First reflection prompt
-→ Home. Status: ✅ Done (Phase 5) — `onboarding_completed` flag on `users`
-(migration 0004); every step skippable; picks are added as watched; the
-"a little about you" answer seeds the first reflection conversation.
+1. Sign up → 2. Import Letterboxd `watched.csv` (skippable) → 3. Pick ≥5
+"films that stayed with you" (added as watched) → 4. Pick ONE film for a first
+reflection — suggested from the user's own films, with search to pick another
+→ 5. Reflection session on that film → 6. About-you questionnaire → Home.
+Status: ✅ Done (Phase 5, reworked D38) — `onboarding_completed` flag on
+`users` (migration 0004); every step skippable; the first reflection runs in
+the normal chat view and returns to the questionnaire when ended;
+questionnaire answers are user-authored, so they enter the profile directly
+as confirmed preferences via `POST /profile/questionnaire`.

@@ -190,6 +190,34 @@ def main() -> None:
         )
         check("invalid signal rejected (422)", status == 422)
 
+        # --- Onboarding questionnaire (D38) ----------------------------------
+        status, saved = request(
+            "POST", "/profile/questionnaire",
+            {"answers": [
+                {"question": "What kinds of stories do you keep coming back to?",
+                 "answer": "Quiet science fiction about memory and loss."},
+                {"question": "How do you want a film to leave you feeling?",
+                 "answer": "   "},
+            ]}, token,
+        )
+        check("questionnaire saves only non-blank answers (201)",
+              status == 201 and saved.get("saved") == 1, f"saved={saved.get('saved')}")
+        status, summary = request("GET", "/profile/summary", token=token)
+        prefs = summary.get("groups", {}).get("preference", [])
+        mine = [p for p in prefs
+                if p.get("content") == "Quiet science fiction about memory and loss."]
+        check("questionnaire answer surfaces as confirmed preference",
+              status == 200
+              and bool(mine)
+              and mine[0].get("status") == "confirmed"
+              and mine[0].get("explanation") == "You wrote this about yourself.",
+              mine[0].get("explanation", "answer missing") if mine else "answer missing")
+        status, _ = request(
+            "POST", "/profile/questionnaire",
+            {"answers": [{"question": "Q", "answer": "x" * 501}]}, token,
+        )
+        check("over-long answer rejected (422)", status == 422)
+
         # --- Film Assistant discovery conversation (F10) ---------------------
         status, convo = request(
             "POST", "/conversations", {"type": "discovery", "title": "Film Assistant"}, token

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ApiError } from '../lib/api'
 import { endConversation, getConversation, sendMessage } from '../lib/conversations'
 import type { ChatMessage, Conversation } from '../lib/conversations'
@@ -13,6 +13,10 @@ const QUICK_REPLIES = ["I'm not sure", 'Can you ask a different question?', 'May
 export default function ReflectionChat() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  // Opened from onboarding: ending the reflection returns to the about-you
+  // questionnaire instead of the usual review flow (D38).
+  const [searchParams] = useSearchParams()
+  const inOnboarding = searchParams.get('onboarding') === '1'
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
@@ -76,7 +80,7 @@ export default function ReflectionChat() {
     try {
       const res = await endConversation(id)
       setConversation(res.conversation)
-      navigate(`/app/reflections/${id}/review`)
+      navigate(inOnboarding ? '/onboarding?step=3' : `/app/reflections/${id}/review`)
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Could not end the reflection.')
     } finally {

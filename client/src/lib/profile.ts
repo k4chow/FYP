@@ -40,3 +40,17 @@ export const updatePreferences = (style: number) =>
     auth: true,
     body: { recommendation_style: style },
   })
+
+// D38: onboarding about-you answers are user-authored, so they are saved
+// straight into the profile as confirmed preferences.
+export interface QuestionnaireAnswer {
+  question: string
+  answer: string
+}
+
+export const saveQuestionnaire = (answers: QuestionnaireAnswer[]) =>
+  api<{ saved: number }>('/profile/questionnaire', {
+    method: 'POST',
+    auth: true,
+    body: { answers },
+  })

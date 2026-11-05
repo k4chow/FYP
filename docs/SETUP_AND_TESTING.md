@@ -220,6 +220,19 @@ account configured in source. Those values are intentionally not reproduced in
 this document. Use a throwaway account and prefer moving live-test credentials
 to environment variables before sharing scripts more broadly.
 
+### 6.6 Live recommendations + questionnaire E2E (Phase 6)
+
+```powershell
+cd server
+.\.venv\Scripts\python.exe scripts\e2e_phase6.py
+```
+
+Creates a disposable user, seeds films and a confirmed memory, and exercises
+recommendations, feedback, the style slider, the Film Assistant chat, and the
+onboarding questionnaire (`POST /profile/questionnaire` → confirmed
+preferences in `/profile/summary`). Saved result: 25/25 checks in
+`server/scripts/e2e_phase6_output.txt`.
+
 ## 7. Manual feature verification
 
 ### Auth
@@ -260,8 +273,10 @@ to environment variables before sharing scripts more broadly.
    reflection. Check the appropriate seen/planning opening.
 2. Send ordinary text and each quick-reply chip. Reload the page and verify the
    exact history returns, including the assistant opening.
-3. Repeat the same message in a fresh conversation of the same film: mock output
-   should be deterministic at the same turn.
+3. Repeat the same message in a fresh conversation of the same film: the mock
+   samples its questions from prompt banks (D27), so a fresh session should
+   usually ask DIFFERENT questions — no fixed sequence, no immediate
+   repetition within one session.
 4. End the reflection twice and verify it stays completed; further messages are
    rejected. Resume active conversations from My Reflections.
 5. Confirm the UI labels guided review as Phase 4. No proposed memories should
@@ -271,6 +286,21 @@ to environment variables before sharing scripts more broadly.
 
 - Home profile themes are hard-coded examples.
 - There is no mood input or mood-aware recommendation behaviour to test.
+
+### Onboarding (D38 flow)
+
+1. Sign up with a fresh account: you land on onboarding automatically
+   (`onboarding_completed = false` routes everything there).
+2. Import step: the UI recommends `watched.csv`; skipping works.
+3. Your films: pick ≥5 films via search (added as watched), or skip.
+4. First reflection: the step suggests films from your library (watched and
+   highly rated first); the search box lets you pick any other film. Starting
+   opens the normal reflection chat with `?onboarding=1`.
+5. End the reflection: you return to onboarding's About-you questionnaire
+   (not the review flow). Answer any subset and finish.
+6. My Profile should now list the answers as confirmed preferences with the
+   explanation "You wrote this about yourself.", and Home no longer redirects
+   to onboarding.
 
 Phase 6 surfaces that SHOULD now work: Discover cards with why-lines and a
 "Why am I seeing this?" panel, More like this / Not for me feedback that

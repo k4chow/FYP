@@ -24,8 +24,13 @@ function RequireAuth({ children }: { children: ReactElement }) {
   if (loading) return <div className="center-screen muted">Loading…</div>
   if (!user) return <Navigate to="/signin" replace />
   // New users are routed through onboarding first (every step is skippable);
-  // existing/legacy accounts have the flag set and never see this.
-  if (user.onboarding_completed === false && location.pathname !== '/onboarding') {
+  // existing/legacy accounts have the flag set and never see this. The
+  // reflection chat/review pages stay reachable so onboarding can open the
+  // first reflection without leaving the flow.
+  const allowedDuringOnboarding =
+    location.pathname === '/onboarding' ||
+    location.pathname.startsWith('/app/reflections/')
+  if (user.onboarding_completed === false && !allowedDuringOnboarding) {
     return <Navigate to="/onboarding" replace />
   }
   return children

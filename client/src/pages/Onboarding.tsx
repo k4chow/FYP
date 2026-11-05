@@ -1,24 +1,44 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { ApiError } from '../lib/api'
-import { createConversation, sendMessage } from '../lib/conversations'
-import { addFilm, getImportJob, importLetterboxd, searchFilms } from '../lib/films'
-import type { ImportJob, SearchResult } from '../lib/films'
+import { createConversation } from '../lib/conversations'
+import { addFilm, getImportJob, getMyFilms, importLetterboxd, searchFilms } from '../lib/films'
+import type { ImportJob, LibraryFilm, SearchResult } from '../lib/films'
+import { saveQuestionnaire } from '../lib/profile'
 
-// Onboarding (mockup flow): import → pick ≥5 films that stayed with you →
-// one "a little about you" question → first reflection prompt → Home.
-// Every step is skippable; finishing (or skipping) marks onboarding complete
-// on the profile row so existing users never see this again.
-const STEPS = ['Import', 'Your films', 'About you', 'First reflection'] as const
+// Onboarding (mockup flow, D38): import Letterboxd → pick ≥5 films that
+// stayed with you → pick ONE film for your first reflection (suggested from
+// your films; searching for another is fine) → after that reflection ends,
+// an about-you questionnaire whose answers build the profile as confirmed
+// preferences. Every step is skippable; finishing (or skipping) marks
+// onboarding complete on the profile row so existing users never see this.
+const STEPS = ['Import', 'Your films', 'First reflection', 'About you'] as const
 const MIN_PICKS = 5
-const ABOUT_QUESTION =
-  'A little about you — what draws you to films? A mood, a memory, a kind of story you keep returning to…'
+const MAX_SUGGESTIONS = 8
+const QUESTIONNAIRE = [
+  'What kinds of stories do you keep coming back to?',
+  'How do you want a film to leave you feeling?',
+  'What makes a film stay with you long after the credits roll?',
+] as const
+
+interface ReflectionPick {
+  tmdb_id: number
+  title: string
+  year: number | null
+  poster_url: string | null
+  status: 'watched' | 'watchlist' | null
+}
 
 export default function Onboarding() {
   const { completeOnboarding } = useAuth()
   const navigate = useNavigate()
-  const [step, setStep] = useState(0)
+  const [searchParams] = useSearchParams()
+  // Returning from the first reflection chat lands on ?step=3 (About you).
+  const requested = Number.parseInt(searchParams.get('step') ?? '', 10)
+  const [step, setStep] = useState(
+    Number.isInteger(requested) && requested >= 0 && requested < STEPS.length ? requested : 0,
+  )
   const [error, setError] = useState('')
   const [finishing, setFinishing] = useState(false)
 
@@ -27,18 +47,21 @@ export default function Onboarding() {
   const [job, setJob] = useState<ImportJob | null>(null)
   const [importing, setImporting] = useState(false)
 
-  // Step 2 — film picker
+  // Step 2 — film picker (shared search state is reused by step 3)
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
   const [searching, setSearching] = useState(false)
   const [picked, setPicked] = useState<SearchResult[]>([])
   const [savingPicks, setSavingPicks] = useState(false)
 
-  // Step 3 — about you
-  const [about, setAbout] = useState('')
-
-  // Step 4 — first reflection
+  // Step 3 — pick one film for the first reflection
+  const [library, setLibrary] = useState<LibraryFilm[] | null>(null)
+  const [pick, setPick] = useState<ReflectionPick | null>(null)
   const [starting, setStarting] = useState(false)
+
+  // Step 4 — about-you questionnaire
+  const [answers, setAnswers] = useState<string[]>(() => QUESTIONNAIRE.map(() => ''))
+  const [savingAnswers, setSavingAnswers] = useState(false)
 
   async function finish() {
     if (finishing) return
@@ -79,7 +102,8 @@ export default function Onboarding() {
     }
   }
 
-  // ---- Step 2: film picker ----
+
+  // ---- Film search (steps 2 & 3) ----
   useEffect(() => {
     const q = query.trim()
     if (q.length < 2) {
@@ -97,6 +121,7 @@ export default function Onboarding() {
     return () => clearTimeout(timer)
   }, [query])
 
+  // ---- Step 2: film picker ----
   const isPicked = (tmdbId: number) => picked.some((p) => p.tmdb_id === tmdbId)
 
   function togglePick(film: SearchResult) {
@@ -105,6 +130,12 @@ export default function Onboarding() {
         ? current.filter((p) => p.tmdb_id !== film.tmdb_id)
         : [...current, film],
     )
+  }
+
+  function goToReflectionStep() {
+    setQuery('')
+    setResults([])
+    setStep(2)
   }
 
   async function savePicks() {
@@ -117,7 +148,7 @@ export default function Onboarding() {
       for (const film of picked) {
         await addFilm(film.tmdb_id, 'watched')
       }
-      setStep(2)
+      goToReflectionStep()
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Could not save your picks.')
     } finally {
@@ -125,23 +156,59 @@ export default function Onboarding() {
     }
   }
 
-  // ---- Step 4: first reflection ----
-  async function startFirstReflection() {
-    if (starting) return
+  // ---- Step 3: first reflection ----
+  useEffect(() => {
+    if (step !== 2 || library !== null) return
+    getMyFilms()
+      .then((res) => setLibrary(res.films))
+      .catch(() => setLibrary([]))
+  }, [step, library])
+
+  // Suggest the user's own films: watched first, then highest rated, newest.
+  const suggestions = (library ?? [])
+    .filter((f) => f.tmdb_id != null)
+    .sort(
+      (a, b) =>
+        (a.status === 'watched' ? 0 : 1) - (b.status === 'watched' ? 0 : 1) ||
+        (b.rating ?? -1) - (a.rating ?? -1) ||
+        b.added_at.localeCompare(a.added_at),
+    )
+    .slice(0, MAX_SUGGESTIONS)
+
+  async function startReflection() {
+    if (!pick || starting) return
     setStarting(true)
     setError('')
     try {
-      await completeOnboarding()
       const res = await createConversation({
         type: 'reflection',
-        title: 'A little about me',
+        tmdb_id: pick.tmdb_id,
+        watch_type: pick.status === 'watchlist' ? 'planning' : 'seen',
       })
-      // The "about you" answer seeds the conversation as the first message.
-      if (about.trim()) await sendMessage(res.conversation.id, about.trim())
-      navigate(`/app/reflections/${res.conversation.id}`, { replace: true })
+      // Ending this reflection returns here at the About-you step (D38).
+      navigate(`/app/reflections/${res.conversation.id}?onboarding=1`)
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Could not start your reflection.')
       setStarting(false)
+    }
+  }
+
+  // ---- Step 4: about-you questionnaire ----
+  async function submitQuestionnaire() {
+    if (savingAnswers) return
+    setSavingAnswers(true)
+    setError('')
+    try {
+      const payload = QUESTIONNAIRE.map((question, i) => ({
+        question,
+        answer: answers[i] ?? '',
+      })).filter((item) => item.answer.trim())
+      if (payload.length > 0) await saveQuestionnaire(payload)
+      await completeOnboarding()
+      navigate('/app', { replace: true })
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Could not save your answers.')
+      setSavingAnswers(false)
     }
   }
 
@@ -265,7 +332,7 @@ export default function Onboarding() {
               ` — ${picked.map((p) => p.title).slice(0, 3).join(', ')}${picked.length > 3 ? '…' : ''}`}
           </p>
           <div className="row onboarding-nav">
-            <button className="link-button" onClick={() => setStep(2)}>
+            <button className="link-button" onClick={goToReflectionStep}>
               Skip this step →
             </button>
             <button
@@ -282,22 +349,99 @@ export default function Onboarding() {
 
       {step === 2 && (
         <section className="card onboarding-card">
-          <h1 className="page-title">A little about you</h1>
-          <p className="muted">{ABOUT_QUESTION}</p>
-          <textarea
-            className="insight-edit"
-            rows={4}
-            maxLength={500}
-            placeholder="Write as much or as little as you like…"
-            value={about}
-            onChange={(e) => setAbout(e.target.value)}
-          />
+          <h1 className="page-title">Your first reflection</h1>
+          <p className="muted">
+            Pick one film to reflect on — a recent favourite works well. These
+            are suggested from your films; search below if you'd rather reflect
+            on something else. It's a conversation, not a review.
+          </p>
+          {library === null ? (
+            <p className="muted">Loading your films…</p>
+          ) : suggestions.length > 0 ? (
+            <div className="picker-grid">
+              {suggestions.map((film) => (
+                <button
+                  key={film.id}
+                  className={`pick-card${pick?.tmdb_id === film.tmdb_id ? ' selected' : ''}`}
+                  onClick={() =>
+                    setPick({
+                      tmdb_id: film.tmdb_id as number,
+                      title: film.title,
+                      year: film.year,
+                      poster_url: film.poster_url,
+                      status: film.status,
+                    })
+                  }
+                >
+                  <span className="film-poster">
+                    {film.poster_url ? (
+                      <img src={film.poster_url} alt={film.title} loading="lazy" />
+                    ) : (
+                      <span className="no-poster">{film.title}</span>
+                    )}
+                    {pick?.tmdb_id === film.tmdb_id && <span className="pick-check">✓</span>}
+                  </span>
+                  <p>
+                    {film.title}
+                    {film.year ? ` (${film.year})` : ''}
+                  </p>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="muted">Your library is still empty — search for any film below.</p>
+          )}
+          <div className="search-input">
+            <span aria-hidden>⌕</span>
+            <input
+              value={query}
+              placeholder="Pick another film…"
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </div>
+          {searching && <p className="muted">Searching…</p>}
+          {results.length > 0 && (
+            <div className="picker-grid">
+              {results.slice(0, 8).map((film) => (
+                <button
+                  key={film.tmdb_id}
+                  className={`pick-card${pick?.tmdb_id === film.tmdb_id ? ' selected' : ''}`}
+                  onClick={() =>
+                    setPick({
+                      tmdb_id: film.tmdb_id,
+                      title: film.title,
+                      year: film.year,
+                      poster_url: film.poster_url,
+                      status: null,
+                    })
+                  }
+                >
+                  <span className="film-poster">
+                    {film.poster_url ? (
+                      <img src={film.poster_url} alt={film.title} loading="lazy" />
+                    ) : (
+                      <span className="no-poster">{film.title}</span>
+                    )}
+                    {pick?.tmdb_id === film.tmdb_id && <span className="pick-check">✓</span>}
+                  </span>
+                  <p>
+                    {film.title}
+                    {film.year ? ` (${film.year})` : ''}
+                  </p>
+                </button>
+              ))}
+            </div>
+          )}
           <div className="row onboarding-nav">
             <button className="link-button" onClick={() => setStep(3)}>
               Skip this step →
             </button>
-            <button className="btn primary" onClick={() => setStep(3)}>
-              Continue →
+            <button className="btn primary" disabled={!pick || starting} onClick={startReflection}>
+              {starting
+                ? 'Opening…'
+                : pick
+                  ? `Reflect on ${pick.title} →`
+                  : 'Start reflection →'}
             </button>
           </div>
         </section>
@@ -305,20 +449,39 @@ export default function Onboarding() {
 
       {step === 3 && (
         <section className="card onboarding-card">
-          <h1 className="page-title">Your first reflection</h1>
+          <h1 className="page-title">A little about you</h1>
           <p className="muted">
-            Ready to begin? We'll open your first reflection
-            {about.trim()
-              ? ' with what you just told us as the starting point.'
-              : ' — pick any film that’s on your mind.'}{' '}
-            There are no wrong answers; it's a conversation, not a review.
+            Last step — a few questions about you. Your answers join your
+            reflective profile in your own words (editable anytime in My
+            Profile) and help NOACF recommend films that fit.
           </p>
+          {QUESTIONNAIRE.map((question, i) => (
+            <div key={question} style={{ marginBottom: '1rem' }}>
+              <p style={{ marginBottom: '0.4rem' }}>{question}</p>
+              <textarea
+                className="insight-edit"
+                rows={3}
+                maxLength={500}
+                placeholder="Write as much or as little as you like…"
+                value={answers[i]}
+                onChange={(e) =>
+                  setAnswers((current) =>
+                    current.map((a, j) => (j === i ? e.target.value : a)),
+                  )
+                }
+              />
+            </div>
+          ))}
           <div className="row onboarding-nav">
             <button className="link-button" disabled={finishing} onClick={finish}>
-              {finishing ? 'Finishing…' : 'Skip to Home →'}
+              {finishing ? 'Finishing…' : 'Skip and finish →'}
             </button>
-            <button className="btn primary" disabled={starting} onClick={startFirstReflection}>
-              {starting ? 'Opening…' : 'Start my first reflection →'}
+            <button
+              className="btn primary"
+              disabled={savingAnswers}
+              onClick={submitQuestionnaire}
+            >
+              {savingAnswers ? 'Saving…' : 'Save and finish →'}
             </button>
           </div>
         </section>
@@ -326,4 +489,3 @@ export default function Onboarding() {
     </div>
   )
 }
-

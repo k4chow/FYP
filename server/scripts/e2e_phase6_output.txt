@@ -17,7 +17,10 @@
 [PASS] recommendations still healthy after feedback seed
 [PASS] feedback can be undone
 [PASS] invalid signal rejected (422)
+[PASS] questionnaire saves only non-blank answers (201) — saved=1
+[PASS] questionnaire answer surfaces as confirmed preference — You wrote this about yourself.
+[PASS] over-long answer rejected (422)
 [PASS] discovery conversation created with assistant opening
 [PASS] assistant replies in discovery chat
 [PASS] discovery conversation ends cleanly
-temporary user b2b838ee-a3ef-4623-952c-7d8ae4b042d9 deleted
+temporary user 4e1326a8-d24e-4a62-b160-6a10481445f6 deleted

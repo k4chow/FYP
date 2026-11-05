@@ -175,3 +175,45 @@ def update_preferences(
     rec_svc.invalidate(current["id"])
     return {"recommendation_style": body.recommendation_style}
 
+
+# --- Onboarding questionnaire (D38) -------------------------------------------
+
+_MAX_ANSWERS = 8
+
+
+class QuestionnaireAnswer(BaseModel):
+    question: str = Field(..., min_length=1, max_length=200)
+    answer: str = Field(..., max_length=500)
+
+
+class QuestionnaireBody(BaseModel):
+    answers: list[QuestionnaireAnswer] = Field(default_factory=list, max_length=_MAX_ANSWERS)
+
+
+@router.post("/questionnaire", status_code=201)
+def save_questionnaire(
+    body: QuestionnaireBody, current: dict = Depends(get_current_user)
+) -> dict:
+    """Save the onboarding about-you answers into the reflective profile.
+
+    The answers are the user's own words, written about themselves, so they
+    enter the profile directly as confirmed preferences — D12's review step
+    exists for system-proposed insights, not user-authored data.
+    """
+    rows = [
+        {
+            "user_id": current["id"],
+            "content": content,
+            "kind": "preference",
+            "status": "confirmed",
+            "source_message_ids": [],
+        }
+        for item in body.answers
+        if (content := item.answer.strip())
+    ]
+    if rows:
+        supabase.table("memories").insert(rows).execute()
+        # Profile content changed; drop any cached Discover grid.
+        rec_svc.invalidate(current["id"])
+    return {"saved": len(rows)}
+

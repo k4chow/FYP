@@ -126,7 +126,7 @@ def _source_map(user_id: str, rows: list[dict]) -> dict[str, dict]:
     }
 
 
-def _fallback_explanation(sources: list[dict]) -> str:
+def _fallback_explanation(sources: list[dict], status: str | None = None) -> str:
     source = next((row for row in sources if row.get("role") == "user"), None)
     if source:
         return f"Based on what you wrote: “{_excerpt(source.get('content', ''))}”."
@@ -135,6 +135,10 @@ def _fallback_explanation(sources: list[dict]) -> str:
             "Based on this part of the reflection: "
             f"“{_excerpt(sources[0].get('content', ''))}”."
         )
+    if status == "confirmed":
+        # Sourceless confirmed memories are user-authored (e.g. the onboarding
+        # questionnaire, D38) — never say "proposed" for the user's own words.
+        return "You wrote this about yourself."
     return "This insight was proposed from your reflection."
 
 
@@ -165,7 +169,7 @@ def serialise_rows(
                 "kind": row["kind"],
                 "status": row["status"],
                 "explanation": (explanations or {}).get(row["id"])
-                or _fallback_explanation(sources),
+                or _fallback_explanation(sources, row["status"]),
                 "source_message_ids": ids,
                 "source_messages": [
                     {
