@@ -4,6 +4,41 @@
 > own development values. Never commit `.env`, Supabase service-role keys, TMDB
 > keys, account passwords, or bearer tokens.
 
+## 0. Production deployment (AWS)
+
+The app is deployed on the shared lab AWS box (`cp1.latte-lab.org`, Ubuntu
+24.04) at **https://cp1.latte-lab.org/noacf/** — path-based hosting on the
+lab domain, which already has a certbot TLS certificate, so no separate
+domain or DNS setup is needed:
+
+- Code: `~/noacf` (git clone of this repository; `git pull` to update).
+- Backend: `noacf.service` (systemd) runs uvicorn from
+  `~/noacf/server/.venv` on `127.0.0.1:8001`. Env vars live in
+  `~/noacf/server/.env` (same keys as local). Logs: `journalctl -u noacf`.
+- Client: built on the server with the sub-path base
+  (`VITE_API_URL=https://cp1.latte-lab.org/noacf-api npm run build --
+  --base=/noacf/`; React Router picks the base up via
+  `import.meta.env.BASE_URL`). Output in `~/noacf/client/dist`.
+- nginx: two `location` blocks inside the existing `cp1.latte-lab.org` site
+  (`/etc/nginx/sites-enabled/reflexia`): `/noacf/` serves `dist` with SPA
+  fallback to `/noacf/index.html`, and `/noacf-api/` proxies to the backend
+  with the prefix stripped. The unrelated `reflexia` app keeps `/` and
+  `/api/` — do not remove its blocks.
+- A dedicated domain (finnickodairisalive.com) was considered but never
+  registered; if one is ever pointed at the server, serve `dist` at the root
+  with base `/` and proxy `/api/` instead of the path setup.
+
+To deploy an update:
+
+```bash
+cd ~/noacf && git pull
+cd server && .venv/bin/pip install -r requirements.txt   # if deps changed
+sudo systemctl restart noacf                             # if server code changed
+cd ../client && npm install && \
+  VITE_API_URL=https://cp1.latte-lab.org/noacf-api npm run build -- --base=/noacf/
+```
+
+## 1. Prerequisites
 ## 1. Prerequisites
 
 - Python 3.12 with `venv` and `pip` (the project’s documented runtime).
