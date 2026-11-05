@@ -269,11 +269,14 @@ to environment variables before sharing scripts more broadly.
 
 ### Explicitly incomplete checks
 
-- Discover and My Profile are placeholders, not features to accept as complete.
 - Home profile themes are hard-coded examples.
-- The recommendation slider is disabled and persists nothing.
-- There is no memory review/edit/forget flow, real AI provider, recommendation
-  ranking, mood input, or feedback loop to test.
+- There is no mood input or mood-aware recommendation behaviour to test.
+
+Phase 6 surfaces that SHOULD now work: Discover cards with why-lines and a
+"Why am I seeing this?" panel, More like this / Not for me feedback that
+visibly changes the next load, the Settings recommendation-style slider
+(persists via `/profile/preferences`), and the Film Assistant discovery chat.
+These require migration `0005_recommendations.sql` applied to Supabase first.
 
 ## 8. Troubleshooting
 

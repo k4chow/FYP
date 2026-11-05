@@ -216,29 +216,45 @@ recommendations. Contradiction handling is a project-note requirement but has
 no current implementation. The schema supports this design; the lifecycle
 endpoints and UI do not yet exist.
 
-## 7. Recommendations data flow — planned only
+## 7. Recommendations data flow (Phase 6, D35–D37)
 
-There is no current recommendation flow to trace. No recommendation router,
-service, endpoint, scoring function, feedback table, or Discover implementation
-exists. `client/src/App.tsx` renders a Phase 6 placeholder, and the Settings
-recommendation slider is disabled.
-
-The notes propose the following future flow, **not a description of working
-software**:
+Implemented in `server/app/recommendations.py` and
+`server/app/routers/recommendations.py`; the Discover page and the Settings
+slider are live. The engine is deterministic — SQL reads plus TMDB list
+endpoints only, no LLM or embeddings (D8's pgvector deferral holds).
 
 ```mermaid
 flowchart LR
-    F[(user_films)] -.-> S[Candidate selection]
-    M[(confirmed memories)] -.-> S
-    S -.-> R[Ranking + explanation generation]
-    R -.-> D[Discover cards with why]
-    D -.->|More like this / Not for me| P[Profile signals]
-    P -.-> M
+    F[(user_films)] --> S[Seed selection]
+    FB[(recommendation_feedback)] --> S
+    S -->|per-seed TMDB /recommendations| C[Candidate pool]
+    G[top genres] -->|TMDB /discover| C
+    C --> X[Exclude library + not_for_me]
+    M[(confirmed memories)] -->|keyword / genre-alias match| R[Scoring]
+    U[users.recommendation_style] -->|similarity weight + explore bonus| R
+    X --> R
+    R --> D[Discover cards with why + source_memories]
+    D -.->|More like this / Not for me| FB
 ```
 
-No verified choice exists yet for candidate generation, similarity metrics,
-mood representation, weights, or feedback storage. Those must be designed and
-evaluated before this diagram can become an implementation claim.
+1. Seeds are `more_like_this` feedback rows first, then ≥4★ rated films, then
+   watchlist rows (most recent first, capped). Each seed pulls TMDB
+   `/movie/{id}/recommendations`; a `/discover/movie` pool (vote_count ≥ 200)
+   covers the library's three most frequent genres.
+2. Candidates already in the library or marked `not_for_me` are excluded.
+3. Score = `seed_score × (0.5 + similarity) + memory_bonus + explore_bonus`,
+   where `similarity = 1 − recommendation_style/100`. The memory bonus matches
+   confirmed-memory keywords and genre aliases against the candidate's genres,
+   title, and overview (capped at three memories per card); the explore bonus
+   rewards off-profile genres and scales with the slider.
+4. Every card returns a human-readable `why` plus the `source_memories` it
+   matched — the Discover "Why am I seeing this?" panel renders exactly these.
+5. An empty library returns popular TMDB picks with an honest cold-start
+   why-line. Results are cached per user for 5 minutes; feedback posts and
+   style changes invalidate the cache immediately.
+
+Mood-based recommendations remain unimplemented: there is no mood field,
+extraction, or scoring.
 
 ## 8. Authentication and authorization flow
 

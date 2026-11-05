@@ -51,18 +51,15 @@ not perform such inference.
   (`client/src/pages/Home.tsx`).
 - Home’s prompt of the day is a client-side seven-item rotation, not an
   AI-generated or personalized prompt.
-- Settings includes a disabled recommendation-style slider; it stores nothing
-  and affects nothing (`client/src/pages/Settings.tsx`).
-- The API accepts `type='discovery'`, but there is no discovery UI or actual
-  recommendation behavior. The mock still uses its reflection question banks.
 
 ### Planned / absent in the current code
 
 - Contradiction resolution between stored insights.
 - A reflective profile UI and real themes/insights on Home (Phase 5).
-- Recommendation generation, explanations, feedback, mood handling, and a real
-  discovery assistant (Phase 6). `/app/discover` and `/app/profile` render
-  `Placeholder` pages (`client/src/App.tsx`).
+- Mood-based recommendations (no mood field, extraction, or scoring). The rest
+  of Phase 6 is done: `/app/discover` renders the deterministic recommendation
+  engine with why-lines, feedback toggles, and a Film Assistant discovery chat;
+  the Settings style slider is live (`/profile/preferences`).
 - The full guided onboarding sequence from the notes; sign-up and import exist,
   but mandatory film selection and the about-you step are not implemented.
 - Formal usability evaluation and Phase 7 results (`docs/07-evaluation.md`).

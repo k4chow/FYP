@@ -25,3 +25,18 @@ export interface ProfileSummary {
 
 export const getProfileSummary = () =>
   api<ProfileSummary>('/profile/summary', { auth: true })
+
+// N6 (Phase 6): the recommendation style slider, persisted on the users row.
+export interface Preferences {
+  recommendation_style: number // 0 = more like what I love, 100 = surprise me
+}
+
+export const getPreferences = () =>
+  api<Preferences>('/profile/preferences', { auth: true })
+
+export const updatePreferences = (style: number) =>
+  api<Preferences>('/profile/preferences', {
+    method: 'PATCH',
+    auth: true,
+    body: { recommendation_style: style },
+  })

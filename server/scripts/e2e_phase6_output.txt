@@ -1,0 +1,23 @@
+[PASS] server healthy on 0.6.0
+[PASS] cold start returns cards — 12 cards
+[PASS] cold start why is honest about the fallback
+[PASS] cards carry explanation + provenance fields
+[PASS] default style is 30
+[PASS] style slider saves
+[PASS] out-of-range style rejected (422)
+[PASS] Arrival added (watched, 5 stars)
+[PASS] La La Land added (watchlist)
+[PASS] seeded run returns cards — 12 cards
+[PASS] library films are never recommended
+[PASS] at least one card cites the confirmed insight (F8/F9) — Because you rated "Arrival" 5★ — and it connects with your insight "You love quiet, hopeful sci-fi stories.".
+[PASS] at least one card explains via the library (rating/watchlist) — Because you rated "Arrival" 5★ — and it connects with your insight "You love quiet, hopeful sci-fi stories.".
+[PASS] not_for_me feedback accepted
+[PASS] not_for_me film excluded afterwards (cache invalidated)
+[PASS] more_like_this feedback accepted
+[PASS] recommendations still healthy after feedback seed
+[PASS] feedback can be undone
+[PASS] invalid signal rejected (422)
+[PASS] discovery conversation created with assistant opening
+[PASS] assistant replies in discovery chat
+[PASS] discovery conversation ends cleanly
+temporary user b2b838ee-a3ef-4623-952c-7d8ae4b042d9 deleted

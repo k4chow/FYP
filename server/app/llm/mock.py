@@ -94,6 +94,22 @@ _QUESTIONS_FREE = (
     "What would you want to remember about this a year from now?",
 )
 
+# Film Assistant discovery conversations (F10, Phase 6).
+_OPENERS_DISCOVERY = (
+    "What kind of story are you in the mood for right now?",
+    "Is there a feeling you want your next film to leave you with?",
+    "Are you after something familiar and comforting, or a surprise?",
+)
+
+_QUESTIONS_DISCOVERY = (
+    "Is there a film you loved recently that we could use as a compass?",
+    "Any genres or moods you're drawn to today — or ones you'd rather avoid?",
+    "Do you want something light, or something that sits with you afterwards?",
+    "Who are you watching with, if anyone — does that shape the pick?",
+    "Would you rather revisit a world you know or step into a new one?",
+    "What should this film leave you thinking about tomorrow?",
+)
+
 
 def _keywords(text: str, limit: int = 3) -> list[str]:
     """Distinct content words (len >= 5) from the user's message, in order."""
@@ -174,6 +190,12 @@ class MockLLMProvider(LLMProvider):
                 f"Let's talk about {title}{name}. Take your time — there are no "
                 f"right or wrong answers here. {self._rng.choice(_OPENERS_FILM)}"
             )
+        if context.conversation_type == "discovery":
+            return (
+                f"Let's find your next film{name}. The more honestly you "
+                f"describe your mood, the better I can point you somewhere "
+                f"worthwhile. {self._rng.choice(_OPENERS_DISCOVERY)}"
+            )
         if context.title:
             return (
                 f"You wanted to reflect on this: “{context.title}” "
@@ -246,6 +268,8 @@ class MockLLMProvider(LLMProvider):
             bank = _QUESTIONS_PLANNING
         elif film:
             bank = _QUESTIONS_FILM
+        elif context.conversation_type == "discovery":
+            bank = _QUESTIONS_DISCOVERY
         else:
             bank = _QUESTIONS_FREE
         film_name = film.get("title") or "the film"

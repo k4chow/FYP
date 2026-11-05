@@ -9,8 +9,10 @@ call — so the profile works with the mock provider and stays reproducible.
 from collections import Counter
 
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel, Field
 
 from .. import memories as memory_svc
+from .. import recommendations as rec_svc
 from ..deps import get_current_user
 from ..supabase_client import supabase
 
@@ -134,3 +136,42 @@ def profile_summary(current: dict = Depends(get_current_user)) -> dict:
         "summary": _summary_text(memories, stats, display_name),
         "groups": groups,
     }
+
+
+# --- Recommendation preferences (N6, Phase 6) --------------------------------
+
+_DEFAULT_STYLE = 30  # matches users.recommendation_style default
+
+
+class PreferencesBody(BaseModel):
+    recommendation_style: int = Field(
+        ..., ge=0, le=100, description="0 = more like what I love, 100 = surprise me"
+    )
+
+
+@router.get("/preferences")
+def get_preferences(current: dict = Depends(get_current_user)) -> dict:
+    row = (
+        supabase.table("users")
+        .select("recommendation_style")
+        .eq("id", current["id"])
+        .limit(1)
+        .execute()
+        .data
+        or [{}]
+    )[0]
+    value = row.get("recommendation_style")
+    return {"recommendation_style": value if isinstance(value, int) else _DEFAULT_STYLE}
+
+
+@router.patch("/preferences")
+def update_preferences(
+    body: PreferencesBody, current: dict = Depends(get_current_user)
+) -> dict:
+    supabase.table("users").update(
+        {"recommendation_style": body.recommendation_style}
+    ).eq("id", current["id"]).execute()
+    # Weights change immediately; drop any cached Discover grid.
+    rec_svc.invalidate(current["id"])
+    return {"recommendation_style": body.recommendation_style}
+

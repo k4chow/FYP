@@ -10,7 +10,7 @@ import Home from './pages/Home'
 import MyFilms from './pages/MyFilms'
 import Import from './pages/Import'
 import Settings from './pages/Settings'
-import Placeholder from './pages/Placeholder'
+import Discover from './pages/Discover'
 import Reflections from './pages/Reflections'
 import ReflectionNew from './pages/ReflectionNew'
 import ReflectionChat from './pages/ReflectionChat'
@@ -57,7 +57,7 @@ export default function App() {
             }
           >
             <Route index element={<Home />} />
-            <Route path="discover" element={<Placeholder title="Discover" phase={6} />} />
+            <Route path="discover" element={<Discover />} />
             <Route path="films" element={<MyFilms />} />
             <Route path="import" element={<Import />} />
             <Route path="reflections" element={<Reflections />} />

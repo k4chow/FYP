@@ -74,6 +74,53 @@ def movie_details(tmdb_id: int) -> dict | None:
     return _get(f"/movie/{tmdb_id}", {})
 
 
+# TMDB genre ids are stable catalogue constants; name -> id for /discover/movie.
+GENRE_IDS = {
+    "Action": 28,
+    "Adventure": 12,
+    "Animation": 16,
+    "Comedy": 35,
+    "Crime": 80,
+    "Documentary": 99,
+    "Drama": 18,
+    "Family": 10751,
+    "Fantasy": 14,
+    "History": 36,
+    "Horror": 27,
+    "Music": 10402,
+    "Mystery": 9648,
+    "Romance": 10749,
+    "Science Fiction": 878,
+    "TV Movie": 10770,
+    "Thriller": 53,
+    "War": 10752,
+    "Western": 37,
+}
+GENRE_NAMES = {genre_id: name for name, genre_id in GENRE_IDS.items()}
+
+
+def movie_recommendations(tmdb_id: int) -> list[dict]:
+    """TMDB's own recommendations for a film (Phase 6 candidate source)."""
+    data = _get(f"/movie/{tmdb_id}/recommendations", {"language": "en-US"}) or {}
+    return data.get("results", [])
+
+
+def discover_movies(
+    genre_ids: list[int] | None = None, sort_by: str = "popularity.desc"
+) -> list[dict]:
+    """TMDB discovery listing, optionally matching ANY of the given genres."""
+    params: dict = {
+        "language": "en-US",
+        "sort_by": sort_by,
+        "include_adult": "false",
+        "vote_count.gte": "200",
+    }
+    if genre_ids:
+        params["with_genres"] = "|".join(str(g) for g in genre_ids)
+    data = _get("/discover/movie", params) or {}
+    return data.get("results", [])
+
+
 def _year_from_release(release: str | None) -> int | None:
     release = release or ""
     return int(release[:4]) if release[:4].isdigit() else None
@@ -86,6 +133,21 @@ def simplify_search_result(r: dict) -> dict:
         "year": _year_from_release(r.get("release_date")),
         "poster_url": poster_url(r.get("poster_path")),
         "overview": r.get("overview") or "",
+    }
+
+
+def simplify_list_result(r: dict) -> dict:
+    """Map a TMDB list result (recommendations/discover) to a candidate dict."""
+    return {
+        "tmdb_id": r["id"],
+        "title": r.get("title") or "Untitled",
+        "year": _year_from_release(r.get("release_date")),
+        "poster_url": poster_url(r.get("poster_path")),
+        "overview": r.get("overview") or "",
+        "genres": [
+            GENRE_NAMES.get(g) for g in r.get("genre_ids", []) if g in GENRE_NAMES
+        ],
+        "popularity": float(r.get("popularity") or 0.0),
     }
 
 

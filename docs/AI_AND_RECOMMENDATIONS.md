@@ -1,8 +1,9 @@
 # NOACF — AI, Chat Context, Memory, and Recommendations
 
-> **Critical scope note:** the current assistant is a deterministic mock, and
-> there is no recommendation engine. This document separates executable behavior
-> from the intended Phase 4–6 design.
+> **Status note:** as of Phase 6 the assistant runs behind a provider
+> abstraction (mock or OpenAI, D33) and the deterministic recommendation
+> engine (D35) is live. Mood-based recommendations remain unimplemented.
+> Sections below describe current behavior unless marked otherwise.
 
 ## 1. Implementation status
 
@@ -10,27 +11,30 @@
 |---|---|---|
 | Provider abstraction | **Implemented** | `server/app/llm/base.py`, `__init__.py` |
 | Reflective assistant replies | **Implemented, mocked** | `server/app/llm/mock.py` |
-| Real external model calls | **Absent** | No provider SDK/model endpoint or API-key setting |
+| Real external model calls | **Implemented (OpenAI)** | `server/app/llm/openai.py`, `LLM_PROVIDER=openai` (D33) |
 | Bounded chat context | **Implemented** | `server/app/context.py` |
 | Confirmed-memory retrieval | **Implemented read path only** | `confirmed_memories` |
-| Memory extraction/review/edit/forget | **Not implemented** | Extraction returns `[]`; no memory router/UI |
-| Recommendations and explanations | **Not implemented** | No service/endpoints; Discover placeholder |
+| Memory extraction/review/edit/forget | **Implemented** | Mock keyword proposals + review endpoints/UI (Phases 4–5) |
+| Recommendations and explanations | **Implemented (deterministic)** | `server/app/recommendations.py`, Discover page (Phase 6, D35) |
 | Mood-based recommendations | **Not implemented** | No mood field, extraction, or scoring |
-| Recommendation feedback | **Not implemented** | No endpoint/table; slider disabled |
+| Recommendation feedback + style slider | **Implemented** | `recommendation_feedback` table, `/profile/preferences` (Phase 6, D36/D37) |
 
 ## 2. Provider selection and interface
 
 `get_llm()` is the only provider factory used by the conversation router. It is
-cached with `lru_cache` and accepts `LLM_PROVIDER=mock`; any other value raises
-`RuntimeError` (`server/app/llm/__init__.py`). There is no `OpenAIProvider` or
-fallback chain in the code.
+cached with `lru_cache` and accepts `LLM_PROVIDER=mock` (default, deterministic)
+or `openai` (D33, key via `OPENAI_API_KEY`, model via `OPENAI_MODEL`, default
+`gpt-4o-mini`); any other value raises `RuntimeError`
+(`server/app/llm/__init__.py`). There is no automatic fallback chain.
 
 The abstract `LLMProvider` defines:
 
 - `opening(context) -> str`: first assistant message for a new conversation.
 - `chat(messages, context) -> str`: reply to the latest user message.
-- `extract_insights(messages, context) -> list[dict]`: future memory-extraction
-  seam. `MockLLMProvider` currently returns an empty list.
+- `extract_insights(messages, context) -> list[dict]`: memory-extraction seam,
+  implemented in both providers — mock derives keyword proposals, OpenAI
+  requests JSON mode (unparseable output raises so the conversation stays
+  active for a retry).
 
 `ChatContext` is a dataclass containing conversation type, title, optional raw
 film row, watch type, confirmed-memory strings, display name, and user-turn
@@ -161,10 +165,13 @@ feedback loop. The following is a **design outline, not verified behavior**:
 4. Show a “why” linked to source memories/messages.
 5. Record explicit feedback for later refinement.
 
-Unresolved design questions include candidate sources, scoring weights, mood
-representation, explanation generation, feedback schema, cold-start behavior,
-and evaluation metrics. pgvector is explicitly deferred until plain SQL
-retrieval is proven insufficient (D8); there is no embedding search today.
+These questions were resolved in Phase 6: candidate sources (per-seed TMDB
+recommendations + genre `/discover` pool), scoring (D35's formula), explanation
+generation (per-card `why` + `source_memories`), feedback schema
+(`recommendation_feedback`, D36), and cold-start behavior (popular TMDB picks
+with an honest why-line). Mood representation is still unresolved and
+unimplemented. pgvector remains deferred until plain SQL retrieval is proven
+insufficient (D8); there is no embedding search today.
 
 ## 8. Deterministic logic versus AI decisions
 
@@ -174,10 +181,10 @@ retrieval is proven insufficient (D8); there is no embedding search today.
 | Import matching and first-result selection | Deterministic application logic |
 | Import retries, checkpoints, and resume | Deterministic application logic |
 | Library filters/sorts and prompt-of-day rotation | Deterministic client logic |
-| Chat openings/replies | **Deterministic mock templates** |
+| Chat openings/replies | Deterministic mock templates, or OpenAI chat completions when `LLM_PROVIDER=openai` |
 | Memory retrieval by status/time | Deterministic SQL query |
-| Memory extraction | Stub returning `[]`, not AI |
-| Recommendation ranking/explanations | Absent |
+| Memory extraction | Mock keyword proposals, or OpenAI JSON-mode extraction |
+| Recommendation ranking/explanations | Deterministic scoring formula (D35) — not an AI judgment |
 
 No current output should be presented as an independent AI judgment. When a
 real provider is introduced, its prompt, model/version, temperature, safety
@@ -217,14 +224,16 @@ No pgvector, embeddings, RAG index, or recommendation-specific retrieval exists.
 
 ## 10. Evaluation boundaries and recommendations
 
-- The 34-check Phase 3 E2E verifies deterministic chat behavior and bounded
-  context helpers, not model quality, empathy, safety, or factual accuracy.
-- No test demonstrates preference learning, memory extraction, recommendation
-  relevance, mood awareness, or explanation faithfulness.
-- **Recommendation:** when implementing a real provider, keep deterministic
-  fixtures for CI and add separate evaluation for model behavior. Record exact
+- The Phase 3/5/6 E2E suites verify deterministic chat behavior, bounded
+  context helpers, the review flow, and the recommendation loop (seeding,
+  exclusions, memory attribution, feedback, style bounds) — not model quality,
+  empathy, safety, or factual accuracy.
+- No test demonstrates preference *learning* beyond the deterministic signals,
+  mood awareness, or explanation faithfulness against human judgment.
+- **Recommendation:** keep the mock provider's deterministic fixtures for CI
+  and evaluate the OpenAI provider's model behavior separately. Record exact
   prompts/model settings and test that proposed/rejected memories never enter
   context.
 - **Recommendation:** evaluate recommendation relevance and explanation
-  provenance only after an actual algorithm exists. Do not use the current mock
-  as evidence that the Phase 6 requirements are satisfied.
+  provenance with real users in Phase 7. The Phase 6 tests verify the engine's
+  mechanics, not that its picks feel right.

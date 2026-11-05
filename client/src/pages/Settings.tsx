@@ -3,12 +3,15 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { api, ApiError } from '../lib/api'
 import { getMyFilms } from '../lib/films'
+import { getPreferences, updatePreferences } from '../lib/profile'
 
-// Settings: account info, data & integrations (Letterboxd import), a
-// placeholder for recommendation preferences (Phase 6), and password change.
+// Settings: account info, data & integrations (Letterboxd import),
+// recommendation preferences (N6), and password change.
 export default function Settings() {
   const { user } = useAuth()
   const [importedCount, setImportedCount] = useState<number | null>(null)
+  const [style, setStyle] = useState(30)
+  const [styleState, setStyleState] = useState<'loading' | 'idle' | 'saving' | 'saved'>('loading')
 
   const [currentPw, setCurrentPw] = useState('')
   const [newPw, setNewPw] = useState('')
@@ -21,7 +24,22 @@ export default function Settings() {
     getMyFilms()
       .then((res) => setImportedCount(res.films.filter((f) => f.source === 'letterboxd').length))
       .catch(() => setImportedCount(null))
+    getPreferences()
+      .then((p) => setStyle(p.recommendation_style))
+      .catch(() => {})
+      .finally(() => setStyleState('idle'))
   }, [])
+
+  async function saveStyle(value: number) {
+    setStyle(value)
+    setStyleState('saving')
+    try {
+      await updatePreferences(value)
+      setStyleState('saved')
+    } catch {
+      setStyleState('idle')
+    }
+  }
 
   async function changePassword(e: React.FormEvent) {
     e.preventDefault()
@@ -95,15 +113,27 @@ export default function Settings() {
         <section className="card">
           <h2>Recommendation Preferences</h2>
           <p className="muted">Adjust how NOACF recommends films for you.</p>
-          <div style={{ marginTop: '0.75rem', opacity: 0.55 }}>
+          <div style={{ marginTop: '0.75rem' }}>
             <strong style={{ fontSize: '0.95rem' }}>Recommendation style</strong>
-            <input type="range" min={0} max={100} defaultValue={30} disabled style={{ marginTop: '0.5rem' }} />
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={style}
+              disabled={styleState === 'loading'}
+              onChange={(e) => saveStyle(Number(e.target.value))}
+              style={{ marginTop: '0.5rem' }}
+            />
             <div className="slider-labels">
-              <span>More similar</span>
-              <span>More random</span>
+              <span>More like what I love</span>
+              <span>Surprise me</span>
             </div>
             <p className="muted" style={{ fontSize: '0.85rem' }}>
-              Arrives with Discover in Phase 6.
+              {styleState === 'saving'
+                ? 'Saving…'
+                : styleState === 'saved'
+                  ? 'Saved — your next Discover refresh uses this.'
+                  : 'Weights your Discover picks towards the familiar or the unexpected.'}
             </p>
           </div>
         </section>

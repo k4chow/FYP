@@ -41,7 +41,11 @@ def _context_block(context: ChatContext) -> str:
     if context.display_name:
         lines.append(f"The user's name is {context.display_name}.")
     if context.conversation_type == "discovery":
-        lines.append("This is a discovery conversation about their taste in general.")
+        lines.append(
+            "This is a Film Assistant discovery conversation: the user wants "
+            "help finding their next film. Explore their taste and current mood "
+            "through questions; suggesting films conversationally is welcome here."
+        )
     film = context.film or {}
     if film:
         genres = ", ".join(film.get("genres") or [])
