@@ -16,6 +16,11 @@ class Settings(BaseSettings):
     # Bounded context assembly (F4): last N messages + K confirmed memories.
     llm_context_messages: int = 12
     llm_context_memories: int = 5
+    # Used only when llm_provider = "openai" (D33). The key must come from the
+    # environment (.env locally, hosting env settings when deployed) and is
+    # never committed or sent to the client.
+    openai_api_key: str = ""
+    openai_model: str = "gpt-4o-mini"
 
 
 settings = Settings()

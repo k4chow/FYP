@@ -20,4 +20,8 @@ def get_llm() -> LLMProvider:
     provider = settings.llm_provider.strip().lower()
     if provider == "mock":
         return MockLLMProvider()
-    raise RuntimeError(f"Unknown LLM_PROVIDER '{provider}' (expected: mock)")
+    if provider == "openai":
+        from .openai import OpenAIProvider
+
+        return OpenAIProvider()
+    raise RuntimeError(f"Unknown LLM_PROVIDER '{provider}' (expected: mock, openai)")

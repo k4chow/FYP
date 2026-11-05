@@ -143,7 +143,11 @@ def _match_film(row: dict, cache: dict) -> dict | None:
     if key in cache:
         return cache[key]
 
-    # D15: catalogue first, then TMDB title+year with a title-only fallback.
+    # D15: catalogue first, then TMDB title+year. D32: when the CSV gives a
+    # year, a title-only result is only accepted if its release year matches —
+    # otherwise the most popular same-title film (usually a remake) is
+    # imported alongside the intended one on the next run, producing the
+    # duplicate-library bug. No year match anywhere => unmatched, not a guess.
     query = supabase.table("films").select("*").ilike("title", name)
     if year:
         query = query.eq("year", year)
@@ -151,7 +155,15 @@ def _match_film(row: dict, cache: dict) -> dict | None:
     if found:
         film = found[0]
     else:
-        results = tmdb.search_movies(name, year) or tmdb.search_movies(name)
+        results = tmdb.search_movies(name, year)
+        if not results:
+            results = tmdb.search_movies(name)
+            if year:
+                results = [
+                    r
+                    for r in results
+                    if tmdb._year_from_release(r.get("release_date")) == year
+                ]
         film = _ensure_film(results[0]["id"]) if results else None
     cache[key] = film
     return film

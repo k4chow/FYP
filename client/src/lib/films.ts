@@ -91,14 +91,23 @@ export const getMyFilmsPage = (
 // Fetch every page so client-side filters/sorts operate on the full library,
 // not just Supabase's first 1,000 rows. `counts` come from the server (exact
 // per-status totals), not from the loaded pages.
+// Pages are deduped by row id: while a Letterboxd import is running, new rows
+// prepend to the added_at-desc ordering and shift later page windows, which
+// would otherwise render the same film card several times.
 export const getMyFilms = async (status?: 'watched' | 'watchlist') => {
   const films: LibraryFilm[] = []
+  const seen = new Set<string>()
   let offset = 0
   let total = 0
   let counts: LibraryCounts | null = null
   do {
     const page = await getMyFilmsPage(status, 250, offset)
-    films.push(...page.films)
+    for (const film of page.films) {
+      if (!seen.has(film.id)) {
+        seen.add(film.id)
+        films.push(film)
+      }
+    }
     total = page.total
     counts = page.counts ?? counts
     offset += page.films.length

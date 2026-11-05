@@ -134,6 +134,89 @@ class WatchedWinsImportTests(unittest.TestCase):
 
 
 
+class YearStrictMatchingTests(unittest.TestCase):
+    """D32: a Letterboxd row with a year must never match a same-title film
+    from a different year (the remake-duplicate bug)."""
+
+    def setUp(self):
+        self.store = FakeStore()
+        self.searches = []
+        for patcher in (
+            mock.patch.object(import_jobs, "supabase", self.store),
+            mock.patch.object(import_jobs, "_ensure_film", side_effect=self.ensure_film),
+            mock.patch.object(import_jobs.tmdb, "search_movies", side_effect=self.search),
+        ):
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    # TMDB title+year finds nothing; title-only returns remake-first results.
+    def search(self, name, year=None):
+        self.searches.append((name, year))
+        if year is not None:
+            return []
+        return [
+            {"id": 447277, "release_date": "2023-05-18"},  # popular remake
+            {"id": 10144, "release_date": "1989-11-17"},  # intended version
+        ]
+
+    def ensure_film(self, tmdb_id):
+        film = next(
+            (f for f in self.store.tables["films"] if f["tmdb_id"] == tmdb_id), None
+        )
+        if film is None:
+            film = {
+                "id": f"film-{tmdb_id}", "tmdb_id": tmdb_id, "title": "The Little Mermaid",
+                "year": {447277: 2023, 10144: 1989}.get(tmdb_id),
+                "genres": [], "poster_path": None, "metadata": {},
+            }
+            self.store.tables["films"].append(film)
+        return film
+
+    def run_job(self, row):
+        job = self.store.table("import_jobs").insert(
+            {
+                "user_id": "user-a", "source_filename": "watched.csv",
+                "target_status": "watched", "total_rows": 1,
+                "rows": [row], "results": {},
+            }
+        ).execute().data[0]
+        import_jobs.run_import_job(job["id"])
+        return next(j for j in self.store.tables["import_jobs"] if j["id"] == job["id"])
+
+    def test_year_fallback_picks_matching_release_year(self):
+        job = self.run_job(
+            {"name": "The Little Mermaid", "year": 1989, "rating": None, "watched_on": None}
+        )
+        rows = self.store.tables["user_films"]
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["film_id"], "film-10144")  # 1989, not the remake
+        self.assertEqual(job["added_count"], 1)
+
+    def test_year_fallback_remarks_unmatched_when_no_year_match(self):
+        def only_remake(name, year=None):
+            if year is not None:
+                return []
+            return [{"id": 447277, "release_date": "2023-05-18"}]
+
+        with mock.patch.object(
+            import_jobs.tmdb, "search_movies", side_effect=only_remake
+        ):
+            job = self.run_job(
+                {"name": "The Little Mermaid", "year": 1989, "rating": None, "watched_on": None}
+            )
+        self.assertEqual(self.store.tables["user_films"], [])  # never guessed
+        self.assertEqual(job["unmatched_count"], 1)
+
+    def test_row_without_year_still_uses_first_result(self):
+        job = self.run_job(
+            {"name": "The Little Mermaid", "year": None, "rating": None, "watched_on": None}
+        )
+        rows = self.store.tables["user_films"]
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["film_id"], "film-447277")
+        self.assertEqual(job["added_count"], 1)
+
+
 def _bank_for(context: ChatContext):
     if context.watch_type == "planning" and context.film:
         return _QUESTIONS_PLANNING
