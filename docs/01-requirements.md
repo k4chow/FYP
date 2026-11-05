@@ -9,7 +9,7 @@ the UI screen(s) that surface it. Update the "Status" column per phase.
 | # | Requirement (from notes) | Implementation | UI screen(s) | Status |
 |---|---|---|---|---|
 | F1 | Persistent conversation history; verbatim, never overwritten | `messages` table (layer 1) | Reflection chat | ✅ Done |
-| F2 | Reflective profile built from conversations | `memories` table (layer 2); extraction now feeds Review & Edit | My Profile | Phase 5 (data lifecycle done; profile UI remains) |
+| F2 | Reflective profile built from conversations | `memories` table (layer 2) + `GET /profile/summary` (confirmed memories only) | My Profile | ✅ Done |
 | F3 | User controls every stored insight (confirm / edit / reject) | `memories.status` = proposed/confirmed/rejected + review endpoints | Review & Edit, Compare and refine | ✅ Done |
 | F4 | Bounded LLM context (recent N messages + small set of confirmed memories), never full history | Server-side context assembler | — | ✅ Done |
 | F5 | Swappable LLM provider (mock first) | `server/app/llm/` provider interface | — | ✅ Done |
@@ -36,4 +36,6 @@ the UI screen(s) that surface it. Update the "Status" column per phase.
 
 1. Sign up → 2. Import Letterboxd (skippable) → 3. Pick ≥5 "films that stayed
 with you" → 4. One "a little about you" question → 5. First reflection prompt
-→ Home. Status: Phase 1–5 (incremental).
+→ Home. Status: ✅ Done (Phase 5) — `onboarding_completed` flag on `users`
+(migration 0004); every step skippable; picks are added as watched; the
+"a little about you" answer seeds the first reflection conversation.

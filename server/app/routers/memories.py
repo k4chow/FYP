@@ -53,9 +53,19 @@ def review_memory(
     memory = memory_svc.get_owned(memory_id_text, current["id"])
     if memory is None:
         raise HTTPException(status_code=404, detail="Memory not found")
-    if memory["status"] != "proposed":
+
+    # Review transitions (D12/D29):
+    #   proposed  -> confirmed (optionally edited) | rejected
+    #   confirmed -> confirmed (edit wording)      | rejected (retract)
+    #   rejected  -> terminal (audit trail)
+    current_status = memory["status"]
+    if current_status == "rejected":
         raise HTTPException(
-            status_code=409, detail="Only proposed memories can be reviewed"
+            status_code=409, detail="Rejected memories cannot be changed"
+        )
+    if current_status == "confirmed" and body.status == "confirmed" and body.content is None:
+        raise HTTPException(
+            status_code=400, detail="Nothing to update — provide edited content"
         )
     updated = memory_svc.review(memory_id_text, body.status, body.content)
     return {"memory": memory_svc.serialise_rows([updated], current["id"])[0]}

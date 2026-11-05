@@ -211,6 +211,40 @@ def for_conversation(conversation_id: str, user_id: str) -> list[dict]:
     return serialise_rows(linked, user_id, message_map)
 
 
+def _attach_source_reflections(payloads: list[dict]) -> list[dict]:
+    """Add 'from your reflection on <film>, <date>' attribution to each item.
+
+    Derived from the validated conversation linkage — message rows are never
+    rewritten to carry this (D11).
+    """
+    ids = sorted({p["conversation_id"] for p in payloads if p.get("conversation_id")})
+    index: dict[str, dict] = {}
+    if ids:
+        rows = (
+            supabase.table("conversations")
+            .select("id,title,watch_type,created_at,films(title,year)")
+            .in_("id", ids)
+            .execute()
+            .data
+        )
+        index = {row["id"]: row for row in rows}
+    for payload in payloads:
+        conv = index.get(payload.get("conversation_id") or "")
+        if not conv:
+            payload["source_reflection"] = None
+            continue
+        film = conv.get("films") or {}
+        payload["source_reflection"] = {
+            "conversation_id": conv["id"],
+            "title": conv.get("title"),
+            "watch_type": conv.get("watch_type"),
+            "film_title": film.get("title"),
+            "film_year": film.get("year"),
+            "date": conv.get("created_at"),
+        }
+    return payloads
+
+
 def list_for_user(user_id: str, status: str | None = None) -> list[dict]:
     query = (
         supabase.table("memories")
@@ -220,7 +254,7 @@ def list_for_user(user_id: str, status: str | None = None) -> list[dict]:
     )
     if status:
         query = query.eq("status", status)
-    return serialise_rows(query.execute().data, user_id)
+    return _attach_source_reflections(serialise_rows(query.execute().data, user_id))
 
 
 def get_owned(memory_id: str, user_id: str) -> dict | None:

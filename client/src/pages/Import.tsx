@@ -91,18 +91,25 @@ export default function Import() {
         Bring your film history with you. Upload a CSV from your Letterboxd
         export and we'll match it against TMDB to build your collection.
       </p>
+      <p className="import-tip" style={{ maxWidth: '44rem' }}>
+        <strong>Recommended:</strong> choose <strong>watched.csv</strong> from the
+        unzipped export — it contains your complete watch history.
+      </p>
 
       <div className="settings-grid">
         <section className="card">
           <h2>Your Letterboxd export</h2>
           <p className="muted">
-            CSV file — diary.csv, ratings.csv, watched.csv or watchlist.csv.
+            Choose <strong>watched.csv</strong> (your full watch history) — or use
+            diary.csv, ratings.csv or watchlist.csv if you prefer.
           </p>
           <div className="upload-zone">
             <span className="cloud" aria-hidden>⇪</span>
             <strong>Choose your export file</strong>
             <span className="muted" style={{ fontSize: '0.9rem' }}>
-              {file ? file.name : 'Select a CSV from your downloaded Letterboxd export.'}
+              {file
+                ? file.name
+                : 'Select watched.csv from your unzipped Letterboxd export (recommended).'}
             </span>
             <input
               ref={inputRef}
@@ -213,7 +220,11 @@ export default function Import() {
               </a>{' '}
               section and export your data.
             </li>
-            <li>Download the archive, unzip it, and pick a film-history CSV.</li>
+            <li>
+              Download the archive and unzip it. Inside, select{' '}
+              <strong>watched.csv</strong> — that file is your full watch
+              history and the one we recommend uploading.
+            </li>
           </ol>
         </section>
 

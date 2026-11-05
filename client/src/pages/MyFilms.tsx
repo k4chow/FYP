@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import AddFilmModal from '../components/AddFilmModal'
 import { getMyFilms, removeFilm } from '../lib/films'
-import type { LibraryFilm } from '../lib/films'
+import type { LibraryCounts, LibraryFilm } from '../lib/films'
 
 type Filter = 'all' | 'watched' | 'watchlist'
 type Sort = 'added' | 'title' | 'year'
@@ -11,6 +11,7 @@ type Sort = 'added' | 'title' | 'year'
 // client-side search/sort, per-film menu, and quick-add entry points.
 export default function MyFilms() {
   const [films, setFilms] = useState<LibraryFilm[]>([])
+  const [counts, setCounts] = useState<LibraryCounts | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [filter, setFilter] = useState<Filter>('all')
@@ -23,7 +24,10 @@ export default function MyFilms() {
 
   useEffect(() => {
     getMyFilms()
-      .then((res) => setFilms(res.films))
+      .then((res) => {
+        setFilms(res.films)
+        setCounts(res.counts)
+      })
       .catch(() => setError('Could not load your films.'))
       .finally(() => setLoading(false))
   }, [])
@@ -57,6 +61,11 @@ export default function MyFilms() {
     try {
       await removeFilm(film.id)
       setFilms((fs) => fs.filter((f) => f.id !== film.id))
+      setCounts((c) =>
+        c
+          ? { ...c, all: c.all - 1, [film.status]: c[film.status] - 1 }
+          : c,
+      )
       setToast(`Removed “${film.title}”`)
     } catch {
       setToast('Could not remove film')
@@ -66,7 +75,19 @@ export default function MyFilms() {
   function closeModal(added?: LibraryFilm) {
     setModalOpen(false)
     if (added) {
+      const existing = films.find((f) => f.id === added.id)
       setFilms((fs) => [added, ...fs.filter((f) => f.id !== added.id)])
+      if (!existing) {
+        setCounts((c) =>
+          c
+            ? {
+                ...c,
+                all: c.all + 1,
+                [added.status]: c[added.status as 'watched' | 'watchlist'] + 1,
+              }
+            : c,
+        )
+      }
       setToast(`Added “${added.title}” to your films`)
     }
   }
@@ -77,7 +98,9 @@ export default function MyFilms() {
         <div>
           <h1 className="page-title">My Films</h1>
           <p className="muted" style={{ margin: 0 }}>
-            Your film collection, ready for another look.
+            {counts
+              ? `${counts.all} film${counts.all === 1 ? '' : 's'} in your library — ready for another look.`
+              : 'Your film collection, ready for another look.'}
           </p>
         </div>
         <button className="btn primary" onClick={() => setModalOpen(true)}>
@@ -102,6 +125,7 @@ export default function MyFilms() {
               onClick={() => setFilter(f)}
             >
               {f === 'all' ? 'All films' : f === 'watched' ? 'Watched' : 'Watchlist'}
+              {counts ? ` (${counts[f]})` : ''}
             </button>
           ))}
         </div>

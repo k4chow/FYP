@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from ..deps import get_current_user
-from ..supabase_client import auth_client, supabase
+from ..supabase_client import admin_auth_client, auth_client, supabase
 
 router = APIRouter()
 
@@ -34,32 +34,32 @@ class ChangePasswordBody(BaseModel):
     new_password: str = Field(min_length=8)
 
 
-def _get_display_name(user_id: str) -> str | None:
-    res = (
-        supabase.table("users")
-        .select("display_name")
-        .eq("id", user_id)
-        .limit(1)
-        .execute()
-    )
-    return res.data[0]["display_name"] if res.data else None
+def _get_profile(user_id: str) -> dict:
+    """Profile payload for session responses.
+
+    `onboarding_completed` defaults to True when the column is absent
+    (migration 0004 not yet applied) so older databases never force
+    existing users back through onboarding.
+    """
+    res = supabase.table("users").select("*").eq("id", user_id).limit(1).execute()
+    row = res.data[0] if res.data else {}
+    return {
+        "display_name": row.get("display_name"),
+        "onboarding_completed": row.get("onboarding_completed", True),
+    }
 
 
 def _session_response(user_id: str, email: str, access_token: str) -> dict:
     return {
         "access_token": access_token,
-        "user": {
-            "id": user_id,
-            "email": email,
-            "display_name": _get_display_name(user_id),
-        },
+        "user": {"id": user_id, "email": email, **_get_profile(user_id)},
     }
 
 
 @router.post("/signup")
 def signup(body: SignUpBody) -> dict:
     try:
-        created = auth_client.auth.admin.create_user(
+        created = admin_auth_client.auth.admin.create_user(
             {
                 "email": body.email,
                 "password": body.password,
@@ -114,7 +114,7 @@ def change_password(
         )
     except Exception:
         raise HTTPException(status_code=400, detail="Current password is incorrect")
-    auth_client.auth.admin.update_user_by_id(
+    admin_auth_client.auth.admin.update_user_by_id(
         current["id"], {"password": body.new_password}
     )
     return {"ok": True}
@@ -125,8 +125,13 @@ def me(current: dict = Depends(get_current_user)) -> dict:
     # Self-heal: ensure the profile row exists (signup also inserts it, but
     # this covers users created before the profile table existed).
     supabase.table("users").upsert({"id": current["id"]}, on_conflict="id").execute()
-    return {
-        "id": current["id"],
-        "email": current["email"],
-        "display_name": _get_display_name(current["id"]),
-    }
+    return {"id": current["id"], "email": current["email"], **_get_profile(current["id"])}
+
+
+@router.post("/onboarding-complete")
+def onboarding_complete(current: dict = Depends(get_current_user)) -> dict:
+    """Mark the onboarding flow finished (or skipped) for this user."""
+    supabase.table("users").update({"onboarding_completed": True}).eq(
+        "id", current["id"]
+    ).execute()
+    return {"id": current["id"], "email": current["email"], **_get_profile(current["id"])}

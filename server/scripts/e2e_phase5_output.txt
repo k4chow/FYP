@@ -1,0 +1,30 @@
+[PASS] new signup starts with onboarding_completed=false ！ me={'id': '7a20be81-bf9f-404e-81fe-e139b67cc235', 'email': 'noacf.phase5.alice.1793871166@example.com', 'display_name': 'Phase 5 alice', 'onboarding_completed': False}
+[PASS] empty profile summary is well-formed ！ status=200 profile={"display_name": "Phase 5 alice", "stats": {"films_watched": 0, "watchlist": 0, "confirmed_insights": 0, "proposed_awaiting_review": 0, "reflections_completed": 0, "top_genres": []}, "summary": null, 
+[PASS] profile summary requires auth ！ status=422
+[PASS] profile summary rejects bogus token ！ status=401
+[PASS] onboarding-complete flips the flag ！ status=200 body={'id': '7a20be81-bf9f-404e-81fe-e139b67cc235', 'email': 'noacf.phase5.alice.1793871166@example.com', 'display_name': 'Phase 5 alice', 'onboarding_completed': True}
+[PASS] flag persists on /auth/me
+[PASS] TMDB search finds Inception ！ status=200
+[PASS] manual add as watched
+[PASS] manual watchlist add never downgrades watched ！ status=201 body={'id': 'a9da439e-0f94-4621-9963-962102d542e8', 'user_id': '7a20be81-bf9f-404e-81fe-e139b67cc235', 'film_id': '397832bb-f5b5-4bf2-8cab-f3fb8db0e6bf', 'status': 'watched', 'source': 'manual', 'rating': None, 'watched_on': None, 'added_at': '2026-11-05T09:33:24.097927+00:00', 'tmdb_id': 27205, 'title': 'Inception', 'year': 2010, 'genres': ['Action', 'Science Fiction', 'Crime'], 'runtime': 148, 'poster_url': 'https://image.tmdb.org/t/p/w342/xlaY2zyzMfkhk0HSC5VUwzoZPU1.jpg'}
+[PASS] watchlist import accepted ！ status=202
+[PASS] watchlist import completed ！ job=completed err=None
+[PASS] import of watchlist.csv never downgrades watched ！ row={'id': 'a9da439e-0f94-4621-9963-962102d542e8', 'status': 'watched', 'source': 'manual', 'rating': None, 'watched_on': None, 'added_at': '2026-11-05T09:33:24.097927+00:00', 'film_id': '397832bb-f5b5-4bf2-8cab-f3fb8db0e6bf', 'tmdb_id': 27205, 'title': 'Inception', 'year': 2010, 'genres': ['Action', 'Science Fiction', 'Crime'], 'runtime': 148, 'poster_url': 'https://image.tmdb.org/t/p/w342/xlaY2zyzMfkhk0HSC5VUwzoZPU1.jpg'}
+[PASS] library counts returned by API ！ counts={'all': 1, 'watched': 1, 'watchlist': 0}
+[PASS] reflection produced proposed memories ！ status=200 n=3
+[PASS] proposed memories never surface in the profile (D12) ！ stats={'films_watched': 1, 'watchlist': 0, 'confirmed_insights': 0, 'proposed_awaiting_review': 3, 'reflections_completed': 1, 'top_genres': [{'genre': 'Action', 'count': 1}, {'genre': 'Science Fiction', 'count': 1}, {'genre': 'Crime', 'count': 1}]}
+[PASS] confirm proposed memory
+[PASS] edit-and-confirm preserves source_message_ids ！ status=200
+[PASS] profile shows confirmed memories, grouped, with attribution ！ summary=Phase 5 alice's reflective profile draws on 3 confirmed insights from 1 completed reflection.
+
+Across 1 watched films, A
+[PASS] confirmed memory can be re-edited, sources preserved ！ status=200
+[PASS] confirmed memory can be rejected (retracted)
+[PASS] rejected memory disappears from the profile ！ ids={'e2736abc-3373-4fd3-8e76-99cacd5f64df', 'd182027d-6ea7-46fa-9370-734a149b388a'}
+[PASS] other user cannot review my memory ！ status=404
+[PASS] other user's profile is empty and isolated
+[PASS] other user sees none of my films
+temporary user 7a20be81-bf9f-404e-81fe-e139b67cc235 deleted
+temporary user 6995c721-1bd9-4f53-a618-115f8b7275d6 deleted
+
+RESULT: 24/24 checks passed

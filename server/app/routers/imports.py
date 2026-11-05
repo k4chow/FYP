@@ -90,6 +90,11 @@ async def import_letterboxd(
     target_status = (
         "watchlist" if "watchlist" in (file.filename or "").lower() else "watched"
     )
+    # Log the inferred status so mis-detections are diagnosable (Bug D).
+    print(
+        f"Letterboxd import: user={current['id']} file={file.filename!r} "
+        f"-> target_status={target_status}"
+    )
     rows = _normalise_rows(reader, target_status)
     if not rows:
         raise HTTPException(status_code=400, detail="No film rows found in the file")

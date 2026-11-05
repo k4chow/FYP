@@ -283,19 +283,68 @@ Owner-scoped; the status filter is optional. Ordered by `updated_at` desc.
 → {"status": "confirmed", "content": "Edited wording chosen by the user"}
 → {"status": "rejected"}
 ← 200 {"memory": {<memory review item>}}
+← 400 {"detail": "Nothing to update — provide edited content"}
 ← 404 {"detail": "Memory not found"}
-← 409 {"detail": "Only proposed memories can be reviewed"}
+← 409 {"detail": "Rejected memories cannot be changed"}
 ```
-Only `proposed → confirmed` and `proposed → rejected` are valid. Edit-and-keep
-updates `content` and `status` together; `source_message_ids` and source
-messages are preserved. Rejecting with edited content, blank content, malformed
-UUIDs, or a status outside the contract returns 422. Cross-user access is 404.
+Valid transitions (D12/D29): `proposed → confirmed` (optionally edited),
+`proposed → rejected`, `confirmed → confirmed` (re-edit wording; a no-content
+no-op returns 400), and `confirmed → rejected` (retraction from My Profile).
+`rejected` is terminal (409). Edit-and-keep updates `content` and `status`
+together; `source_message_ids` and source messages are always preserved.
+Rejecting with edited content, blank content, malformed UUIDs, or a status
+outside the contract returns 422. Cross-user access is 404.
+
+## Phase 5
+
+### `GET /profile/summary` (auth required)
+```json
+← 200 {
+  "display_name": "Cheri",
+  "stats": {
+    "films_watched": 247, "watchlist": 12,
+    "confirmed_insights": 5, "proposed_awaiting_review": 2,
+    "reflections_completed": 3,
+    "top_genres": [{"genre": "Drama", "count": 41}, …]
+  },
+  "summary": "Cheri's reflective profile draws on 5 confirmed insights…",
+  "groups": {
+    "theme": [{<memory review item>}…],
+    "preference": [{<memory review item>}…],
+    "insight": [{<memory review item>}…]
+  }
+}
+← 401 {"detail": "…"}
+```
+The reflective profile (F2). Built ONLY from `confirmed` memories (D12):
+`summary` is a deterministic, human-readable paragraph (no LLM call) and is
+`null` when nothing is confirmed yet; `groups` contains the confirmed memories
+grouped by `kind`, each with `source_messages` and `source_reflection`
+attribution ("from your reflection on <film>, <date>"). `top_genres` is genre
+frequency across watched films. Stats use exact server-side counts.
+
+### `POST /auth/onboarding-complete` (auth required)
+```json
+→ (no body)
+← 200 {"id": "…", "email": "…", "display_name": "…", "onboarding_completed": true}
+```
+Marks the onboarding flow finished (or skipped — every step is skippable).
+`onboarding_completed` is also returned by `POST /auth/signup`,
+`POST /auth/login` and `GET /auth/me`; new signups default to `false`
+(migration 0004, D30).
+
+### Phase 2 contracts extended in Phase 5
+- `GET /films/mine` now returns `{"films": […], "total", "limit", "offset",
+  "counts": {"all", "watched", "watchlist"}}` — exact per-status totals for the
+  My Films header and filter pills, independent of pagination.
+- `POST /films/mine` and Letterboxd imports implement watched-wins (D28): an
+  existing `watched` row is never downgraded to `watchlist`; a `watchlist`
+  row is upgraded to `watched` by any watched signal.
 
 ## Planned (grown per phase)
 
 | Phase | Endpoint | Purpose |
 |---|---|---|
-| 5 | `GET /profile/summary`; contradiction comparison/refinement UI | Reflective profile views |
 | 6 | `POST /recommendations`, `POST /recommendations/{id}/feedback` | Reflection-informed recs + feedback loop |
 
 ## Conventions

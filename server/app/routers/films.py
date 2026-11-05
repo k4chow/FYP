@@ -120,17 +120,63 @@ def my_films(
     if status in ("watched", "watchlist"):
         query = query.eq("status", status)
     res = query.range(offset, offset + limit - 1).execute()
+
+    # Per-status totals for the filter pills — always for the whole library,
+    # regardless of the active filter/pagination.
+    def status_count(value: str | None) -> int:
+        q = (
+            supabase.table("user_films")
+            .select("id", count="exact")
+            .eq("user_id", current["id"])
+            .limit(1)
+        )
+        if value:
+            q = q.eq("status", value)
+        return q.execute().count or 0
+
+    counts = {
+        "all": status_count(None),
+        "watched": status_count("watched"),
+        "watchlist": status_count("watchlist"),
+    }
     return {
         "films": [_flatten(r) for r in res.data],
         "total": res.count or 0,
         "limit": limit,
         "offset": offset,
+        "counts": counts,
+    }
+
+
+def _response_row(user_film: dict, film: dict) -> dict:
+    film_meta = film.get("metadata") or {}
+    return {
+        **user_film,
+        "tmdb_id": film.get("tmdb_id"),
+        "title": film.get("title"),
+        "year": film.get("year"),
+        "genres": film.get("genres") or [],
+        "runtime": film_meta.get("runtime"),
+        "poster_url": tmdb.poster_url(film.get("poster_path")),
     }
 
 
 @router.post("/mine", status_code=201)
 def add_film(body: AddFilmBody, current: dict = Depends(get_current_user)) -> dict:
     film = _ensure_film(body.tmdb_id)
+    existing = (
+        supabase.table("user_films")
+        .select("*")
+        .eq("user_id", current["id"])
+        .eq("film_id", film["id"])
+        .limit(1)
+        .execute()
+        .data
+    )
+    # Watched always wins (D28): adding an already-watched film to the
+    # watchlist must not downgrade its status — return it unchanged.
+    if existing and existing[0]["status"] == "watched" and body.status == "watchlist":
+        return _response_row(existing[0], film)
     row = {
         "user_id": current["id"],
         "film_id": film["id"],
@@ -144,16 +190,7 @@ def add_film(body: AddFilmBody, current: dict = Depends(get_current_user)) -> di
         .upsert(row, on_conflict="user_id,film_id")
         .execute()
     )
-    film_meta = film.get("metadata") or {}
-    return {
-        **res.data[0],
-        "tmdb_id": film.get("tmdb_id"),
-        "title": film.get("title"),
-        "year": film.get("year"),
-        "genres": film.get("genres") or [],
-        "runtime": film_meta.get("runtime"),
-        "poster_url": tmdb.poster_url(film.get("poster_path")),
-    }
+    return _response_row(res.data[0], film)
 
 
 @router.patch("/mine/{user_film_id}")

@@ -186,6 +186,11 @@ def _attempt_row(
         return "duplicate", None, film_id
 
     existing = library.get(film_id)
+    # Watched always wins (D28): a watchlist import must never downgrade an
+    # existing 'watched' row. Watchlist rows carry no rating/date, so there is
+    # nothing else to merge — the row is already current.
+    if existing and existing.get("status") == "watched" and job["target_status"] == "watchlist":
+        return "duplicate", None, film_id
     # Missing values in a later import must not erase an existing rating/date.
     rating = row.get("rating")
     if rating is None and existing:

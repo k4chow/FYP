@@ -1,4 +1,4 @@
-"""Phase 4 E2E: guided insight review (F3/D11/D12) against live Supabase.
+﻿"""Phase 4 E2E: guided insight review (F3/D11/D12) against live Supabase.
 
 Run from server/ with the Python that has the app deps:
     python scripts/e2e_phase4.py
@@ -46,7 +46,7 @@ def request(method: str, path: str, body=None, token: str | None = None):
 
 def check(name: str, cond: bool, detail: str = "") -> None:
     CHECKS.append(bool(cond))
-    log(f"[{'PASS' if cond else 'FAIL'}] {name}" + (f" — {detail}" if detail else ""))
+    log(f"[{'PASS' if cond else 'FAIL'}] {name}" + (f" 鈥?{detail}" if detail else ""))
 
 
 def main() -> None:
@@ -65,9 +65,9 @@ def main() -> None:
 
         # A second auth user proves the service-role server still scopes by owner.
         other_email = f"noacf.phase4.{int(time.time())}@example.com"
-        from app.supabase_client import auth_client, supabase
+        from app.supabase_client import admin_auth_client, supabase
 
-        created = auth_client.auth.admin.create_user(
+        created = admin_auth_client.auth.admin.create_user(
             {
                 "email": other_email,
                 "password": "testpassword123",
@@ -354,9 +354,9 @@ def main() -> None:
     finally:
         if other_user_id:
             try:
-                from app.supabase_client import auth_client
+                from app.supabase_client import admin_auth_client
 
-                auth_client.auth.admin.delete_user(other_user_id)
+                admin_auth_client.auth.admin.delete_user(other_user_id)
                 log("temporary isolation user deleted")
             except Exception as exc:
                 log(f"temporary isolation user cleanup failed: {type(exc).__name__}")

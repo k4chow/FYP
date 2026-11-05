@@ -6,6 +6,7 @@ export interface User {
   id: string
   email: string
   display_name?: string | null
+  onboarding_completed?: boolean
 }
 
 interface AuthContextValue {
@@ -14,6 +15,7 @@ interface AuthContextValue {
   signIn: (email: string, password: string) => Promise<void>
   signUp: (email: string, password: string, displayName: string) => Promise<void>
   signOut: () => void
+  completeOnboarding: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -56,8 +58,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
   }
 
+  async function completeOnboarding() {
+    const updated = await api<User>('/auth/onboarding-complete', {
+      method: 'POST',
+      auth: true,
+    })
+    setUser(updated)
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider
+      value={{ user, loading, signIn, signUp, signOut, completeOnboarding }}
+    >
       {children}
     </AuthContext.Provider>
   )

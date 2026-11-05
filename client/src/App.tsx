@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import type { ReactElement } from 'react'
 import { AuthProvider, useAuth } from './auth/AuthContext'
 import Landing from './pages/Landing'
@@ -15,11 +15,19 @@ import Reflections from './pages/Reflections'
 import ReflectionNew from './pages/ReflectionNew'
 import ReflectionChat from './pages/ReflectionChat'
 import ReviewReflection from './pages/ReviewReflection'
+import Onboarding from './pages/Onboarding'
+import Profile from './pages/Profile'
 
 function RequireAuth({ children }: { children: ReactElement }) {
   const { user, loading } = useAuth()
+  const location = useLocation()
   if (loading) return <div className="center-screen muted">Loading…</div>
   if (!user) return <Navigate to="/signin" replace />
+  // New users are routed through onboarding first (every step is skippable);
+  // existing/legacy accounts have the flag set and never see this.
+  if (user.onboarding_completed === false && location.pathname !== '/onboarding') {
+    return <Navigate to="/onboarding" replace />
+  }
   return children
 }
 
@@ -32,6 +40,14 @@ export default function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route
+            path="/onboarding"
+            element={
+              <RequireAuth>
+                <Onboarding />
+              </RequireAuth>
+            }
+          />
           <Route
             path="/app"
             element={
@@ -48,7 +64,7 @@ export default function App() {
             <Route path="reflections/new" element={<ReflectionNew />} />
             <Route path="reflections/:id/review" element={<ReviewReflection />} />
             <Route path="reflections/:id" element={<ReflectionChat />} />
-            <Route path="profile" element={<Placeholder title="My Profile" phase={5} />} />
+            <Route path="profile" element={<Profile />} />
             <Route path="settings" element={<Settings />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

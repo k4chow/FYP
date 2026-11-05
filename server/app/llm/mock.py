@@ -1,11 +1,18 @@
-"""Deterministic mock LLM provider (D5).
+"""Mock LLM provider (D5) with a randomised reflective prompt bank (D27).
 
 Empathetic, reflective replies that reference the film and the user's own
-words. No randomness anywhere: template selection is a pure function of the
-bounded history and the turn count, so demos, screenshots and tests are
-reproducible without an API key.
+words. Reflection questions are drawn from prompt banks (openers, film
+follow-ups, planning questions, free-reflection deepeners) and sampled
+without repetition within a session: a question already asked in the bounded
+history is not asked again until the bank is exhausted (then it resets,
+still excluding the most recent question).
+
+Randomness is injectable: pass ``MockLLMProvider(rng=random.Random(seed))``
+for deterministic tests and demos. The default singleton (get_llm) uses an
+unseeded ``random.Random`` so real sessions vary naturally.
 """
 
+import random
 import re
 
 from .base import ChatContext, LLMProvider
@@ -56,6 +63,26 @@ _QUESTIONS_PLANNING = (
     "Where did you first hear about {film} — and what stuck with you?",
     "Is there something in your life right now that makes this the right moment for {film}?",
     "What would make {film} a great watch for you, do you think?",
+)
+
+# Opening prompts (used once per conversation, sampled per session).
+_OPENERS_FILM = (
+    "What stayed with you most after watching it?",
+    "When you think back on it now, what's the first thing that comes up?",
+    "If you had to keep just one moment of it, which would it be?",
+    "How did it leave you feeling, once the credits rolled?",
+)
+
+_OPENERS_PLANNING = (
+    "What draws you to it? What are you hoping it will make you feel?",
+    "What made you add this one to your list?",
+    "What would make this a great watch for you?",
+)
+
+_OPENERS_FREE = (
+    "What's coming up for you as you sit with that?",
+    "Where does your mind go first when you think about it?",
+    "What feels most alive in that thought right now?",
 )
 
 _QUESTIONS_FREE = (
@@ -124,8 +151,14 @@ def _substantive_user_messages(messages: list[dict]) -> list[dict]:
 
 
 class MockLLMProvider(LLMProvider):
-    """Scripted, deterministic provider — the reference implementation of the
-    seam a real provider (e.g. OpenAI) will fill later."""
+    """Scripted provider — the reference implementation of the seam a real
+    provider (e.g. OpenAI) will fill later.
+
+    `rng` is injectable (D27): seeded in tests, unseeded by default.
+    """
+
+    def __init__(self, rng: random.Random | None = None) -> None:
+        self._rng = rng or random.Random()
 
     def opening(self, context: ChatContext) -> str:
         film = context.film or {}
@@ -134,19 +167,17 @@ class MockLLMProvider(LLMProvider):
         if title and context.watch_type == "planning":
             return (
                 f"{title} is one you're planning to watch — a different kind of "
-                f"reflection{name}. What draws you to it? What are you hoping "
-                f"it will make you feel?"
+                f"reflection{name}. {self._rng.choice(_OPENERS_PLANNING)}"
             )
         if title:
             return (
                 f"Let's talk about {title}{name}. Take your time — there are no "
-                f"right or wrong answers here. What stayed with you most after "
-                f"watching it?"
+                f"right or wrong answers here. {self._rng.choice(_OPENERS_FILM)}"
             )
         if context.title:
             return (
                 f"You wanted to reflect on this: “{context.title}” "
-                f"What's coming up for you as you sit with that?"
+                f"{self._rng.choice(_OPENERS_FREE)}"
             )
         return "This is your space to reflect. What's on your mind today?"
 
@@ -172,7 +203,7 @@ class MockLLMProvider(LLMProvider):
         if normalised in _NEW_QUESTION:
             return (
                 "Of course — let's try a different angle. "
-                f"{self._question(context, offset=1)}"
+                f"{self._question(context, messages)}"
             )
         if normalised in _MAYBE_LATER:
             return (
@@ -180,7 +211,7 @@ class MockLLMProvider(LLMProvider):
                 "pick this up whenever you're ready — or simply sit with it."
             )
 
-        parts: list[str] = [_ACKS[context.turn % len(_ACKS)]]
+        parts: list[str] = [self._rng.choice(_ACKS)]
 
         hit = _genre_hit(text, film.get("genres") or [])
         keywords = _keywords(text)
@@ -190,9 +221,7 @@ class MockLLMProvider(LLMProvider):
                 "that says something about what you notice in stories."
             )
         elif keywords:
-            parts.append(
-                _REFLECTIONS[context.turn % len(_REFLECTIONS)].format(kw=keywords[0])
-            )
+            parts.append(self._rng.choice(_REFLECTIONS).format(kw=keywords[0]))
 
         # Occasionally weave in a confirmed memory (F4: confirmed only).
         if context.memories and context.turn % 3 == 2:
@@ -202,10 +231,16 @@ class MockLLMProvider(LLMProvider):
                 "Does that feel present here too?"
             )
 
-        parts.append(self._question(context))
+        parts.append(self._question(context, messages))
         return " ".join(parts)
 
-    def _question(self, context: ChatContext, offset: int = 0) -> str:
+    def _question(self, context: ChatContext, messages: list[dict]) -> str:
+        """Sample a follow-up question not yet asked in this session (D27).
+
+        Questions already present in the bounded assistant history are
+        excluded; when the bank is exhausted it resets, still excluding the
+        most recently asked question so back-to-back repeats never happen.
+        """
         film = context.film or {}
         if context.watch_type == "planning" and film:
             bank = _QUESTIONS_PLANNING
@@ -213,9 +248,23 @@ class MockLLMProvider(LLMProvider):
             bank = _QUESTIONS_FILM
         else:
             bank = _QUESTIONS_FREE
-        return bank[(context.turn + offset) % len(bank)].format(
-            film=film.get("title") or "the film"
-        )
+        film_name = film.get("title") or "the film"
+        formatted = [template.format(film=film_name) for template in bank]
+
+        asked = [
+            question
+            for message in messages
+            if message.get("role") == "assistant"
+            for question in formatted
+            if question in str(message.get("content", ""))
+        ]
+        fresh = [question for question in formatted if question not in asked]
+        if fresh:
+            return self._rng.choice(fresh)
+        # Bank exhausted: reset, but never repeat the most recent question.
+        last = asked[-1] if asked else None
+        remaining = [question for question in formatted if question != last]
+        return self._rng.choice(remaining or formatted)
 
     def extract_insights(
         self, messages: list[dict], context: ChatContext

@@ -39,3 +39,13 @@ supabase: Client = create_client(
 auth_client: Client = create_client(
     settings.supabase_url, settings.supabase_service_role_key
 )
+
+# Dedicated client for ADMIN auth calls (create_user / update_user_by_id /
+# delete_user). gotrue-py persists sign-in state on the client, so once
+# `auth_client` performs sign_in_with_password, its Authorization header
+# becomes the signed-in USER's JWT and subsequent admin calls on it fail
+# with AuthApiError "User not allowed" (or "token is expired" once the
+# user token lapses). This client must never perform a sign-in.
+admin_auth_client: Client = create_client(
+    settings.supabase_url, settings.supabase_service_role_key
+)

@@ -30,11 +30,18 @@ export interface FilmDetail extends SearchResult {
   in_library: { id: string; status: string; rating: number | null } | null
 }
 
+export interface LibraryCounts {
+  all: number
+  watched: number
+  watchlist: number
+}
+
 export interface LibraryPage {
   films: LibraryFilm[]
   total: number
   limit: number
   offset: number
+  counts: LibraryCounts
 }
 
 export interface ImportIssue {
@@ -82,19 +89,22 @@ export const getMyFilmsPage = (
 }
 
 // Fetch every page so client-side filters/sorts operate on the full library,
-// not just Supabase's first 1,000 rows.
+// not just Supabase's first 1,000 rows. `counts` come from the server (exact
+// per-status totals), not from the loaded pages.
 export const getMyFilms = async (status?: 'watched' | 'watchlist') => {
   const films: LibraryFilm[] = []
   let offset = 0
   let total = 0
+  let counts: LibraryCounts | null = null
   do {
     const page = await getMyFilmsPage(status, 250, offset)
     films.push(...page.films)
     total = page.total
+    counts = page.counts ?? counts
     offset += page.films.length
     if (page.films.length === 0) break
   } while (offset < total)
-  return { films }
+  return { films, counts }
 }
 
 export const searchFilms = (q: string) =>

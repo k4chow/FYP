@@ -10,6 +10,17 @@ export interface MemorySourceMessage {
   created_at: string
 }
 
+// "From your reflection on <film>, <date>" attribution, derived server-side
+// from the validated conversation linkage.
+export interface MemorySourceReflection {
+  conversation_id: string
+  title: string | null
+  watch_type: 'seen' | 'planning' | null
+  film_title: string | null
+  film_year: number | null
+  date: string
+}
+
 export interface Memory {
   id: string
   conversation_id: string | null
@@ -19,6 +30,7 @@ export interface Memory {
   explanation: string
   source_message_ids: string[]
   source_messages: MemorySourceMessage[]
+  source_reflection?: MemorySourceReflection | null
   created_at: string
   updated_at: string
 }
