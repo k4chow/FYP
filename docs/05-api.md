@@ -305,7 +305,8 @@ outside the contract returns 422. Cross-user access is 404.
     "films_watched": 247, "watchlist": 12,
     "confirmed_insights": 5, "proposed_awaiting_review": 2,
     "reflections_completed": 3,
-    "top_genres": [{"genre": "Drama", "count": 41}, …]
+    "top_genres": [{"genre": "Drama", "count": 41}, …],
+    "genre_counts": [{"genre": "Drama", "count": 41}, …]
   },
   "summary": "Cheri's reflective profile draws on 5 confirmed insights…",
   "groups": {
@@ -321,14 +322,18 @@ The reflective profile (F2). Built ONLY from `confirmed` memories (D12):
 `null` when nothing is confirmed yet; `groups` contains the confirmed memories
 grouped by `kind`, each with `source_messages` and `source_reflection`
 attribution ("from your reflection on <film>, <date>"). `top_genres` is genre
-frequency across watched films. Stats use exact server-side counts.
+frequency across watched films (top 3, for the summary sentence and the
+overview pills); `genre_counts` is the same frequency with no limit, powering
+the profile's Genres tab. Stats use exact server-side counts.
 
 ### `POST /auth/onboarding-complete` (auth required)
 ```json
 → (no body)
 ← 200 {"id": "…", "email": "…", "display_name": "…", "onboarding_completed": true}
 ```
-Marks the onboarding flow finished (or skipped — every step is skippable).
+Marks the onboarding flow finished. Only the Letterboxd import step is
+skippable; the client requires the film picks, first reflection and
+questionnaire before calling this.
 `onboarding_completed` is also returned by `POST /auth/signup`,
 `POST /auth/login` and `GET /auth/me`; new signups default to `false`
 (migration 0004, D30).

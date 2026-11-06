@@ -43,6 +43,7 @@ export default function Profile() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [draft, setDraft] = useState('')
   const [savingId, setSavingId] = useState<string | null>(null)
+  const [tab, setTab] = useState<'overview' | 'genres'>('overview')
 
   const load = useCallback(() => {
     setLoading(true)
@@ -82,6 +83,7 @@ export default function Profile() {
 
   const { stats } = profile
   const confirmedTotal = KIND_ORDER.reduce((n, k) => n + profile.groups[k].length, 0)
+  const maxGenreCount = stats.genre_counts[0]?.count ?? 1
 
   return (
     <div>
@@ -93,6 +95,23 @@ export default function Profile() {
       </p>
       {error && <p className="form-error">{error}</p>}
 
+      <div className="tabs">
+        <button
+          className={`tab${tab === 'overview' ? ' active' : ''}`}
+          onClick={() => setTab('overview')}
+        >
+          Overview
+        </button>
+        <button
+          className={`tab${tab === 'genres' ? ' active' : ''}`}
+          onClick={() => setTab('genres')}
+        >
+          Genres
+        </button>
+      </div>
+
+      {tab === 'overview' && (
+        <>
       <div className="stat-strip">
         <div className="stat">
           <span className="stat-num">{stats.films_watched}</span>
@@ -113,12 +132,20 @@ export default function Profile() {
       </div>
 
       {stats.top_genres.length > 0 && (
-        <div className="pills" style={{ marginBottom: '1.25rem' }}>
+        <div
+          className="pills"
+          style={{ marginBottom: '1.25rem', alignItems: 'center', flexWrap: 'wrap' }}
+        >
           {stats.top_genres.map((g) => (
             <span className="pill active" key={g.genre}>
               {g.genre} · {g.count}
             </span>
           ))}
+          {stats.genre_counts.length > stats.top_genres.length && (
+            <button className="link link-btn" onClick={() => setTab('genres')}>
+              See all {stats.genre_counts.length} genres →
+            </button>
+          )}
         </div>
       )}
 
@@ -245,6 +272,46 @@ export default function Profile() {
           </Link>
           .
         </p>
+      )}
+        </>
+      )}
+
+      {tab === 'genres' && (
+        <section>
+          {stats.genre_counts.length === 0 ? (
+            <p className="muted">
+              Mark some films as watched and your genre breakdown will appear
+              here.
+            </p>
+          ) : (
+            <>
+              <p className="muted" style={{ maxWidth: '44rem' }}>
+                Every genre across your {stats.films_watched} watched films.
+                Films can belong to several genres, so the counts add up to
+                more than {stats.films_watched}.
+              </p>
+              <div className="genre-list">
+                {stats.genre_counts.map((g) => (
+                  <div className="genre-row" key={g.genre}>
+                    <span className="genre-name">{g.genre}</span>
+                    <div className="genre-track">
+                      <div
+                        className="genre-fill"
+                        style={{
+                          width: `${Math.max(
+                            2,
+                            Math.round((g.count / maxGenreCount) * 100),
+                          )}%`,
+                        }}
+                      />
+                    </div>
+                    <span className="genre-count">{g.count}</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </section>
       )}
     </div>
   )

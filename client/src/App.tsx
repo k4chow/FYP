@@ -23,8 +23,9 @@ function RequireAuth({ children }: { children: ReactElement }) {
   const location = useLocation()
   if (loading) return <div className="center-screen muted">Loading…</div>
   if (!user) return <Navigate to="/signin" replace />
-  // New users are routed through onboarding first (every step is skippable);
-  // existing/legacy accounts have the flag set and never see this. The
+  // New users are routed through onboarding first (only the Letterboxd
+  // import step is skippable); existing/legacy accounts have the flag set
+  // and never see this. The
   // reflection chat/review pages stay reachable so onboarding can open the
   // first reflection without leaving the flow.
   const allowedDuringOnboarding =

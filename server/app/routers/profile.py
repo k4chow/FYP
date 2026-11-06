@@ -34,8 +34,12 @@ def _count(table: str, user_id: str, **filters: str) -> int:
     return query.limit(1).execute().count or 0
 
 
-def _top_genres(user_id: str) -> list[dict]:
-    """Genre frequency across the user's watched films, most common first."""
+def _genre_counts(user_id: str, limit: int | None = _TOP_GENRES) -> list[dict]:
+    """Genre frequency across the user's watched films, most common first.
+
+    limit=None returns every genre (the profile page's Genres tab); the
+    default keeps just the top few for the summary sentence.
+    """
     counts: Counter[str] = Counter()
     offset = 0
     while True:
@@ -56,7 +60,7 @@ def _top_genres(user_id: str) -> list[dict]:
         offset += _PAGE
     return [
         {"genre": genre, "count": count}
-        for genre, count in counts.most_common(_TOP_GENRES)
+        for genre, count in counts.most_common(limit)
     ]
 
 
@@ -123,7 +127,8 @@ def profile_summary(current: dict = Depends(get_current_user)) -> dict:
         "reflections_completed": _count(
             "conversations", user_id, type="reflection", status="completed"
         ),
-        "top_genres": _top_genres(user_id),
+        "top_genres": _genre_counts(user_id),
+        "genre_counts": _genre_counts(user_id, limit=None),
     }
     memories = memory_svc.list_for_user(user_id, "confirmed")
     groups = {

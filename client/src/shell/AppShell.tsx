@@ -71,7 +71,6 @@ export default function AppShell() {
       </aside>
       <main className="content">
         <header className="topbar">
-          <div className="search">Search films, themes, directors… (arrives with Discover in Phase 6)</div>
           <div className="avatar" title={user?.email}>
             {initial}
           </div>

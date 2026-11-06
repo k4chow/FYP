@@ -8,6 +8,9 @@ export interface ProfileStats {
   proposed_awaiting_review: number
   reflections_completed: number
   top_genres: { genre: string; count: number }[]
+  // Every genre across the watched library (the Genres tab); top_genres is
+  // just the first few of these, kept for the summary sentence.
+  genre_counts: { genre: string; count: number }[]
 }
 
 // GET /profile/summary (F2): the reflective profile, built only from
