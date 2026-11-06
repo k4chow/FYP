@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import AddFilmModal from '../components/AddFilmModal'
+import DisapprovalNote from '../components/DisapprovalNote'
 import { getMyFilms, removeFilm } from '../lib/films'
 import type { LibraryCounts, LibraryFilm } from '../lib/films'
 
@@ -184,6 +185,7 @@ export default function MyFilms() {
                 .filter(Boolean)
                 .join(' · ')}
             </p>
+            <DisapprovalNote title={film.title} year={film.year} />
           </div>
         ))}
       </div>

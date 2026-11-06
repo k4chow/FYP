@@ -110,21 +110,47 @@ def discover_movies(
     sort_by: str = "popularity.desc",
     page: int = 1,
     year: int | None = None,
+    person_id: int | None = None,
+    min_votes: int = 200,
 ) -> list[dict]:
-    """TMDB discovery listing, optionally matching ANY of the given genres."""
+    """TMDB discovery listing, optionally matching ANY of the given genres.
+
+    `person_id` restricts results to films that person has credit on
+    (`with_crew`), which is how a director-scoped request such as "only Paul
+    Thomas Anderson films" is served. `min_votes` is relaxed for those
+    narrower queries so a single filmography is not filtered away.
+    """
     params: dict = {
         "language": "en-US",
         "sort_by": sort_by,
         "include_adult": "false",
-        "vote_count.gte": "200",
+        "vote_count.gte": str(min_votes),
         "page": str(max(1, page)),
     }
     if genre_ids:
         params["with_genres"] = "|".join(str(g) for g in genre_ids)
     if year:
         params["primary_release_year"] = str(year)
+    if person_id:
+        params["with_crew"] = str(person_id)
     data = _get("/discover/movie", params) or {}
     return data.get("results", [])
+
+
+def search_person(query: str) -> dict | None:
+    """Resolve a person (typically a director) to their TMDB record."""
+    text = (query or "").strip()
+    if not text:
+        return None
+    data = _get("/search/person", {"query": text, "include_adult": "false"}) or {}
+    results = data.get("results") or []
+    if not results:
+        return None
+    folded = text.casefold()
+    return next(
+        (r for r in results if str(r.get("name") or "").casefold() == folded),
+        results[0],
+    )
 
 
 def _year_from_release(release: str | None) -> int | None:

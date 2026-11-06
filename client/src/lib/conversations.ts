@@ -40,11 +40,19 @@ export interface CreateConversationInput {
   title?: string
 }
 
-export const listConversations = (status?: 'active' | 'completed') =>
-  api<{ conversations: Conversation[] }>(
-    `/conversations${status ? `?status=${status}` : ''}`,
+export const listConversations = (
+  status?: 'active' | 'completed',
+  type?: 'reflection' | 'discovery',
+) => {
+  const params = new URLSearchParams()
+  if (status) params.set('status', status)
+  if (type) params.set('type', type)
+  const qs = params.toString()
+  return api<{ conversations: Conversation[] }>(
+    `/conversations${qs ? `?${qs}` : ''}`,
     { auth: true },
   )
+}
 
 export const createConversation = (body: CreateConversationInput) =>
   api<{ conversation: Conversation; messages: ChatMessage[] }>('/conversations', {
@@ -71,4 +79,34 @@ export const endConversation = (id: string) =>
       method: 'POST',
       auth: true,
     },
+  )
+
+// --- Ephemeral Film Assistant (Phase 7) -------------------------------------
+// The assistant no longer creates a persisted conversation: the transcript
+// lives in the client (sessionStorage) and each turn is a stateless request.
+
+export interface AssistantRecommendation {
+  tmdb_id: number
+  title: string
+  year: number | null
+  genres: string[]
+  runtime: number | null
+  overview: string
+  poster_url: string | null
+  vote_average: number
+  themes: string[]
+}
+
+interface AssistantMessage {
+  role: 'user' | 'assistant'
+  content: string
+}
+
+export const assistantOpening = () =>
+  api<{ reply: string }>('/assistant/opening', { method: 'POST', auth: true })
+
+export const assistantChat = (messages: AssistantMessage[]) =>
+  api<{ reply: string; recommendations: AssistantRecommendation[] }>(
+    '/assistant/chat',
+    { method: 'POST', auth: true, body: { messages } },
   )

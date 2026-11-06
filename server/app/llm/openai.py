@@ -65,6 +65,11 @@ def _context_block(context: ChatContext) -> str:
             "help finding their next film. Recommend decisively from the "
             "candidate list below."
         )
+        if context.request:
+            lines.append(
+                "Explicit request to honour: " + context.request + " "
+                "Recommend only films that satisfy it."
+            )
         if context.library_titles:
             lines.append(
                 "Films already in the user's library — NEVER recommend any "

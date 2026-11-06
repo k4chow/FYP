@@ -1,14 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { ApiError } from '../lib/api'
 import DisapprovalNote from '../components/DisapprovalNote'
-import {
-  createConversation,
-  endConversation,
-  getConversation,
-  sendMessage,
-} from '../lib/conversations'
-import type { ChatMessage, Conversation } from '../lib/conversations'
+import { assistantChat, assistantOpening } from '../lib/conversations'
+import type { AssistantRecommendation } from '../lib/conversations'
 import { addFilm, formatRuntime } from '../lib/films'
 import { sendFeedback } from '../lib/recommendations'
 
@@ -20,66 +14,69 @@ const MOODS = [
   'A good cry',
 ]
 
-// A film card as the server embeds it in assistant message metadata
-// (`metadata.recommendations`): verified TMDB data, no recommendation-engine
-// fields (score/why) — the assistant's own picks, not the Discover feed.
-interface AssistantRec {
-  tmdb_id: number
-  title: string
-  year: number | null
-  genres: string[]
-  runtime: number | null
-  overview: string
-  poster_url: string | null
-  vote_average: number
-  themes: string[]
+// A recommendation card returned by a Film Assistant turn: verified TMDB data
+// (the assistant's own picks), not the Discover feed's scored/sorted cards.
+type AssistantRec = AssistantRecommendation
+
+// The assistant transcript is session-scoped (Phase 7): it survives navigation
+// within the tab but clears when the tab closes, and nothing is persisted on
+// the server. Shape of what we write to / read from sessionStorage.
+const STORAGE_KEY = 'noacf.assistant.transcript'
+
+interface LocalMessage {
+  role: 'user' | 'assistant'
+  content: string
+  createdAt: string
+  recommendations?: AssistantRec[]
 }
 
-// Film Assistant (F10): chat on the left, live recommendation cards on the
-// right. Assistant replies carry verified TMDB cards in message metadata and
-// the newest set of picks is always what the right panel shows.
-export default function Assistant() {
-  const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const existingId = searchParams.get('c')
+function loadTranscript(): LocalMessage[] {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY)
+    const parsed = raw ? JSON.parse(raw) : []
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
 
-  const [conversation, setConversation] = useState<Conversation | null>(null)
-  const [messages, setMessages] = useState<ChatMessage[]>([])
+// Film Assistant (F10, Phase 7): chat on the left, live recommendation cards on
+// the right. The transcript is session-scoped — nothing is persisted to the
+// server — and the newest set of picks is always what the right panel shows.
+export default function Assistant() {
+  const [messages, setMessages] = useState<LocalMessage[]>(loadTranscript)
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
-  const [ending, setEnding] = useState(false)
   const [added, setAdded] = useState<Record<number, boolean>>({})
   const [busyCard, setBusyCard] = useState<number | null>(null)
   const [expanded, setExpanded] = useState<number | null>(null)
   const [error, setError] = useState('')
-  const [notFound, setNotFound] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    let cancelled = false
-    const request = existingId
-      ? getConversation(existingId)
-      : createConversation({ type: 'discovery', title: 'Film Assistant' })
-    request
-      .then((res) => {
-        if (cancelled) return
-        if (res.conversation.type !== 'discovery') {
-          // Reflection conversations belong to the reflection chat page.
-          navigate(`/app/reflections/${res.conversation.id}`, { replace: true })
-          return
-        }
-        setConversation(res.conversation)
-        setMessages(res.messages)
-      })
-      .catch((err) =>
-        err instanceof ApiError && err.status === 404
-          ? setNotFound(true)
-          : setError('Could not open the Film Assistant.'),
-      )
-    return () => {
-      cancelled = true
+  async function open() {
+    setError('')
+    try {
+      const res = await assistantOpening()
+      setMessages([
+        { role: 'assistant', content: res.reply, createdAt: new Date().toISOString() },
+      ])
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Could not open the Film Assistant.')
     }
-  }, [existingId, navigate])
+  }
+
+  // No saved transcript yet → greet with a fresh opening message.
+  useEffect(() => {
+    if (messages.length === 0) open()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Persist the transcript to sessionStorage so tab navigation keeps it, and
+  // clear it when the chat is ended.
+  useEffect(() => {
+    if (messages.length) sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
+    else sessionStorage.removeItem(STORAGE_KEY)
+  }, [messages])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ block: 'end' })
@@ -89,39 +86,39 @@ export default function Assistant() {
   const recs = useMemo<AssistantRec[]>(() => {
     for (let i = messages.length - 1; i >= 0; i--) {
       const message = messages[i]
-      if (message.role !== 'assistant') continue
-      const found = (message.metadata ?? {}) as { recommendations?: AssistantRec[] }
-      if (Array.isArray(found.recommendations) && found.recommendations.length > 0) {
-        return found.recommendations
+      if (message.role === 'assistant' && (message.recommendations?.length ?? 0) > 0) {
+        return message.recommendations as AssistantRec[]
       }
     }
     return []
   }, [messages])
 
-  const active = conversation?.status === 'active'
-
   async function send(raw: string) {
     const content = raw.trim()
-    const id = conversation?.id
-    if (!content || !id || sending || !active) return
+    if (!content || sending) return
     setSending(true)
     setError('')
     setInput('')
-    // Optimistic user bubble; replaced by the server's stored messages.
-    const tempId = `temp-${Date.now()}`
-    setMessages((ms) => [
-      ...ms,
-      { id: tempId, role: 'user', content, metadata: {}, created_at: new Date().toISOString() },
-    ])
+    const history: LocalMessage[] = [
+      ...messages,
+      { role: 'user', content, createdAt: new Date().toISOString() },
+    ]
+    setMessages(history)
     try {
-      const res = await sendMessage(id, content)
-      setMessages((ms) => [
-        ...ms.filter((m) => m.id !== tempId),
-        res.user_message,
-        res.assistant_message,
+      const res = await assistantChat(
+        history.map(({ role, content }) => ({ role, content })),
+      )
+      setMessages([
+        ...history,
+        {
+          role: 'assistant',
+          content: res.reply,
+          createdAt: new Date().toISOString(),
+          recommendations: res.recommendations,
+        },
       ])
     } catch (err) {
-      setMessages((ms) => ms.filter((m) => m.id !== tempId))
+      setMessages(messages)
       setError(err instanceof ApiError ? err.message : 'Could not send your message.')
     } finally {
       setSending(false)
@@ -129,20 +126,15 @@ export default function Assistant() {
   }
 
   async function end() {
-    if (!conversation || ending) return
-    setEnding(true)
+    // Ending is just discarding the session transcript (nothing is persisted).
+    setMessages([])
     setError('')
-    try {
-      await endConversation(conversation.id)
-      navigate('/app/discover')
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Could not end the chat.')
-      setEnding(false)
-    }
+    setAdded({})
+    await open()
   }
 
   async function moreLikeThis(rec: AssistantRec) {
-    if (busyCard === rec.tmdb_id || sending || !active) return
+    if (busyCard === rec.tmdb_id || sending) return
     setBusyCard(rec.tmdb_id)
     setError('')
     try {
@@ -169,17 +161,6 @@ export default function Assistant() {
     }
   }
 
-  if (notFound) {
-    return (
-      <div>
-        <Link className="back-link" style={{ marginTop: 0 }} to="/app/discover">
-          ← Back to Discover
-        </Link>
-        <p className="muted">This chat no longer exists.</p>
-      </div>
-    )
-  }
-
   return (
     <div className="assistant-layout">
       <section className="card chat-panel">
@@ -191,20 +172,18 @@ export default function Assistant() {
             <h2>Film Assistant</h2>
             <p className="muted">Tell it your mood — it picks the films</p>
           </div>
-          {active && (
-            <button className="btn ghost" onClick={end} disabled={ending}>
-              {ending ? 'Ending…' : '✕ End chat'}
-            </button>
-          )}
+          <button className="btn ghost" onClick={end} disabled={sending}>
+            ✕ End chat
+          </button>
         </header>
 
         <div className="chat-msgs">
-          {messages.map((m) => (
-            <div key={m.id} className={`msg-row ${m.role}`}>
+          {messages.map((m, i) => (
+            <div key={`${m.role}-${m.createdAt}-${i}`} className={`msg-row ${m.role}`}>
               <div className="msg">
                 {m.content}
                 <span className="msg-meta">
-                  {new Date(m.created_at).toLocaleTimeString(undefined, {
+                  {new Date(m.createdAt).toLocaleTimeString(undefined, {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}
@@ -222,51 +201,35 @@ export default function Assistant() {
           </p>
         )}
 
-        {active ? (
-          <>
-            <div className="chat-input-row">
-              <input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && send(input)}
-                placeholder="What are you in the mood for…"
-                disabled={sending}
-              />
-              <button
-                className="btn primary"
-                onClick={() => send(input)}
-                disabled={sending || !input.trim()}
-                aria-label="Send"
-              >
-                ➤
-              </button>
-            </div>
-            <div className="quick-replies">
-              {MOODS.map((mood) => (
-                <button
-                  key={mood}
-                  className="chip-btn"
-                  disabled={sending}
-                  onClick={() => send(mood)}
-                >
-                  {mood}
-                </button>
-              ))}
-            </div>
-          </>
-        ) : (
-          <div className="chat-done">
-            <span>Chat ended ✓</span>
-            <Link to="/app/discover">Back to Discover</Link>
+        <div className="chat-input-row">
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && send(input)}
+            placeholder="What are you in the mood for…"
+            disabled={sending}
+          />
+          <button
+            className="btn primary"
+            onClick={() => send(input)}
+            disabled={sending || !input.trim()}
+            aria-label="Send"
+          >
+            ➤
+          </button>
+        </div>
+        <div className="quick-replies">
+          {MOODS.map((mood) => (
             <button
-              className="link-button"
-              onClick={() => navigate('/app/discover/assistant')}
+              key={mood}
+              className="chip-btn"
+              disabled={sending}
+              onClick={() => send(mood)}
             >
-              Start a new chat
+              {mood}
             </button>
-
-          </div>
-        )}
+          ))}
+        </div>
       </section>
 
 
@@ -275,7 +238,7 @@ export default function Assistant() {
           <h2>Here are some recommendations for you</h2>
           <button
             className="btn ghost small"
-            disabled={sending || !active}
+            disabled={sending}
             onClick={() => send('Can you suggest something different?')}
           >
             ↻ Regenerate
@@ -344,7 +307,7 @@ export default function Assistant() {
                     <div className="assistant-rec-details">
                       <p className="meta">
                         TMDB rating: {rec.vote_average > 0 ? `${(rec.vote_average / 2).toFixed(1)} / 5` : 'unrated'}
-                        {rec.themes.length > 0 && rec.themes.length > 2
+                        {rec.themes.length > 2
                           ? ` · more themes: ${rec.themes.slice(2).join(', ')}`
                           : ''}
                       </p>
@@ -368,7 +331,7 @@ export default function Assistant() {
                     </button>
                     <button
                       className="btn ghost small"
-                      disabled={busyCard === rec.tmdb_id || sending || !active}
+                      disabled={busyCard === rec.tmdb_id || sending}
                       onClick={() => moreLikeThis(rec)}
                     >
                       More like this

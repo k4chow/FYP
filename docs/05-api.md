@@ -413,6 +413,41 @@ are the user's own words, so no review step applies. Blank answers are
 skipped (`saved` counts only stored rows); the Discover cache is invalidated
 when anything is saved. Max 8 answers, 500 chars each.
 
+## Phase 7
+
+The Film Assistant is **ephemeral**: it writes no `conversations` or `messages`
+rows, so it never appears in My Reflections, reflection history, or the Discover
+grid. The client owns the transcript (sessionStorage) and re-sends the full,
+oldest-first history each turn; the server only bounds the provider window.
+"Ending" the chat is the client discarding its transcript.
+
+### `POST /assistant/opening` (auth required)
+```json
+← 200 {"reply": "What are you in the mood for tonight?"}
+```
+The assistant's first message, built from the user's confirmed memories and
+display name. Stateless — no conversation row is created.
+
+### `POST /assistant/chat` (auth required)
+```json
+→ {"messages": [{"role": "user", "content": "recommend me Thor: Ragnarok"}]}
+← 200 {"reply": "…", "recommendations": [
+  {"tmdb_id": 284053, "title": "Thor: Ragnarok", "year": 2017,
+   "genres": ["Action", "Comedy"], "poster_url": "…", "vote_average": 7.6,
+   "runtime": 130, "overview": "…", "themes": []}
+]}
+→ {"messages": [{"role": "user", "content": ""}]} → 422
+```
+One stateless turn. The server parses the latest user message for an explicit
+constraint (F12): a director ("…by Paul Thomas Anderson"), a named title, or a
+genre — each validated against TMDB so only names actually present in the
+message are accepted. A constrained request rebuilds the candidate pool around
+that ask instead of the generic profile. A film the user names is answered
+directly and never refused; if it is already in their library the assistant
+acknowledges it ("already in your library — here are films close to it
+instead") and returns close alternatives. The reply and `recommendations`
+(each a verified film card) are returned together; nothing is persisted.
+
 ## Conventions
 - Auth: `Authorization: Bearer <supabase access token>`; server verifies JWT.
 - Errors: RFC 7807-style `{ "detail": "..." }` with appropriate status codes.

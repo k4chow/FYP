@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 from .import_jobs import recover_import_jobs
 from .routers import (
+    assistant,
     auth,
     conversations,
     films,
@@ -43,6 +44,7 @@ app.include_router(profile.router, prefix="/profile", tags=["profile"])
 app.include_router(
     recommendations.router, prefix="/recommendations", tags=["recommendations"]
 )
+app.include_router(assistant.router, prefix="/assistant", tags=["assistant"])
 
 
 @app.get("/health")

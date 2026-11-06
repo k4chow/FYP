@@ -268,6 +268,30 @@ onboarding questionnaire (`POST /profile/questionnaire` → confirmed
 preferences in `/profile/summary`). Saved result: 25/25 checks in
 `server/scripts/e2e_phase6_output.txt`.
 
+### 6.7 Isolated Phase 7 suite (explicit constraints + ephemeral assistant)
+
+```powershell
+cd server
+.\.venv\Scripts\python.exe scripts\test_phase7.py
+```
+
+This built-in `unittest` suite reuses the in-memory Supabase `FakeStore` from
+`test_large_import.py` and mocks TMDB/LLM, so it makes no live requests and
+writes no rows. It covers (13 tests):
+
+- F12 explicit-constraint parsing: a director ("…by Paul Thomas Anderson"), a
+  named title ("recommend me Thor: Ragnarok"), and a genre, each validated
+  against TMDB so only names that actually appear in the message are accepted;
+- constrained candidate-pool rebuild for a director/genre, without mutating the
+  Discover engine's `_cache` or `_last_served` state;
+- named-film answers that are never refused: a film the user named is offered
+  directly, and a film already in their library returns close alternatives;
+- the stateless `discovery_turn`: it returns a reply and recommendations and
+  writes no `conversations`/`messages` rows, so the ephemeral Film Assistant
+  leaves reflection history and the Discover grid untouched.
+
+Expected result: 13 tests, `OK`.
+
 ## 7. Manual feature verification
 
 ### Auth
@@ -371,7 +395,8 @@ These require migration `0005_recommendations.sql` applied to Supabase first.
 
 The saved outputs are useful development evidence, not a complete acceptance
 suite. Missing coverage includes browser/component tests, direct RLS tests for
-every table, real LLM behavior, memory lifecycle, recommendations, accessibility,
+every table, real LLM behavior, memory lifecycle, recommendations, live/browser
+E2E for the ephemeral Phase 7 assistant endpoints, accessibility,
 production deployment, and concurrent multi-worker import behavior. The
 repository’s `docs/07-evaluation.md` remains a plan for later evaluation rather
 than a record of completed user research.

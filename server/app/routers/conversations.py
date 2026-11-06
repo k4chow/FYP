@@ -15,6 +15,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field, field_validator
 
+from .. import constraints as constraint_svc
 from .. import context as context_svc
 from .. import memories as memory_svc
 from .. import recommendations as rec_svc
@@ -128,15 +129,26 @@ def _chat_context(conv: dict, user_id: str, turn: int) -> ChatContext:
     )
 
 
-def _candidate_pool(user_id: str, limit: int = 8) -> list[dict]:
+def _candidate_pool(
+    user_id: str, limit: int = 8, asked: dict | None = None
+) -> list[dict]:
     """Personalised candidates for the Film Assistant to pick from.
 
     The recommendation engine already excludes library films and every
     "not for me" card, so anything the provider names from this pool is safe
-    to show. Best-effort: an engine failure must never break the chat.
+    to show. When the user stated a constraint (`asked`), the pool is built
+    from that request instead of the taste profile. Best-effort: an engine
+    failure must never break the chat.
     """
     try:
-        cards = rec_svc.get_recommendations(user_id, limit=limit)
+        cards = rec_svc.get_recommendations(
+            user_id,
+            limit=limit,
+            genres=(asked or {}).get("genres") or None,
+            person_id=(asked or {}).get("person_id"),
+            # Chatting must not consume Discover's "don't repeat these" state.
+            track_served=False,
+        )
     except Exception:  # noqa: BLE001 - discovery chat must never fail here
         return []
     return [
@@ -244,6 +256,114 @@ def _pool_card(film: dict) -> dict:
     }
 
 
+def _library_ids(user_id: str) -> set[int]:
+    return {
+        row["films"]["tmdb_id"]
+        for row in (
+            supabase.table("user_films")
+            .select("films(tmdb_id)")
+            .eq("user_id", user_id)
+            .execute()
+            .data
+            or []
+        )
+        if row.get("films") and row["films"].get("tmdb_id")
+    }
+
+
+def _last_user_text(history: list[dict]) -> str:
+    return next(
+        (str(m.get("content") or "") for m in reversed(history) if m.get("role") == "user"),
+        "",
+    )
+
+
+def _requested_title_cards(
+    title: str, tmdb_id: int | None, user_id: str
+) -> tuple[list[dict], str | None]:
+    """Cards for a film the user named explicitly (Phase 7).
+
+    Returns ``(cards, note)``. When the film is already in the library, the
+    cards are TMDB's own recommendations instead and `note` says so — so the
+    assistant acknowledges the film instead of refusing to discuss it.
+    """
+    if not tmdb_id:
+        try:
+            hits = tmdb.search_movies(title)
+        except Exception:  # noqa: BLE001
+            return [], None
+        if not hits:
+            return [], None
+        tmdb_id = hits[0].get("id")
+
+    details = tmdb.movie_details(tmdb_id)
+    if not details:
+        return [], None
+
+    library_ids = _library_ids(user_id)
+
+    def card_from(r: dict) -> dict:
+        return {
+            "tmdb_id": r["id"],
+            "title": r.get("title") or "Untitled",
+            "year": _tmdb_year(r.get("release_date")),
+            "genres": [
+                tmdb.GENRE_NAMES[g] for g in r.get("genre_ids", []) if g in tmdb.GENRE_NAMES
+            ],
+            "runtime": None,
+            "overview": r.get("overview") or "",
+            "poster_url": poster_url(r.get("poster_path")),
+            "vote_average": r.get("vote_average") or 0.0,
+            "themes": [],
+        }
+
+    if details["id"] in library_ids:
+        recs = tmdb.movie_recommendations(details["id"])[:4]
+        cards = [
+            card_from(r)
+            for r in recs
+            if r.get("id") and r["id"] not in library_ids
+        ][:3]
+        note = (
+            f"“{details.get('title') or title}” is already in your library — "
+            "here are films close to it instead."
+        )
+        return cards, note
+
+    card = {
+        "tmdb_id": details["id"],
+        "title": details.get("title") or title,
+        "year": _tmdb_year(details.get("release_date")),
+        "genres": [g.get("name") for g in details.get("genres", [])],
+        "runtime": details.get("runtime"),
+        "overview": details.get("overview") or "",
+        "poster_url": poster_url(details.get("poster_path")),
+        "vote_average": details.get("vote_average") or 0.0,
+        "themes": [],
+    }
+    try:
+        neighbours = [
+            r
+            for r in tmdb.movie_recommendations(details["id"])[:3]
+            if r.get("id") and r.get("id") not in library_ids and r.get("id") != details["id"]
+        ]
+    except Exception:  # noqa: BLE001
+        neighbours = []
+    return [card] + [card_from(r) for r in neighbours][:2], None
+
+
+def _fallback_reply(cards: list[dict], note: str | None = None) -> str:
+    if not cards:
+        return "I couldn't pull together a solid pick that fits that — want to try a different mood?"
+    titles = " and ".join(card["title"] for card in cards[:2])
+    lead = (cards[0].get("genres") or ["worth a look"])[0].lower()
+    text = (
+        f"Going with {titles}. {cards[0]['title']} — {lead}. "
+        "Which one grabs you, or shall I pull something different?"
+    )
+    return f"{text}\n\n{note}" if note else text
+
+
 def _discovery_reply(
     history: list[dict], ctx: ChatContext, user_id: str
 ) -> tuple[str, dict]:
@@ -256,9 +376,15 @@ def _discovery_reply(
     and only a fully empty pool degrades to a plain chat reply.
     """
     llm = get_llm()
-    pool = _candidate_pool(user_id)
+    asked = constraint_svc.parse_constraints(_last_user_text(history))
+    pool = _candidate_pool(
+        user_id, asked=asked if constraint_svc.has_constraint(asked) else None
+    )
     if pool:
         ctx = replace(ctx, suggestions=pool)
+    hint = constraint_svc.describe(asked)
+    if hint:
+        ctx = replace(ctx, request=hint)
     try:
         turn = llm.chat_discovery(history, ctx)
         reply, specs = turn["reply"], turn.get("films") or []
@@ -268,19 +394,65 @@ def _discovery_reply(
         cards = _resolve_suggestions(specs, user_id)
     except Exception:  # noqa: BLE001 - grounding is best-effort
         cards = []
+    # A named film is answered directly — and if it is already logged, the
+    # assistant acknowledges it with close alternatives instead of refusing.
+    named_cards: list[dict] = []
+    named_note: str | None = None
+    if asked.get("title"):
+        try:
+            named_cards, named_note = _requested_title_cards(
+                asked["title"], asked.get("tmdb_id"), user_id
+            )
+        except Exception:  # noqa: BLE001 - grounding is best-effort
+            named_cards, named_note = [], None
+    if named_cards:
+        seen = {c["tmdb_id"] for c in named_cards}
+        cards = named_cards + [c for c in cards if c["tmdb_id"] not in seen]
+        cards = cards[:3]
     if not cards and pool:
         # The provider named nothing groundable — fall back to the top of the
         # personalised pool so every assistant turn still recommends films.
         cards = [_pool_card(film) for film in pool[:2]]
-        titles = " and ".join(card["title"] for card in cards)
-        lead = cards[0]["genres"][0] if cards[0]["genres"] else "worth a look"
-        reply = (
-            f"Going with {titles}. {cards[0]['title']} — {lead.lower()}. "
-            "Which one grabs you, or shall I pull something different?"
-        )
     if reply is None:
-        return llm.chat(history, ctx), {}
+        # The provider failed: without any candidate pool to fall back on, the
+        # turn degrades to a plain chat reply rather than an empty recommender.
+        if not cards:
+            return llm.chat(history, ctx), {}
+        reply = _fallback_reply(cards, named_note)
+    elif not reply:
+        reply = _fallback_reply(cards, named_note)
+    elif named_note:
+        reply = f"{reply}\n\n{named_note}"
     return reply, {"kind": "suggestions", "recommendations": cards}
+
+
+def discovery_opening(user_id: str) -> str:
+    """The Film Assistant's first message, with no conversation row (Phase 7)."""
+    ctx = ChatContext(
+        conversation_type="discovery",
+        memories=context_svc.confirmed_memories(user_id),
+        display_name=_display_name(user_id),
+        turn=0,
+    )
+    return get_llm().opening(ctx)
+
+
+def discovery_turn(user_id: str, history: list[dict]) -> dict:
+    """One Film Assistant turn with no persistence (Phase 7).
+
+    The client owns the transcript (sessionStorage) and sends the bounded
+    window here; nothing is written to the database, so ending the chat is
+    just the client discarding that transcript.
+    """
+    ctx = ChatContext(
+        conversation_type="discovery",
+        memories=context_svc.confirmed_memories(user_id),
+        display_name=_display_name(user_id),
+        turn=sum(1 for m in history if m.get("role") == "user"),
+        library_titles=_library_titles(user_id),
+    )
+    reply, metadata = _discovery_reply(history, ctx, user_id)
+    return {"reply": reply, "recommendations": metadata.get("recommendations", [])}
 
 
 def _user_turn_count(conversation_id: str) -> int:

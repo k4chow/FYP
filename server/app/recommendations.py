@@ -233,7 +233,13 @@ def _diverse(cards: list[dict], limit: int, cap: int = 2) -> list[dict]:
 
 
 def get_recommendations(
-    user_id: str, limit: int = 12, refresh: bool = False
+    user_id: str,
+    limit: int = 12,
+    refresh: bool = False,
+    *,
+    genres: list[str] | None = None,
+    person_id: int | None = None,
+    track_served: bool = True,
 ) -> list[dict]:
     """Ranked, explained recommendation cards for the Discover grid.
 
@@ -241,9 +247,17 @@ def get_recommendations(
     a varied subset from the top slice instead of always showing the same
     highest-scored cards — so an explicit refresh shows new films rather than
     the same list reordered.
+
+    `genres` / `person_id` (Phase 7) serve an *explicitly stated* constraint
+    instead of the taste profile — the Film Assistant passes them when the user
+    asks for something like "only Paul Thomas Anderson films". Constrained runs
+    bypass the cache and never record `_last_served`, so chatting cannot change
+    what Discover shows. `track_served=False` lets the Assistant use the normal
+    profile pool without disturbing Discover's refresh state either.
     """
+    constrained = bool(genres or person_id)
     cached = _cache.get(user_id)
-    if not refresh and cached and cached[0] > time.monotonic():
+    if not constrained and not refresh and cached and cached[0] > time.monotonic():
         return cached[1][:limit]
 
     library = _library_rows(user_id)
@@ -301,19 +315,41 @@ def get_recommendations(
     #    best-rated) within the user's top genres, or plain popular when the
     #    library is empty (the cold-start path). Refresh runs add a random
     #    year/page so they can surface candidates the default pages never show.
-    genre_ids = [tmdb.GENRE_IDS[g] for g in top_genres if g in tmdb.GENRE_IDS]
-    pool_pages = [
-        tmdb.discover_movies(genre_ids or None),
-        tmdb.discover_movies(genre_ids or None, sort_by=_DISCOVER_VOTE_SORT),
-    ]
-    if refresh:
-        pool_pages.append(
+    if constrained:
+        # A stated constraint outranks the taste profile: build the pool from
+        # the requested director/genres so the assistant can actually answer,
+        # then rank those films with the same scoring as any other pool.
+        genre_ids = [tmdb.GENRE_IDS[g] for g in (genres or []) if g in tmdb.GENRE_IDS]
+        pool_pages = [
+            tmdb.discover_movies(genre_ids or None, person_id=person_id, min_votes=40),
             tmdb.discover_movies(
                 genre_ids or None,
-                page=random.randint(1, 3),
-                year=random.randint(1970, 2026),
+                sort_by=_DISCOVER_VOTE_SORT,
+                person_id=person_id,
+                min_votes=40,
+            ),
+            tmdb.discover_movies(
+                genre_ids or None,
+                sort_by="vote_count.desc",
+                page=2,
+                person_id=person_id,
+                min_votes=40,
+            ),
+        ]
+    else:
+        genre_ids = [tmdb.GENRE_IDS[g] for g in top_genres if g in tmdb.GENRE_IDS]
+        pool_pages = [
+            tmdb.discover_movies(genre_ids or None),
+            tmdb.discover_movies(genre_ids or None, sort_by=_DISCOVER_VOTE_SORT),
+        ]
+        if refresh:
+            pool_pages.append(
+                tmdb.discover_movies(
+                    genre_ids or None,
+                    page=random.randint(1, 3),
+                    year=random.randint(1970, 2026),
+                )
             )
-        )
     for page_index, raw_rows in enumerate(pool_pages):
         page_weight = 1.0 if page_index == 0 else 0.7
         for raw in raw_rows[:_DISCOVER_LIMIT]:
@@ -390,8 +426,12 @@ def get_recommendations(
         }
         for c in ranked
     ]
-    _cache[user_id] = (time.monotonic() + _CACHE_TTL_SECONDS, cards)
-    served = _diverse(cards, limit)
-    _last_served[user_id] = {card["tmdb_id"] for card in served}
+    if not constrained:
+        _cache[user_id] = (time.monotonic() + _CACHE_TTL_SECONDS, cards)
+    # A constrained pool is already narrow; the per-genre diversity cap would
+    # silently drop half of a director's filmography.
+    served = cards[:limit] if constrained else _diverse(cards, limit)
+    if track_served and not constrained:
+        _last_served[user_id] = {card["tmdb_id"] for card in served}
     return served
 

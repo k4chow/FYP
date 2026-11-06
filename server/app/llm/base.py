@@ -23,6 +23,10 @@ class ChatContext:
     # recommended again) and the personalised candidate pool to pick from.
     library_titles: list[str] = field(default_factory=list)
     suggestions: list[dict] = field(default_factory=list)
+    # Phase 7: a restatement of an explicit constraint the user stated (e.g.
+    # "only Paul Thomas Anderson films") so providers answer in scope rather
+    # than falling back to the generic taste profile.
+    request: str | None = None
 
 
 class LLMProvider(ABC):
