@@ -463,6 +463,18 @@ h1, h2, h3 {
   gap: 1rem;
 }
 
+/* Let the title block shrink/wrap, but keep action buttons on one line so
+   labels like "＋ Start a reflection" don't squeeze and wrap awkwardly. */
+.page-header > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.page-header > .btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .films-toolbar {
   display: flex;
   align-items: center;
