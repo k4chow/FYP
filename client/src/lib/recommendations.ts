@@ -15,6 +15,7 @@ export interface Recommendation {
   genres: string[]
   poster_url: string | null
   overview: string
+  vote_average: number
   score: number
   why: string
   source_memories: SourceMemory[]
@@ -22,10 +23,11 @@ export interface Recommendation {
 
 export type FeedbackSignal = 'more_like_this' | 'not_for_me'
 
-export const getRecommendations = (limit = 12) =>
-  api<{ recommendations: Recommendation[] }>(`/recommendations?limit=${limit}`, {
-    auth: true,
-  })
+export const getRecommendations = (limit = 12, refresh = false) =>
+  api<{ recommendations: Recommendation[] }>(
+    `/recommendations?limit=${limit}${refresh ? '&refresh=1' : ''}`,
+    { auth: true },
+  )
 
 export const sendFeedback = (tmdbId: number, signal: FeedbackSignal, title: string) =>
   api<{ tmdb_id: number; signal: FeedbackSignal }>('/recommendations/feedback', {

@@ -34,6 +34,16 @@ class LLMProvider(ABC):
         """Reply to the latest user message in `messages`."""
 
     @abstractmethod
+    def chat_discovery(self, messages: list[dict], context: ChatContext) -> dict:
+        """Recommender turn for discovery (Film Assistant) conversations.
+
+        Returns {"reply": str, "films": [{"title", "year", "themes": [...]}]}.
+        The router grounds each named film against TMDB before persisting, so
+        titles may be resolved or dropped — providers must still name real,
+        well-known films only.
+        """
+
+    @abstractmethod
     def extract_insights(
         self, messages: list[dict], context: ChatContext
     ) -> list[dict]:

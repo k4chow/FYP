@@ -611,6 +611,7 @@ h1, h2, h3 {
 }
 
 .film-poster {
+  position: relative;
   aspect-ratio: 2 / 3;
   border-radius: 0.9rem;
   overflow: hidden;
@@ -1999,5 +2000,244 @@ a.prompt-card:hover {
 .btn.ghost.active {
   border-color: var(--color-accent, #8ab4f8);
   color: var(--color-accent, #8ab4f8);
+}
+
+
+/* Phase 6: Film Assistant (two-panel chat + recommendations) */
+.assistant-layout {
+  display: grid;
+  grid-template-columns: minmax(340px, 420px) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.assistant-recs {
+  min-width: 0;
+}
+
+.assistant-recs-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.assistant-recs-head h2 {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+}
+
+.assistant-recs-empty {
+  padding: 2rem 1rem;
+  border: 1px dashed var(--color-border);
+  border-radius: 0.9rem;
+  text-align: center;
+}
+
+.assistant-rec-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.assistant-rec-card {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.assistant-rec-poster {
+  position: relative;
+  display: flex;
+  width: 110px;
+  aspect-ratio: 2 / 3;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 0.7rem;
+  background: var(--color-surface-2);
+}
+
+.assistant-rec-poster img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bookmark-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 1;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: rgba(10, 12, 20, 0.65);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.bookmark-btn:hover {
+  border-color: var(--color-accent);
+}
+
+.bookmark-btn.active {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.bookmark-btn:disabled {
+  opacity: 0.85;
+  cursor: default;
+}
+
+.assistant-rec-body h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.assistant-rec-body .meta {
+  margin: 0.2rem 0 0.5rem;
+}
+
+.theme-tags {
+  display: flex;
+  flex-wrap: wrap;
+
+/* Discover cards: TMDB rating + hover thumbs */
+.rec-rating {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.rec-feedback {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  z-index: 1;
+  display: flex;
+  gap: 0.4rem;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.film-poster:hover .rec-feedback,
+.rec-feedback.open {
+  opacity: 1;
+}
+
+.rec-thumb {
+  width: 2.1rem;
+  height: 2.1rem;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: rgba(10, 12, 20, 0.7);
+  color: var(--color-text);
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.rec-thumb:hover {
+  border-color: var(--color-accent);
+}
+
+.rec-thumb.active {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.rec-thumb:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+@media (max-width: 700px) {
+  .rec-feedback {
+    opacity: 1;
+  }
+}
+
+/* Import page: watched vs watchlist mode toggle */
+.mode-toggle {
+  display: inline-flex;
+  margin: 1.25rem 0 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.mode-btn {
+  padding: 0.5rem 1.1rem;
+  border: 0;
+  background: none;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.mode-btn.active {
+  background: linear-gradient(135deg, var(--color-accent-grad-from), var(--color-accent-grad-to));
+  color: #0b0d17;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .assistant-layout {
+    grid-template-columns: 1fr;
+  }
+  .assistant-rec-card {
+    grid-template-columns: 90px minmax(0, 1fr);
+  }
+}
+
+  gap: 0.35rem;
+  margin: 0 0 0.5rem;
+}
+
+.theme-tag {
+  padding: 0.15rem 0.55rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  font-size: 0.74rem;
+}
+
+.assistant-rec-body .overview {
+  margin: 0 0 0.75rem;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.assistant-rec-card.expanded .overview {
+  -webkit-line-clamp: unset;
+}
+
+.assistant-rec-details {
+  margin: -0.4rem 0 0.75rem;
+}
+
+.rec-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 

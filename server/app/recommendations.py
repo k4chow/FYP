@@ -20,6 +20,7 @@ Pipeline:
    `source_memories` that influenced it, for "Why am I seeing this?" (F9).
 """
 
+import random
 import re
 import time
 from collections import Counter
@@ -31,7 +32,12 @@ from .supabase_client import supabase
 # --- Tunable constants (D35) ------------------------------------------------
 _SEED_LIMIT = 6  # seeds that each pull a TMDB recommendations page
 _SEED_REC_LIMIT = 8  # candidates taken per seed, rank-weighted
-_DISCOVER_LIMIT = 20  # raw discover rows considered for the genre pool
+_DISCOVER_LIMIT = 20  # raw discover rows considered per genre-pool page
+# Two deterministic pool pages by default (popularity + best-rated); a refresh
+# run adds a random year/page on top so it can surface different candidates.
+_DISCOVER_VOTE_SORT = "vote_average.desc"
+_QUALITY_WEIGHT = 0.5  # TMDB rating prior, confidence-scaled by vote_count
+_REFRESH_POOL_FACTOR = 2  # refresh samples from the top slice: factor x limit
 _FEEDBACK_SEED_WEIGHT = 1.2  # explicit "more like this" beats implicit seeds
 _RATING_SEED_DIVISOR = 5.0  # a 5-star film seeds at weight 1.0
 _WATCHLIST_SEED_WEIGHT = 0.6
@@ -203,10 +209,18 @@ def _why(
     return value if isinstance(value, int) else _DEFAULT_STYLE
 
 
-def get_recommendations(user_id: str, limit: int = 12) -> list[dict]:
-    """Ranked, explained recommendation cards for the Discover grid."""
+def get_recommendations(
+    user_id: str, limit: int = 12, refresh: bool = False
+) -> list[dict]:
+    """Ranked, explained recommendation cards for the Discover grid.
+
+    `refresh=True` skips the cache and, when the pool is large enough, samples
+    a varied subset from the top slice instead of always showing the same
+    highest-scored cards — so an explicit refresh shows new films rather than
+    the same list reordered.
+    """
     cached = _cache.get(user_id)
-    if cached and cached[0] > time.monotonic():
+    if not refresh and cached and cached[0] > time.monotonic():
         return cached[1][:limit]
 
     library = _library_rows(user_id)
@@ -257,13 +271,29 @@ def get_recommendations(user_id: str, limit: int = 12) -> list[dict]:
             if cand["best_seed"] is None or contribution > cand["best_seed"][1]:
                 cand["best_seed"] = (seed, contribution)
 
-    # 2) Genre pool: discover within the user's top genres, or plain popular
-    #    when the library is empty (the cold-start path).
+    # 2) Genre pool: two deterministic discover pages (popularity + TMDB
+    #    best-rated) within the user's top genres, or plain popular when the
+    #    library is empty (the cold-start path). Refresh runs add a random
+    #    year/page so they can surface candidates the default pages never show.
     genre_ids = [tmdb.GENRE_IDS[g] for g in top_genres if g in tmdb.GENRE_IDS]
-    for raw in tmdb.discover_movies(genre_ids or None)[:_DISCOVER_LIMIT]:
-        if raw.get("id") in excluded:
-            continue
-        candidate_for(raw)["score"] += _DISCOVER_BASE
+    pool_pages = [
+        tmdb.discover_movies(genre_ids or None),
+        tmdb.discover_movies(genre_ids or None, sort_by=_DISCOVER_VOTE_SORT),
+    ]
+    if refresh:
+        pool_pages.append(
+            tmdb.discover_movies(
+                genre_ids or None,
+                page=random.randint(1, 3),
+                year=random.randint(1970, 2026),
+            )
+        )
+    for page_index, raw_rows in enumerate(pool_pages):
+        page_weight = 1.0 if page_index == 0 else 0.7
+        for raw in raw_rows[:_DISCOVER_LIMIT]:
+            if raw.get("id") in excluded:
+                continue
+            candidate_for(raw)["score"] += _DISCOVER_BASE * page_weight
 
     memory_rows = [
         {
@@ -284,6 +314,11 @@ def get_recommendations(user_id: str, limit: int = 12) -> list[dict]:
             ):
                 cand["matched_memories"][memory["id"]] = memory
 
+        quality_bonus = (
+            (cand.get("vote_average", 0.0) / 10.0)
+            * _QUALITY_WEIGHT
+            * min(1.0, cand.get("vote_count", 0) / 2000.0)
+        )
         memory_bonus = min(
             len(cand["matched_memories"]) * _MEMORY_KEYWORD_BONUS,
             _MEMORY_BONUS_CAP,
@@ -295,7 +330,10 @@ def get_recommendations(user_id: str, limit: int = 12) -> list[dict]:
         )
         best = cand["best_seed"][0] if cand["best_seed"] else None
         cand["score"] += (
-            cand["seed_score"] * (0.5 + similarity) + memory_bonus + explore_bonus
+            cand["seed_score"] * (0.5 + similarity)
+            + memory_bonus
+            + explore_bonus
+            + quality_bonus
         )
         matched = sorted(cand["matched_memories"].values(), key=lambda m: m["id"])
         cand["why"] = _why(best, matched, top_genres)
@@ -307,6 +345,10 @@ def get_recommendations(user_id: str, limit: int = 12) -> list[dict]:
         candidates.values(),
         key=lambda c: (-c["score"], -c["popularity"], c["tmdb_id"]),
     )
+    if refresh and len(ranked) > limit:
+        pool = ranked[: max(limit * _REFRESH_POOL_FACTOR, limit + 6)]
+        chosen = random.sample(pool, k=min(limit, len(pool)))
+        ranked = sorted(chosen, key=lambda c: -c["score"])
     cards = [
         {
             "tmdb_id": c["tmdb_id"],
@@ -315,6 +357,7 @@ def get_recommendations(user_id: str, limit: int = 12) -> list[dict]:
             "genres": c["genres"],
             "poster_url": c["poster_url"],
             "overview": c["overview"],
+            "vote_average": round(c.get("vote_average", 0.0), 1),
             "score": round(c["score"], 3),
             "why": c["why"],
             "source_memories": c["source_memories"],

@@ -27,9 +27,12 @@ class FeedbackBody(BaseModel):
 @router.get("")
 def list_recommendations(
     limit: int = Query(default=12, ge=1, le=24),
+    refresh: bool = Query(default=False),
     current: dict = Depends(get_current_user),
 ) -> dict:
-    cards = rec_svc.get_recommendations(current["id"], limit=limit)
+    cards = rec_svc.get_recommendations(
+        current["id"], limit=limit, refresh=refresh
+    )
     return {"recommendations": cards}
 
 

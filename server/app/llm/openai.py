@@ -28,6 +28,24 @@ _SYSTEM_BASE = (
     "- Never invent plot details; if unsure, ask the user."
 )
 
+# Film Assistant conversations are recommender turns, not reflection turns
+# (F10): decisive picks, grounded in the user's taste, not an interview.
+_SYSTEM_DISCOVERY = (
+    "You are the Film Assistant inside a movie-journal app: a decisive, "
+    "knowledgeable film recommender — not a reflective interviewer.\n"
+    "Rules:\n"
+    "- Every reply must recommend one to three concrete, real films.\n"
+    "- Give each pick a one-line reason tied to what the user told you: "
+    "their mood, taste, or the confirmed memories in the context.\n"
+    "- Be decisive: pick films instead of only asking questions. Ask at most "
+    "one short follow-up question, and only if you truly cannot pick yet.\n"
+    "- Keep replies under 120 words, warm and direct; no lectures, no "
+    "spoilers.\n"
+    "- Never invent films, directors, or plot details; only recommend films "
+    "you are confident exist.\n"
+    "- Avoid films the user's memories suggest they have already seen."
+)
+
 _KIND_DEFINITIONS = (
     '- "theme": an idea or motif the user kept returning to.\n'
     '- "preference": something the user explicitly liked or disliked.\n'
@@ -105,6 +123,12 @@ class OpenAIProvider(LLMProvider):
                 "user briefly and invite them to recall a moment or feeling "
                 "that stayed with them."
             )
+        elif context.conversation_type == "discovery":
+            task = (
+                "Open a Film Assistant conversation. Welcome the user briefly "
+                "and ask what they are in the mood to watch — mention they "
+                "can just ask you to surprise them."
+            )
         else:
             task = (
                 "Open a free reflection"
@@ -126,15 +150,82 @@ class OpenAIProvider(LLMProvider):
             ]
         )
 
+    def chat_discovery(self, messages: list[dict], context: ChatContext) -> dict:
+        """Recommender turn: a decisive reply plus 1-3 named films (JSON)."""
+        raw = self._complete(
+            [
+                {
+                    "role": "system",
+                    "content": _SYSTEM_DISCOVERY + "\n" + _context_block(context),
+                },
+                *messages,
+                {
+                    "role": "user",
+                    "content": (
+                        "Reply now. Respond with JSON only: "
+                        '{"reply": str, "films": [{"title": str, '
+                        '"year": int | null, "themes": [str]}]}. '
+                        "`reply` is what the user reads (max 120 words, at "
+                        "most one follow-up question); `films` lists the "
+                        "1-3 real films you recommend in it, each with 2-4 "
+                        "short mood/theme tags."
+                    ),
+                },
+            ],
+            json_mode=True,
+        )
+        try:
+            data = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError(
+                f"OpenAI returned unparseable discovery JSON: {raw[:200]}"
+            ) from exc
+        if not isinstance(data, dict) or not isinstance(data.get("reply"), str):
+            raise RuntimeError(
+                f"OpenAI discovery reply missing 'reply': {raw[:200]}"
+            )
+        films = data.get("films")
+        if not isinstance(films, list):
+            films = []
+        cleaned: list[dict] = []
+        for film in films[:3]:
+            if not isinstance(film, dict):
+                continue
+            title = str(film.get("title") or "").strip()
+            if not title:
+                continue
+            year = film.get("year")
+            themes = [
+                str(t).strip()
+                for t in (film.get("themes") or [])
+                if str(t).strip()
+            ][:4]
+            cleaned.append(
+                {
+                    "title": title,
+                    "year": year if isinstance(year, int) else None,
+                    "themes": themes,
+                }
+            )
+        return {"reply": data["reply"].strip(), "films": cleaned}
+
     def extract_insights(
         self, messages: list[dict], context: ChatContext
     ) -> list[dict]:
         prompt = (
             "Read this reflection transcript and propose up to 5 insights "
-            "worth remembering about the user. Each proposal must be grounded "
-            "in the user's own words.\n"
+            "worth remembering about the user.\n"
             + _KIND_DEFINITIONS
-            + "\nRules: phrase `content` to the user in second person "
+            + "\nMix two kinds of proposals:\n"
+            "- Faithful observations: what the user revealed, phrased in "
+            "fresh words — some rephrasing is welcome.\n"
+            "- Bolder interpretive reads: go one step beyond the transcript — "
+            "a pattern across their films or reactions, a hypothesis about "
+            "their taste or values, or a sharp interpretation they could "
+            "reasonably push back on. These must still be anchored in "
+            "something the user actually said.\n"
+            "Never invent biography and never diagnose the user.\n"
+            "Rules: phrase `content` to the user in second person "
             "(\"You ...\"), max 500 characters; `explanation` briefly states "
             "which of their messages ground it; `source_message_ids` must "
             "only contain ids from the transcript below; skip anything "

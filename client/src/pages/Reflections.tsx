@@ -72,21 +72,33 @@ function Section({
       </p>
       <div className="conv-list">
         {items.map((c) => (
-          <Link key={c.id} to={`/app/reflections/${c.id}`} className="conv-row">
+          <Link
+            key={c.id}
+            to={
+              c.type === 'discovery'
+                ? `/app/discover/assistant?c=${c.id}`
+                : `/app/reflections/${c.id}`
+            }
+            className="conv-row"
+          >
             {c.film?.poster_url ? (
               <img className="result-thumb" src={c.film.poster_url} alt="" />
             ) : (
               <span className="result-thumb no-poster">{c.film ? 'No poster' : '✎'}</span>
             )}
             <span className="conv-main">
-              <span className="t">{c.film?.title ?? c.title ?? 'Free reflection'}</span>
+              <span className="t">
+                {c.film?.title ?? (c.type === 'discovery' ? 'Film Assistant' : c.title ?? 'Free reflection')}
+              </span>
               <span className="y">
                 {c.film ? `${c.film.year ?? ''} · ` : ''}
                 {c.watch_type === 'planning'
                   ? 'Planning to watch'
                   : c.film
                     ? 'Watched'
-                    : 'Prompt'}
+                    : c.type === 'discovery'
+                      ? 'Film Assistant chat'
+                      : 'Prompt'}
                 {' · '}
                 {new Date(c.updated_at).toLocaleDateString(undefined, {
                   month: 'short',

@@ -90,9 +90,6 @@ export default function Home() {
         </section>
         <aside className="card">
           <h2>Your profile themes</h2>
-          <p className="muted">
-            Themes from your reflections appear here (Phase 5).
-          </p>
           <div className="chips" style={{ marginTop: '0.75rem' }}>
             {PLACEHOLDER_THEMES.map((theme) => (
               <span key={theme} className="chip">

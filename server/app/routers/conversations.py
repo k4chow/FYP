@@ -16,6 +16,7 @@ from pydantic import BaseModel, Field, field_validator
 
 from .. import context as context_svc
 from .. import memories as memory_svc
+from .. import tmdb
 from ..deps import get_current_user
 from ..llm import ChatContext, get_llm
 from ..supabase_client import supabase
@@ -102,6 +103,89 @@ def _chat_context(conv: dict, user_id: str, turn: int) -> ChatContext:
         display_name=_display_name(user_id),
         turn=turn,
     )
+
+
+def _tmdb_year(release: object) -> int | None:
+    """Release dates come back as 'YYYY-MM-DD' or None."""
+    text = str(release or "")
+    return int(text[:4]) if text[:4].isdigit() else None
+
+
+def _resolve_suggestions(specs: list[dict], user_id: str) -> list[dict]:
+    """Ground LLM-named films against TMDB, skipping films already in the
+    library. Unresolvable titles are dropped; library films are skipped so
+    the Film Assistant never recommends something the user has logged."""
+    if not specs:
+        return []
+    library_ids = {
+        row["films"]["tmdb_id"]
+        for row in (
+            supabase.table("user_films")
+            .select("films(tmdb_id)")
+            .eq("user_id", user_id)
+            .execute()
+            .data
+            or []
+        )
+        if row.get("films")
+    }
+    cards: list[dict] = []
+    for spec in specs[:3]:
+        title = str(spec.get("title") or "").strip()
+        if not title:
+            continue
+        year = spec.get("year")
+        try:
+            hits = tmdb.search_movies(title, year if isinstance(year, int) else None)
+        except Exception:  # noqa: BLE001 - grounding is best-effort per title
+            continue
+        match = next(
+            (
+                hit
+                for hit in hits
+                if str(hit.get("title") or "").casefold() == title.casefold()
+            ),
+            hits[0] if hits else None,
+        )
+        if match is None or match.get("id") in library_ids:
+            continue
+        details = tmdb.movie_details(match["id"])
+        if details is None:
+            continue
+        cards.append(
+            {
+                "tmdb_id": details["id"],
+                "title": details.get("title") or title,
+                "year": _tmdb_year(details.get("release_date")),
+                "genres": [g.get("name") for g in details.get("genres", [])],
+                "runtime": details.get("runtime"),
+                "overview": details.get("overview") or "",
+                "poster_url": poster_url(details.get("poster_path")),
+                "vote_average": details.get("vote_average"),
+                "themes": spec.get("themes") or [],
+            }
+        )
+    return cards
+
+
+def _discovery_reply(
+    history: list[dict], ctx: ChatContext, user_id: str
+) -> tuple[str, dict]:
+    """One Film Assistant turn: recommender reply + verified film cards.
+
+    Any provider or TMDB failure degrades to a plain chat reply — discovery
+    chat must never fail just because suggestions could not be grounded.
+    """
+    llm = get_llm()
+    try:
+        turn = llm.chat_discovery(history, ctx)
+    except (RuntimeError, AttributeError):
+        return llm.chat(history, ctx), {}
+    try:
+        cards = _resolve_suggestions(turn.get("films") or [], user_id)
+    except Exception:  # noqa: BLE001 - grounding is best-effort
+        cards = []
+    return turn["reply"], {"kind": "suggestions", "recommendations": cards}
 
 
 def _user_turn_count(conversation_id: str) -> int:
@@ -253,6 +337,9 @@ def post_message(
         conv, current["id"], turn=_user_turn_count(conversation_id_text)
     )
     reply = get_llm().chat(history, ctx)
+    metadata: dict = {}
+    if conv["type"] == "discovery":
+        reply, metadata = _discovery_reply(history, ctx, current["id"])
     assistant_message = (
         supabase.table("messages")
         .insert(
@@ -260,6 +347,7 @@ def post_message(
                 "conversation_id": conversation_id_text,
                 "role": "assistant",
                 "content": reply,
+                "metadata": metadata,
             }
         )
         .execute()

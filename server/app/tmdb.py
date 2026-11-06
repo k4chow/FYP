@@ -106,7 +106,10 @@ def movie_recommendations(tmdb_id: int) -> list[dict]:
 
 
 def discover_movies(
-    genre_ids: list[int] | None = None, sort_by: str = "popularity.desc"
+    genre_ids: list[int] | None = None,
+    sort_by: str = "popularity.desc",
+    page: int = 1,
+    year: int | None = None,
 ) -> list[dict]:
     """TMDB discovery listing, optionally matching ANY of the given genres."""
     params: dict = {
@@ -114,9 +117,12 @@ def discover_movies(
         "sort_by": sort_by,
         "include_adult": "false",
         "vote_count.gte": "200",
+        "page": str(max(1, page)),
     }
     if genre_ids:
         params["with_genres"] = "|".join(str(g) for g in genre_ids)
+    if year:
+        params["primary_release_year"] = str(year)
     data = _get("/discover/movie", params) or {}
     return data.get("results", [])
 
@@ -148,6 +154,8 @@ def simplify_list_result(r: dict) -> dict:
             GENRE_NAMES.get(g) for g in r.get("genre_ids", []) if g in GENRE_NAMES
         ],
         "popularity": float(r.get("popularity") or 0.0),
+        "vote_average": float(r.get("vote_average") or 0.0),
+        "vote_count": int(r.get("vote_count") or 0),
     }
 
 

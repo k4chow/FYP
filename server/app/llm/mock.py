@@ -110,6 +110,17 @@ _QUESTIONS_DISCOVERY = (
     "What should this film leave you thinking about tomorrow?",
 )
 
+# Mock picks for discovery recommender turns: real, well-known films so the
+# router's TMDB grounding step can resolve them in demos without surprises.
+_MOCK_FILMS = (
+    {"title": "Arrival", "year": 2016, "themes": ["Time", "Language", "Connection"]},
+    {"title": "Her", "year": 2013, "themes": ["Loneliness", "Connection", "Modern life"]},
+    {"title": "Whiplash", "year": 2014, "themes": ["Ambition", "Pressure", "Obsession"]},
+    {"title": "Paddington 2", "year": 2017, "themes": ["Comfort", "Kindness", "Family"]},
+    {"title": "Spirited Away", "year": 2001, "themes": ["Wonder", "Growth", "Memory"]},
+    {"title": "Blade Runner 2049", "year": 2017, "themes": ["Isolation", "Identity", "Atmosphere"]},
+)
+
 
 def _keywords(text: str, limit: int = 3) -> list[str]:
     """Distinct content words (len >= 5) from the user's message, in order."""
@@ -255,6 +266,27 @@ class MockLLMProvider(LLMProvider):
 
         parts.append(self._question(context, messages))
         return " ".join(parts)
+
+    def chat_discovery(self, messages: list[dict], context: ChatContext) -> dict:
+        """Mock recommender turn: a short decisive reply plus film picks."""
+        last_user = next(
+            (m for m in reversed(messages) if m.get("role") == "user"),
+            {"content": ""},
+        )
+        keywords = _keywords(str(last_user.get("content", "")), limit=2)
+        picks: list[dict] = []
+        while len(picks) < 2:
+            film = dict(self._rng.choice(_MOCK_FILMS))
+            if all(pick["title"] != film["title"] for pick in picks):
+                picks.append(film)
+        topic = " and ".join(keywords) if keywords else "your mood"
+        reply = (
+            f"Got it — going with {topic}. I think {picks[0]['title']} and "
+            f"{picks[1]['title']} will hit the spot: {picks[0]['title']} for "
+            f"the {picks[0]['themes'][0].lower()} of it, {picks[1]['title']} "
+            f"for its {picks[1]['themes'][0].lower()}."
+        )
+        return {"reply": reply, "films": picks}
 
     def _question(self, context: ChatContext, messages: list[dict]) -> str:
         """Sample a follow-up question not yet asked in this session (D27).

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ApiError } from '../lib/api'
-import { createConversation } from '../lib/conversations'
 import {
   clearFeedback,
   getRecommendations,
@@ -11,9 +10,9 @@ import {
 } from '../lib/recommendations'
 
 // Discover (Phase 6: F8-F11): reflection-informed recommendation cards, each
-// with a why-line, a "Why am I seeing this?" provenance panel, and explicit
-// feedback (More like this / Not for me) that steers future picks. The Film
-// Assistant entry point starts a discovery conversation (F10).
+// with a why-line, a "Why am I seeing this?" provenance panel, TMDB ratings,
+// and hover thumbs (More like this / Not for me) that steer future picks. The
+// Film Assistant entry point opens the dedicated two-panel assistant page.
 export default function Discover() {
   const navigate = useNavigate()
   const [recs, setRecs] = useState<Recommendation[]>([])
@@ -22,12 +21,11 @@ export default function Discover() {
   const [expanded, setExpanded] = useState<number | null>(null)
   const [feedback, setFeedback] = useState<Record<number, FeedbackSignal>>({})
   const [busy, setBusy] = useState<number | null>(null)
-  const [startingChat, setStartingChat] = useState(false)
 
-  const load = useCallback(() => {
+  const load = useCallback((refresh = false) => {
     setLoading(true)
     setError('')
-    getRecommendations(12)
+    getRecommendations(12, refresh)
       .then((res) => setRecs(res.recommendations))
       .catch((err) =>
         setError(err instanceof ApiError ? err.message : 'Could not load recommendations'),
@@ -64,19 +62,6 @@ export default function Discover() {
     }
   }
 
-  async function startAssistant() {
-    if (startingChat) return
-    setStartingChat(true)
-    setError('')
-    try {
-      const res = await createConversation({ type: 'discovery', title: 'Film Assistant' })
-      navigate(`/app/reflections/${res.conversation.id}`)
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Could not start the Film Assistant')
-      setStartingChat(false)
-    }
-  }
-
   return (
     <div>
       <div className="discover-header">
@@ -87,7 +72,7 @@ export default function Discover() {
             tells you why it's here.
           </p>
         </div>
-        <button className="btn ghost" onClick={load} disabled={loading}>
+        <button className="btn ghost" onClick={() => load(true)} disabled={loading}>
           {loading ? 'Refreshing…' : 'Refresh'}
         </button>
       </div>
@@ -100,8 +85,11 @@ export default function Discover() {
             conversation shape your next watch.
           </p>
         </div>
-        <button className="btn primary" onClick={startAssistant} disabled={startingChat}>
-          {startingChat ? 'Starting…' : 'Chat with the Film Assistant'}
+        <button
+          className="btn primary"
+          onClick={() => navigate('/app/discover/assistant')}
+        >
+          Chat with the Film Assistant
         </button>
       </section>
 
@@ -127,10 +115,35 @@ export default function Discover() {
                 ) : (
                   <span className="no-poster">{rec.title}</span>
                 )}
+                <div className={`rec-feedback${feedback[rec.tmdb_id] ? ' open' : ''}`}>
+                  <button
+                    className={`rec-thumb up${feedback[rec.tmdb_id] === 'more_like_this' ? ' active' : ''}`}
+                    disabled={busy === rec.tmdb_id}
+                    aria-label="More like this"
+                    title="More like this"
+                    onClick={() => giveFeedback(rec, 'more_like_this')}
+                  >
+                    👍
+                  </button>
+                  <button
+                    className={`rec-thumb down${feedback[rec.tmdb_id] === 'not_for_me' ? ' active' : ''}`}
+                    disabled={busy === rec.tmdb_id}
+                    aria-label="Not for me"
+                    title="Not for me"
+                    onClick={() => giveFeedback(rec, 'not_for_me')}
+                  >
+                    👎
+                  </button>
+                </div>
               </div>
               <h3>
                 {rec.title}
                 {rec.year ? ` (${rec.year})` : ''}
+                {rec.vote_average > 0 && (
+                  <span className="rec-rating" title="TMDB rating (out of 5)">
+                    {' '}⭐ {(rec.vote_average / 2).toFixed(1)}
+                  </span>
+                )}
               </h3>
               {rec.genres.length > 0 && (
                 <p className="meta">{rec.genres.slice(0, 2).join(' · ')}</p>
@@ -157,22 +170,6 @@ export default function Discover() {
                   )}
                 </div>
               )}
-              <div className="rec-actions">
-                <button
-                  className={`btn ghost small${feedback[rec.tmdb_id] === 'more_like_this' ? ' active' : ''}`}
-                  disabled={busy === rec.tmdb_id}
-                  onClick={() => giveFeedback(rec, 'more_like_this')}
-                >
-                  More like this
-                </button>
-                <button
-                  className={`btn ghost small${feedback[rec.tmdb_id] === 'not_for_me' ? ' active' : ''}`}
-                  disabled={busy === rec.tmdb_id}
-                  onClick={() => giveFeedback(rec, 'not_for_me')}
-                >
-                  Not for me
-                </button>
-              </div>
             </article>
           ))}
         </div>

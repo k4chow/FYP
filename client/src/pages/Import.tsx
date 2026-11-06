@@ -13,6 +13,9 @@ export default function Import() {
   const [job, setJob] = useState<ImportJob | null>(null)
   const [error, setError] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+  // Watched vs watchlist mode: only the watchlist flow points users at
+  // watchlist.csv; the watched flow keeps recommending watched.csv.
+  const [mode, setMode] = useState<'watched' | 'watchlist'>('watched')
 
   const active = job?.status === 'queued' || job?.status === 'processing'
   const finished = job?.status === 'completed' || job?.status === 'completed_with_errors'
@@ -91,17 +94,50 @@ export default function Import() {
         Bring your film history with you. Upload a CSV from your Letterboxd
         export and we'll match it against TMDB to build your collection.
       </p>
+      <div className="mode-toggle" role="tablist" aria-label="What are you importing?">
+        <button
+          className={`mode-btn${mode === 'watched' ? ' active' : ''}`}
+          onClick={() => setMode('watched')}
+        >
+          Films I've watched
+        </button>
+        <button
+          className={`mode-btn${mode === 'watchlist' ? ' active' : ''}`}
+          onClick={() => setMode('watchlist')}
+        >
+          My watchlist
+        </button>
+      </div>
       <p className="import-tip" style={{ maxWidth: '44rem' }}>
-        <strong>Recommended:</strong> choose <strong>watched.csv</strong> from the
-        unzipped export — it contains your complete watch history.
+        {mode === 'watched' ? (
+          <>
+            <strong>Recommended:</strong> choose <strong>watched.csv</strong> from
+            the unzipped export — it contains your complete watch history.
+          </>
+        ) : (
+          <>
+            <strong>You're importing a watchlist:</strong> choose{' '}
+            <strong>watchlist.csv</strong> from the unzipped export — it's the
+            list of films you plan to watch.
+          </>
+        )}
       </p>
 
       <div className="settings-grid">
         <section className="card">
           <h2>Your Letterboxd export</h2>
           <p className="muted">
-            Choose <strong>watched.csv</strong> (your full watch history) — or use
-            diary.csv, ratings.csv or watchlist.csv if you prefer.
+            {mode === 'watched' ? (
+              <>
+                Choose <strong>watched.csv</strong> (your full watch history) — or
+                use diary.csv or ratings.csv if you prefer.
+              </>
+            ) : (
+              <>
+                Choose <strong>watchlist.csv</strong> (the films you plan to
+                watch) — or use diary.csv or ratings.csv if you prefer.
+              </>
+            )}
           </p>
           <div className="upload-zone">
             <span className="cloud" aria-hidden>⇪</span>
@@ -109,7 +145,9 @@ export default function Import() {
             <span className="muted" style={{ fontSize: '0.9rem' }}>
               {file
                 ? file.name
-                : 'Select watched.csv from your unzipped Letterboxd export (recommended).'}
+                : mode === 'watched'
+                  ? 'Select watched.csv from your unzipped Letterboxd export (recommended).'
+                  : 'Select watchlist.csv from your unzipped Letterboxd export.'}
             </span>
             <input
               ref={inputRef}
@@ -221,9 +259,11 @@ export default function Import() {
               section and export your data.
             </li>
             <li>
-              Download the archive and unzip it. Inside, select{' '}
-              <strong>watched.csv</strong> — that file is your full watch
-              history and the one we recommend uploading.
+              Download the archive and unzip it. Inside:{' '}
+              <strong>watched.csv</strong> is your full watch history (use it in{' '}
+              <em>Films I've watched</em> mode) and <strong>watchlist.csv</strong> is
+              your watchlist (use it in <em>My watchlist</em> mode). For this
+              import, use <strong>{mode === 'watched' ? 'watched.csv' : 'watchlist.csv'}</strong>.
             </li>
           </ol>
         </section>
