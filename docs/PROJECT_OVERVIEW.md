@@ -86,7 +86,8 @@ onboarding flow (D38): optional Letterboxd `watched.csv` import → pick ≥5
 "films that stayed with you" → pick one film (suggested from the library, or
 search for another) and run a first reflection in the normal chat view → an
 about-you questionnaire whose answers are stored as confirmed preference
-memories (`POST /profile/questionnaire`) → Home. Every step is skippable.
+memories (`POST /profile/questionnaire`) → Home. Only the import step is
+skippable; the film picks, first reflection, and questionnaire are required.
 
 ### 3.2 Add and browse films
 

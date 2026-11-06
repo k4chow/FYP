@@ -326,13 +326,17 @@ preferences in `/profile/summary`). Saved result: 25/25 checks in
 
 1. Sign up with a fresh account: you land on onboarding automatically
    (`onboarding_completed = false` routes everything there).
-2. Import step: the UI recommends `watched.csv`; skipping works.
-3. Your films: pick ≥5 films via search (added as watched), or skip.
-4. First reflection: the step suggests films from your library (watched and
-   highly rated first); the search box lets you pick any other film. Starting
-   opens the normal reflection chat with `?onboarding=1`.
+2. Import step: the UI recommends `watched.csv`; it is the ONLY skippable
+   step ("Skip this step →" continues without importing).
+3. Your films: no skip — the continue button stays disabled until ≥5 films
+   are picked via search (added as watched).
+4. First reflection: no skip — the step suggests films from your library
+   (watched and highly rated first); the search box lets you pick any other
+   film. Starting opens the normal reflection chat with `?onboarding=1`.
 5. End the reflection: you return to onboarding's About-you questionnaire
-   (not the review flow). Answer any subset and finish.
+   (not the review flow). All three answers are required; opening
+   `/onboarding?step=3` directly without ≥5 films and a completed reflection
+   bounces you back to the missing step.
 6. My Profile should now list the answers as confirmed preferences with the
    explanation "You wrote this about yourself.", and Home no longer redirects
    to onboarding.

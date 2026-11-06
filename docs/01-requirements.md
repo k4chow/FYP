@@ -39,7 +39,10 @@ the UI screen(s) that surface it. Update the "Status" column per phase.
 reflection — suggested from the user's own films, with search to pick another
 → 5. Reflection session on that film → 6. About-you questionnaire → Home.
 Status: ✅ Done (Phase 5, reworked D38) — `onboarding_completed` flag on
-`users` (migration 0004); every step skippable; the first reflection runs in
-the normal chat view and returns to the questionnaire when ended;
-questionnaire answers are user-authored, so they enter the profile directly
-as confirmed preferences via `POST /profile/questionnaire`.
+`users` (migration 0004); only the import step is skippable — the ≥5 picks,
+the first reflection, and all three questionnaire answers are required
+(arriving at the questionnaire step without them redirects to the missing
+step); the first reflection runs in the normal chat view and returns to the
+questionnaire when ended; questionnaire answers are user-authored, so they
+enter the profile directly as confirmed preferences via
+`POST /profile/questionnaire`.

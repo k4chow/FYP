@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { ApiError } from '../lib/api'
-import { createConversation } from '../lib/conversations'
+import { createConversation, listConversations } from '../lib/conversations'
 import { addFilm, getImportJob, getMyFilms, importLetterboxd, searchFilms } from '../lib/films'
 import type { ImportJob, LibraryFilm, SearchResult } from '../lib/films'
 import { saveQuestionnaire } from '../lib/profile'
@@ -11,8 +11,10 @@ import { saveQuestionnaire } from '../lib/profile'
 // stayed with you → pick ONE film for your first reflection (suggested from
 // your films; searching for another is fine) → after that reflection ends,
 // an about-you questionnaire whose answers build the profile as confirmed
-// preferences. Every step is skippable; finishing (or skipping) marks
-// onboarding complete on the profile row so existing users never see this.
+// preferences. Only the import step is skippable — picks, the first
+// reflection, and the questionnaire are required so the profile and
+// recommender have something real to work with. Finishing marks onboarding
+// complete on the profile row so existing users never see this.
 const STEPS = ['Import', 'Your films', 'First reflection', 'About you'] as const
 const MIN_PICKS = 5
 const MAX_SUGGESTIONS = 8
@@ -40,7 +42,6 @@ export default function Onboarding() {
     Number.isInteger(requested) && requested >= 0 && requested < STEPS.length ? requested : 0,
   )
   const [error, setError] = useState('')
-  const [finishing, setFinishing] = useState(false)
 
   // Step 1 — Letterboxd import
   const [file, setFile] = useState<File | null>(null)
@@ -62,19 +63,6 @@ export default function Onboarding() {
   // Step 4 — about-you questionnaire
   const [answers, setAnswers] = useState<string[]>(() => QUESTIONNAIRE.map(() => ''))
   const [savingAnswers, setSavingAnswers] = useState(false)
-
-  async function finish() {
-    if (finishing) return
-    setFinishing(true)
-    setError('')
-    try {
-      await completeOnboarding()
-      navigate('/app', { replace: true })
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Could not finish onboarding.')
-      setFinishing(false)
-    }
-  }
 
   // ---- Step 1: import ----
   const importActive = job?.status === 'queued' || job?.status === 'processing'
@@ -196,14 +184,18 @@ export default function Onboarding() {
   // ---- Step 4: about-you questionnaire ----
   async function submitQuestionnaire() {
     if (savingAnswers) return
+    const payload = QUESTIONNAIRE.map((question, i) => ({
+      question,
+      answer: (answers[i] ?? '').trim(),
+    }))
+    if (payload.some((item) => !item.answer)) {
+      setError('Please answer all three questions — even one sentence each is enough.')
+      return
+    }
     setSavingAnswers(true)
     setError('')
     try {
-      const payload = QUESTIONNAIRE.map((question, i) => ({
-        question,
-        answer: answers[i] ?? '',
-      })).filter((item) => item.answer.trim())
-      if (payload.length > 0) await saveQuestionnaire(payload)
+      await saveQuestionnaire(payload)
       await completeOnboarding()
       navigate('/app', { replace: true })
     } catch (err) {
@@ -211,6 +203,36 @@ export default function Onboarding() {
       setSavingAnswers(false)
     }
   }
+
+  const allAnswered = answers.every((a) => a.trim().length > 0)
+
+  // Steps run in order and only the import is skippable. Landing on
+  // About you (?step=3 — where the reflection chat returns to) without the
+  // prerequisites, e.g. by editing the URL, sends the user back to the
+  // missing step.
+  useEffect(() => {
+    if (step !== 3) return
+    let cancelled = false
+    ;(async () => {
+      try {
+        const [filmsData, convData] = await Promise.all([
+          getMyFilms(),
+          listConversations('completed'),
+        ])
+        if (cancelled) return
+        if (filmsData.films.length < MIN_PICKS) {
+          setStep(1)
+        } else if (!convData.conversations.some((c) => c.type === 'reflection')) {
+          setStep(2)
+        }
+      } catch {
+        // Leave the user where they are; the finish flow validates again.
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [step])
 
   return (
     <div className="onboarding">
@@ -332,9 +354,7 @@ export default function Onboarding() {
               ` — ${picked.map((p) => p.title).slice(0, 3).join(', ')}${picked.length > 3 ? '…' : ''}`}
           </p>
           <div className="row onboarding-nav">
-            <button className="link-button" onClick={goToReflectionStep}>
-              Skip this step →
-            </button>
+            <span className="muted">Pick {MIN_PICKS} films to continue</span>
             <button
               className="btn primary"
               disabled={picked.length < MIN_PICKS || savingPicks}
@@ -433,9 +453,6 @@ export default function Onboarding() {
             </div>
           )}
           <div className="row onboarding-nav">
-            <button className="link-button" onClick={() => setStep(3)}>
-              Skip this step →
-            </button>
             <button className="btn primary" disabled={!pick || starting} onClick={startReflection}>
               {starting
                 ? 'Opening…'
@@ -473,12 +490,9 @@ export default function Onboarding() {
             </div>
           ))}
           <div className="row onboarding-nav">
-            <button className="link-button" disabled={finishing} onClick={finish}>
-              {finishing ? 'Finishing…' : 'Skip and finish →'}
-            </button>
             <button
               className="btn primary"
-              disabled={savingAnswers}
+              disabled={savingAnswers || !allAnswered}
               onClick={submitQuestionnaire}
             >
               {savingAnswers ? 'Saving…' : 'Save and finish →'}
