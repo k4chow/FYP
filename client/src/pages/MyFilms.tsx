@@ -41,6 +41,15 @@ export default function MyFilms() {
     }
   }, [params, setParams])
 
+  // Profile stats deep-link here with ?filter=watched|watchlist.
+  useEffect(() => {
+    const f = params.get('filter')
+    if (f === 'watched' || f === 'watchlist') {
+      setFilter(f)
+      setParams({}, { replace: true })
+    }
+  }, [params, setParams])
+
   useEffect(() => {
     if (!toast) return
     const t = setTimeout(() => setToast(''), 3000)

@@ -23,7 +23,7 @@ async def lifespan(_: FastAPI):
     yield
 
 
-app = FastAPI(title="NOACF API", version="0.6.0", lifespan=lifespan)
+app = FastAPI(title="NOACF API", version="0.7.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,

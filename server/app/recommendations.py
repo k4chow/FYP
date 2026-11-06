@@ -37,7 +37,7 @@ _DISCOVER_LIMIT = 20  # raw discover rows considered per genre-pool page
 # run adds a random year/page on top so it can surface different candidates.
 _DISCOVER_VOTE_SORT = "vote_average.desc"
 _QUALITY_WEIGHT = 0.5  # TMDB rating prior, confidence-scaled by vote_count
-_REFRESH_POOL_FACTOR = 2  # refresh samples from the top slice: factor x limit
+_REFRESH_POOL_FACTOR = 4  # refresh samples from the top slice: factor x limit
 _FEEDBACK_SEED_WEIGHT = 1.2  # explicit "more like this" beats implicit seeds
 _RATING_SEED_DIVISOR = 5.0  # a 5-star film seeds at weight 1.0
 _WATCHLIST_SEED_WEIGHT = 0.6
@@ -343,13 +343,22 @@ def get_recommendations(
             tmdb.discover_movies(genre_ids or None, sort_by=_DISCOVER_VOTE_SORT),
         ]
         if refresh:
-            pool_pages.append(
-                tmdb.discover_movies(
-                    genre_ids or None,
-                    page=random.randint(1, 3),
-                    year=random.randint(1970, 2026),
+            # A refresh broadens the pool with several randomised discover
+            # pages (varied sort, page and year) so the next grid genuinely
+            # changes instead of reshuffling the same high-scored candidates.
+            for sort_by in (
+                "popularity.desc",
+                _DISCOVER_VOTE_SORT,
+                "vote_count.desc",
+            ):
+                pool_pages.append(
+                    tmdb.discover_movies(
+                        genre_ids or None,
+                        sort_by=sort_by,
+                        page=random.randint(1, 5),
+                        year=random.randint(1970, 2026),
+                    )
                 )
-            )
     for page_index, raw_rows in enumerate(pool_pages):
         page_weight = 1.0 if page_index == 0 else 0.7
         for raw in raw_rows[:_DISCOVER_LIMIT]:

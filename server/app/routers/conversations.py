@@ -573,6 +573,39 @@ def get_conversation(
     return {"conversation": _serialise(conv), "messages": res.data}
 
 
+@router.delete("/{conversation_id}", status_code=200)
+def delete_conversation(
+    conversation_id: UUID, current: dict = Depends(get_current_user)
+) -> dict:
+    """Delete a reflection (or any own conversation) plus its derived insights.
+
+    Order matters: memories are removed first (they reference message ids),
+    then the messages, then the conversation row. The recommendation cache is
+    invalidated because its ranking is built from confirmed memories.
+    """
+    conversation_id_text = str(conversation_id)
+    _get_own(conversation_id_text, current["id"])
+    rows = (
+        supabase.table("messages")
+        .select("id")
+        .eq("conversation_id", conversation_id_text)
+        .execute()
+        .data
+        or []
+    )
+    message_ids = [row["id"] for row in rows]
+    memory_svc.delete_for_messages(current["id"], message_ids)
+    if message_ids:
+        supabase.table("messages").delete().eq(
+            "conversation_id", conversation_id_text
+        ).execute()
+    supabase.table("conversations").delete().eq(
+        "id", conversation_id_text
+    ).execute()
+    rec_svc.invalidate(current["id"])
+    return {"deleted": True}
+
+
 @router.post("/{conversation_id}/messages", status_code=201)
 def post_message(
     conversation_id: UUID,

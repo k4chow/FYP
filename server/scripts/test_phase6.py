@@ -10,6 +10,7 @@ import sys
 import unittest
 from pathlib import Path
 from unittest import mock
+from uuid import UUID
 
 SERVER_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SERVER_ROOT))
@@ -18,6 +19,7 @@ sys.path.insert(0, str(SERVER_ROOT / "scripts"))
 from test_large_import import FakeStore  # noqa: E402  (shared in-memory store)
 
 from app import recommendations as rec  # noqa: E402
+from app import memories as memory_svc  # noqa: E402
 from app.llm.base import ChatContext  # noqa: E402
 from app.llm.mock import (  # noqa: E402
     _OPENERS_DISCOVERY,
@@ -542,6 +544,72 @@ class DiscoveryGroundingTests(unittest.TestCase):
             provider, library_data=[{"films": {"tmdb_id": self.WHIPLASH}}]
         )
         self.assertEqual(metadata["recommendations"], [])
+
+
+class ConversationDeleteTests(unittest.TestCase):
+    """Deleting a reflection cascades to its messages and derived memories,
+    across every memory status, and invalidates the recommendation cache."""
+
+    CONV = "11111111-1111-1111-1111-111111111111"
+    MSG1 = "21111111-1111-1111-1111-111111111111"
+    MSG2 = "31111111-1111-1111-1111-111111111111"
+
+    def setUp(self):
+        self.store = FakeStore()
+        self.store.tables.setdefault("users", []).append(
+            {"id": USER, "recommendation_style": 30, "display_name": "A"}
+        )
+        self.store.tables.setdefault("conversations", []).append(
+            {"id": self.CONV, "user_id": USER, "status": "completed", "type": "reflection"}
+        )
+        self.store.tables.setdefault("messages", []).extend(
+            [
+                {"id": self.MSG1, "conversation_id": self.CONV, "role": "user", "content": "hi"},
+                {"id": self.MSG2, "conversation_id": self.CONV, "role": "assistant", "content": "yo"},
+            ]
+        )
+        # Derived memories across statuses; m4 belongs to a different message
+        # and m5 to a different user — both must survive the cascade.
+        self.store.tables.setdefault("memories", []).extend(
+            [
+                {"id": "m1", "user_id": USER, "source_message_ids": [self.MSG1, self.MSG2], "status": "confirmed"},
+                {"id": "m2", "user_id": USER, "source_message_ids": [self.MSG1], "status": "proposed"},
+                {"id": "m3", "user_id": USER, "source_message_ids": [self.MSG2], "status": "rejected"},
+                {"id": "m4", "user_id": USER, "source_message_ids": ["41111111-1111-1111-1111-111111111111"], "status": "confirmed"},
+                {"id": "m5", "user_id": "someone-else", "source_message_ids": [self.MSG1], "status": "confirmed"},
+            ]
+        )
+        self.invalidated = []
+        for patcher in (
+            mock.patch.object(conversations_router, "supabase", self.store),
+            mock.patch.object(memory_svc, "supabase", self.store),
+            mock.patch.object(
+                conversations_router.rec_svc, "invalidate",
+                side_effect=lambda uid: self.invalidated.append(uid),
+            ),
+        ):
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    def test_delete_cascades_across_all_statuses(self):
+        result = conversations_router.delete_conversation(
+            UUID(self.CONV), current={"id": USER}
+        )
+        self.assertEqual(result, {"deleted": True})
+        self.assertEqual(self.store.tables["conversations"], [])
+        self.assertEqual(self.store.tables["messages"], [])
+        remaining_ids = [r["id"] for r in self.store.tables["memories"]]
+        self.assertEqual(sorted(remaining_ids), ["m4", "m5"])
+        self.assertEqual(self.invalidated, [USER])
+
+    def test_delete_missing_conversation_404(self):
+        from fastapi import HTTPException
+
+        with self.assertRaises(HTTPException) as ctx:
+            conversations_router.delete_conversation(
+                UUID("00000000-0000-0000-0000-000000000000"), current={"id": USER}
+            )
+        self.assertEqual(ctx.exception.status_code, 404)
 
 
 if __name__ == "__main__":

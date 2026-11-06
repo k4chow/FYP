@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { ApiError } from '../lib/api'
 import { reviewMemory } from '../lib/memories'
 import type { Memory, MemoryKind } from '../lib/memories'
@@ -43,7 +43,16 @@ export default function Profile() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [draft, setDraft] = useState('')
   const [savingId, setSavingId] = useState<string | null>(null)
-  const [tab, setTab] = useState<'overview' | 'genres'>('overview')
+  const [params, setParams] = useSearchParams()
+  const [tab, setTab] = useState<'overview' | 'genres' | 'themes'>(() => {
+    const initial = params.get('tab')
+    return initial === 'genres' || initial === 'themes' ? initial : 'overview'
+  })
+
+  function selectTab(next: 'overview' | 'genres' | 'themes') {
+    setTab(next)
+    setParams(next === 'overview' ? {} : { tab: next }, { replace: true })
+  }
 
   const load = useCallback(() => {
     setLoading(true)
@@ -98,37 +107,43 @@ export default function Profile() {
       <div className="tabs">
         <button
           className={`tab${tab === 'overview' ? ' active' : ''}`}
-          onClick={() => setTab('overview')}
+          onClick={() => selectTab('overview')}
         >
           Overview
         </button>
         <button
           className={`tab${tab === 'genres' ? ' active' : ''}`}
-          onClick={() => setTab('genres')}
+          onClick={() => selectTab('genres')}
         >
           Genres
+        </button>
+        <button
+          className={`tab${tab === 'themes' ? ' active' : ''}`}
+          onClick={() => selectTab('themes')}
+        >
+          Profile themes
         </button>
       </div>
 
       {tab === 'overview' && (
         <>
       <div className="stat-strip">
-        <div className="stat">
+        <Link className="stat" to="/app/films?filter=watched">
           <span className="stat-num">{stats.films_watched}</span>
           <span className="muted">films watched</span>
-        </div>
-        <div className="stat">
+        </Link>
+        <Link className="stat" to="/app/films?filter=watchlist">
           <span className="stat-num">{stats.watchlist}</span>
           <span className="muted">on your watchlist</span>
-        </div>
+        </Link>
         <div className="stat">
           <span className="stat-num">{stats.confirmed_insights}</span>
           <span className="muted">confirmed insights</span>
         </div>
-        <div className="stat">
+        <Link className="stat" to="/app/reflections">
           <span className="stat-num">{stats.reflections_completed}</span>
           <span className="muted">reflections completed</span>
-        </div>
+        </Link>
       </div>
 
       {stats.top_genres.length > 0 && (
@@ -142,7 +157,7 @@ export default function Profile() {
             </span>
           ))}
           {stats.genre_counts.length > stats.top_genres.length && (
-            <button className="link link-btn" onClick={() => setTab('genres')}>
+            <button className="link link-btn" onClick={() => selectTab('genres')}>
               See all {stats.genre_counts.length} genres →
             </button>
           )}
@@ -274,6 +289,43 @@ export default function Profile() {
         </p>
       )}
         </>
+      )}
+
+      {tab === 'themes' && (
+        <section>
+          <p className="muted" style={{ maxWidth: '44rem' }}>
+            Profile themes are the ideas that keep coming up across your
+            reflections — threads like longing, guilt, or reinvention. NOACF
+            uses them to explain the films it recommends on your Discover page,
+            which is why keeping the ones that feel true sharpens your picks.
+          </p>
+          {profile.groups.theme.length === 0 ? (
+            <p className="muted">
+              You don't have any themes yet. They'll appear here as you complete
+              reflections and keep the insights that ring true.
+            </p>
+          ) : (
+            <div className="insight-list">
+              {profile.groups.theme.map((memory) => (
+                <article className="insight-card" key={memory.id}>
+                  <div className="insight-top">
+                    <span className="insight-kind">
+                      <span className="insight-icon" aria-hidden>
+                        ✦
+                      </span>
+                      Theme
+                    </span>
+                    <span className="insight-status confirmed">Confirmed</span>
+                  </div>
+                  <p className="insight-text">{memory.content}</p>
+                  {sourceLine(memory) && (
+                    <p className="insight-explanation">{sourceLine(memory)}</p>
+                  )}
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
       )}
 
       {tab === 'genres' && (

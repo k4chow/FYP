@@ -95,7 +95,14 @@ export default function Settings() {
           <h2>Data &amp; Integrations</h2>
           <p className="muted">Connect your film data to get personalised recommendations.</p>
           <div className="settings-row" style={{ marginTop: '0.75rem' }}>
-            <div className="avatar lg" aria-hidden>L⃞</div>
+            <div className="letterboxd-mark" aria-hidden>
+              <svg viewBox="0 0 24 24" width="44" height="44" role="img" aria-label="Letterboxd">
+                <title>Letterboxd</title>
+                <circle cx="12" cy="7.4" r="5.6" fill="#00E054" />
+                <circle cx="7.7" cy="15.5" r="5.6" fill="#40BCF4" />
+                <circle cx="16.3" cy="15.5" r="5.6" fill="#FF8000" />
+              </svg>
+            </div>
             <div className="grow">
               <h3>Letterboxd</h3>
               <p className="muted" style={{ fontSize: '0.9rem' }}>
@@ -141,7 +148,16 @@ export default function Settings() {
         <section className="card">
           <h2>Change Password</h2>
           <p className="muted">Update your account password.</p>
-          <form onSubmit={changePassword} style={{ marginTop: '0.75rem', maxWidth: '26rem' }}>
+          <form
+            onSubmit={changePassword}
+            style={{
+              marginTop: '0.75rem',
+              maxWidth: '26rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem',
+            }}
+          >
             <div className="field">
               <label htmlFor="current-pw">Current password</label>
               <input

@@ -81,6 +81,12 @@ export const endConversation = (id: string) =>
     },
   )
 
+export const deleteConversation = (id: string) =>
+  api<{ deleted: boolean }>(`/conversations/${id}`, {
+    method: 'DELETE',
+    auth: true,
+  })
+
 // --- Ephemeral Film Assistant (Phase 7) -------------------------------------
 // The assistant no longer creates a persisted conversation: the transcript
 // lives in the client (sessionStorage) and each turn is a stateless request.

@@ -36,6 +36,7 @@ class FakeQuery:
         self.filters = []
         self._data = None
         self._update = None
+        self._delete = False
         self._limit = None
         self._range = None
         self._count = None
@@ -66,6 +67,10 @@ class FakeQuery:
 
     def update(self, values):
         self._update = values
+        return self
+
+    def delete(self):
+        self._delete = True
         return self
 
     def upsert(self, row, on_conflict=None):
@@ -116,6 +121,9 @@ class FakeQuery:
             return Result(self._data)
         rows = self.store.tables[self.table]
         matched = [row for row in rows if all(f(row) for f in self.filters)]
+        if self._delete:
+            self.store.tables[self.table] = [row for row in rows if row not in matched]
+            return Result([dict(row) for row in matched])
         if self._update is not None:
             if self.table == "import_jobs" and "results" in self._update and self._update.get("status") == "processing":
                 self.store.checkpoint_calls += 1

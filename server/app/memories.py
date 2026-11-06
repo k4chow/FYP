@@ -274,6 +274,29 @@ def get_owned(memory_id: str, user_id: str) -> dict | None:
     return rows[0] if rows else None
 
 
+def delete_for_messages(user_id: str, message_ids: list[str]) -> int:
+    """Delete every memory (any kind, any status) derived from these messages.
+
+    Used when a reflection is deleted so the insights it produced do not
+    outlive it. Returns the number of rows removed.
+    """
+    if not message_ids:
+        return 0
+    target = set(message_ids)
+    rows = (
+        supabase.table("memories")
+        .select("id,source_message_ids")
+        .eq("user_id", user_id)
+        .execute()
+        .data
+        or []
+    )
+    ids = [row["id"] for row in rows if target & set(_row_source_ids(row))]
+    if not ids:
+        return 0
+    return len(supabase.table("memories").delete().in_("id", ids).execute().data)
+
+
 def review(memory_id: str, status: str, content: str | None = None) -> dict:
     update = {"status": status, "updated_at": datetime.now(timezone.utc).isoformat()}
     if content is not None:

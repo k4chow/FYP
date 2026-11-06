@@ -25,10 +25,20 @@ export default function AppShell() {
   return (
     <div className="shell">
       <aside className="sidebar">
-        <p className="brand">
-          NOACF
-          <small>Your personal film journal</small>
-        </p>
+        <div className="sidebar-brand">
+          <p className="brand">
+            NOACF
+            <small>Your personal film journal</small>
+          </p>
+          <Link
+            to="/app/profile"
+            className="avatar"
+            title={user?.email}
+            aria-label="My Profile"
+          >
+            {initial}
+          </Link>
+        </div>
         <nav className="nav">
           {NAV.map((item) => (
             <NavLink
@@ -70,11 +80,6 @@ export default function AppShell() {
         </div>
       </aside>
       <main className="content">
-        <header className="topbar">
-          <Link to="/app/profile" className="avatar" title={user?.email} aria-label="My Profile">
-            {initial}
-          </Link>
-        </header>
         <Outlet />
       </main>
     </div>
