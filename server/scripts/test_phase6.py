@@ -79,6 +79,14 @@ DISCOVER = [
     _tmdb(562, "Die Hard", 1988, [28, 53]),  # off-profile genres
 ]
 
+# Only surfaced by randomised refresh pages (page/year beyond the defaults).
+EXTRA_DISCOVER = [
+    _tmdb(901, "Extra Drama", 1999, [18], vote_average=7.5, vote_count=1500),
+    _tmdb(902, "Extra Sci-Fi", 2003, [878], vote_average=7.0, vote_count=1200),
+    _tmdb(903, "Extra Comedy", 1994, [35], vote_average=7.2, vote_count=1400),
+    _tmdb(904, "Extra Crime", 2011, [80], vote_average=6.9, vote_count=1100),
+]
+
 MEMORY = {
     "id": "mem-1",
     "content": "You love quiet, hopeful sci-fi stories.",
@@ -142,11 +150,16 @@ class RecommendationEngineTests(unittest.TestCase):
             patcher.start()
             self.addCleanup(patcher.stop)
         rec.invalidate(USER)
+        rec._last_served.clear()
 
     def _discover(
         self, genre_ids=None, sort_by="popularity.desc", page=1, year=None
     ):
         self.discover_calls.append((genre_ids, sort_by, page, year))
+        if page != 1 or year is not None:
+            # Randomised refresh pages surface candidates the default pages
+            # never show, so a refresh can genuinely change the grid.
+            return DISCOVER + EXTRA_DISCOVER
         return DISCOVER
 
     def cards(self):
@@ -156,13 +169,15 @@ class RecommendationEngineTests(unittest.TestCase):
         dune = next(c for c in self.cards() if c["tmdb_id"] == 438631)
         self.assertEqual(dune["vote_average"], 8.0)
 
-    def test_refresh_samples_from_widened_pool(self):
-        all_ids = {c["tmdb_id"] for c in self.cards()}
-        self.assertEqual(len(all_ids), 6)
+    def test_refresh_excludes_last_served_and_widens_pool(self):
+        served = {c["tmdb_id"] for c in self.cards()}
+        self.assertEqual(len(served), 6)
         random.seed(11)
         refreshed = rec.get_recommendations(USER, limit=3, refresh=True)
         self.assertEqual(len(refreshed), 3)
-        self.assertTrue({c["tmdb_id"] for c in refreshed} <= all_ids)
+        # A refresh must surface films the user has not just seen, not the
+        # same cards reordered (D36).
+        self.assertFalse({c["tmdb_id"] for c in refreshed} & served)
         # Refresh bypassed the cache and widened the pool: an extra
         # randomised discover page ran (page/year beyond the defaults).
         self.assertTrue(
@@ -171,9 +186,13 @@ class RecommendationEngineTests(unittest.TestCase):
                 for _, _, page, year in self.discover_calls
             )
         )
-        # Same seed + same pool => the refresh draw is reproducible.
+
+    def test_refresh_draw_is_reproducible_from_clean_state(self):
         random.seed(11)
+        refreshed = rec.get_recommendations(USER, limit=3, refresh=True)
         rec.invalidate(USER)
+        rec._last_served.clear()
+        random.seed(11)
         again = rec.get_recommendations(USER, limit=3, refresh=True)
         self.assertEqual(
             [c["tmdb_id"] for c in refreshed], [c["tmdb_id"] for c in again]
@@ -314,6 +333,45 @@ class DiscoveryAssistantMockTests(unittest.TestCase):
         self.assertLessEqual(len(turn["films"]), 3)
         self.assertTrue(all(film["title"] for film in turn["films"]))
 
+    def test_chat_discovery_picks_from_candidate_pool(self):
+        """D36: with an engine pool available the mock picks from it and
+        passes tmdb_ids through so grounding never has to re-search."""
+        provider = MockLLMProvider(rng=random.Random(1))
+        pool = [
+            {
+                "tmdb_id": 1, "title": "Alpha", "year": 2000,
+                "genres": ["Drama"], "why": "Because Drama films lead your library",
+                "overview": "", "poster_url": None, "vote_average": 7.0,
+            },
+            {
+                "tmdb_id": 2, "title": "Beta", "year": 2001,
+                "genres": ["Comedy"], "why": "",
+                "overview": "", "poster_url": None, "vote_average": 6.0,
+            },
+        ]
+        turn = provider.chat_discovery(
+            [{"role": "user", "content": "something comforting"}],
+            ChatContext(conversation_type="discovery", suggestions=pool),
+        )
+        self.assertEqual(
+            sorted(film["tmdb_id"] for film in turn["films"]), [1, 2]
+        )
+        self.assertIn("Alpha", turn["reply"])
+
+    def test_chat_discovery_canned_path_skips_library_titles(self):
+        from app.llm.mock import _MOCK_FILMS
+
+        provider = MockLLMProvider(rng=random.Random(1))
+        taken = [film["title"] for film in _MOCK_FILMS[:-1]]
+        turn = provider.chat_discovery(
+            [{"role": "user", "content": "something comforting"}],
+            ChatContext(conversation_type="discovery", library_titles=taken),
+        )
+        taken_casefold = {title.casefold() for title in taken}
+        self.assertTrue(
+            all(film["title"].casefold() not in taken_casefold for film in turn["films"])
+        )
+
 
 class DiscoveryGroundingTests(unittest.TestCase):
     """F10: assistant film picks are grounded against TMDB before they are
@@ -344,7 +402,7 @@ class DiscoveryGroundingTests(unittest.TestCase):
             "vote_average": 8.4,
         }
 
-    def _run(self, provider, library_data=None):
+    def _run(self, provider, library_data=None, pool=None):
         self.store.table.return_value.select.return_value.eq.return_value.execute.return_value.data = (
             library_data or []
         )
@@ -352,6 +410,11 @@ class DiscoveryGroundingTests(unittest.TestCase):
             mock.patch.object(conversations_router, "supabase", self.store),
             mock.patch.object(
                 conversations_router, "get_llm", return_value=provider
+            ),
+            mock.patch.object(
+                conversations_router.rec_svc,
+                "get_recommendations",
+                return_value=pool or [],
             ),
             mock.patch.object(
                 conversations_router.tmdb, "search_movies", side_effect=self.search
@@ -405,6 +468,80 @@ class DiscoveryGroundingTests(unittest.TestCase):
         reply, metadata = self._run(self._provider(failing=True))
         self.assertEqual(reply, "plain fallback reply")
         self.assertEqual(metadata, {})
+
+    def test_failing_provider_still_recommends_from_pool(self):
+        """D36: a broken provider must not turn the assistant into a plain
+        chatbot — the engine pool keeps every turn a recommendation."""
+        pool = [
+            {
+                "tmdb_id": 42,
+                "title": "Pool Pick",
+                "year": 2001,
+                "genres": ["Drama"],
+                "overview": "A pool pick.",
+                "why": "Because Drama films lead your library",
+                "poster_url": "http://p/42.jpg",
+                "vote_average": 7.1,
+            },
+            {
+                "tmdb_id": 43,
+                "title": "Second Pick",
+                "year": 2002,
+                "genres": ["Comedy"],
+                "overview": "",
+                "why": "",
+                "poster_url": None,
+                "vote_average": 6.0,
+            },
+        ]
+        reply, metadata = self._run(self._provider(failing=True), pool=pool)
+        cards = metadata["recommendations"]
+        self.assertEqual([c["tmdb_id"] for c in cards], [42, 43])
+        self.assertEqual(cards[0]["runtime"], None)
+        self.assertIn("Pool Pick and Second Pick", reply)
+        self.assertNotEqual(reply, "plain fallback reply")
+
+    def test_provider_tmdb_ids_pass_through_without_search(self):
+        provider = self._provider()
+        provider.chat_discovery.return_value = {
+            "reply": "Try Whiplash.",
+            "films": [
+                {
+                    "tmdb_id": self.WHIPLASH,
+                    "title": "Whiplash",
+                    "year": 2014,
+                    "themes": ["Ambition"],
+                }
+            ],
+        }
+        calls = []
+        original_search = self.search
+
+        def counting_search(name, year=None):
+            calls.append(name)
+            return original_search(name, year)
+
+        with mock.patch.object(
+            conversations_router.tmdb, "search_movies", side_effect=counting_search
+        ):
+            _, metadata = self._run(provider)
+        self.assertEqual(calls, [])  # pool ids never re-searched
+        self.assertEqual(
+            [c["tmdb_id"] for c in metadata["recommendations"]], [self.WHIPLASH]
+        )
+
+    def test_pool_cards_exclude_library_films(self):
+        """Films the user already logged are never recommended, even when the
+        provider names a pool film that is in the library."""
+        provider = self._provider()
+        provider.chat_discovery.return_value = {
+            "reply": "Try Whiplash.",
+            "films": [{"tmdb_id": self.WHIPLASH, "title": "Whiplash", "year": 2014}],
+        }
+        _, metadata = self._run(
+            provider, library_data=[{"films": {"tmdb_id": self.WHIPLASH}}]
+        )
+        self.assertEqual(metadata["recommendations"], [])
 
 
 if __name__ == "__main__":

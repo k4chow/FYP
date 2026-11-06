@@ -172,7 +172,9 @@ class LargeImportTests(unittest.TestCase):
             self.name_ids[name] = 1_000_000 + len(self.name_ids)
         tmdb_id = self.name_ids[name]
         self.titles[tmdb_id] = (name, year)
-        return [{"id": tmdb_id}]
+        return [
+            {"id": tmdb_id, "release_date": f"{year or 2000}-01-01", "title": name}
+        ]
 
     def ensure_film(self, tmdb_id):
         existing = next((f for f in self.store.tables["films"] if f["tmdb_id"] == tmdb_id), None)

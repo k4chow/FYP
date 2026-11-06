@@ -268,24 +268,73 @@ class MockLLMProvider(LLMProvider):
         return " ".join(parts)
 
     def chat_discovery(self, messages: list[dict], context: ChatContext) -> dict:
-        """Mock recommender turn: a short decisive reply plus film picks."""
+        """Mock recommender turn: decisive picks from the candidate pool."""
+        pool = list(context.suggestions or [])
+        library = {t.casefold() for t in (context.library_titles or [])}
+        if pool:
+            shuffled = pool[:]
+            self._rng.shuffle(shuffled)
+            first, second = shuffled[0], shuffled[1]
+
+            def hook(film: dict) -> str:
+                why = str(film.get("why") or "").rstrip(". ")
+                if why:
+                    return why
+                genres = film.get("genres") or []
+                return f"a {genres[0].lower()} pick" if genres else "a solid pick"
+
+            def spec(film: dict) -> dict:
+                return {
+                    "tmdb_id": film.get("tmdb_id"),
+                    "title": film["title"],
+                    "year": (
+                        film.get("year")
+                        if isinstance(film.get("year"), int)
+                        else None
+                    ),
+                    "themes": list((film.get("genres") or []))[:3],
+                }
+
+            reply = (
+                f"Going with {first['title']} and {second['title']}. "
+                f"{first['title']} — {hook(first)}. "
+                f"{second['title']} — {hook(second)}. "
+                "Which one grabs you, or shall I pull something different?"
+            )
+            return {"reply": reply, "films": [spec(first), spec(second)]}
+
+        # No engine pool available: fall back to the canned bank, skipping
+        # anything the user has already logged.
+        available = [
+            film for film in _MOCK_FILMS if film["title"].casefold() not in library
+        ] or list(_MOCK_FILMS)
+        picks: list[dict] = []
+        distinct_titles = {film["title"] for film in available}
+        while len(picks) < min(2, len(distinct_titles)):
+            film = dict(self._rng.choice(available))
+            if all(pick["title"] != film["title"] for pick in picks):
+                picks.append(film)
         last_user = next(
             (m for m in reversed(messages) if m.get("role") == "user"),
             {"content": ""},
         )
         keywords = _keywords(str(last_user.get("content", "")), limit=2)
-        picks: list[dict] = []
-        while len(picks) < 2:
-            film = dict(self._rng.choice(_MOCK_FILMS))
-            if all(pick["title"] != film["title"] for pick in picks):
-                picks.append(film)
-        topic = " and ".join(keywords) if keywords else "your mood"
-        reply = (
-            f"Got it — going with {topic}. I think {picks[0]['title']} and "
-            f"{picks[1]['title']} will hit the spot: {picks[0]['title']} for "
-            f"the {picks[0]['themes'][0].lower()} of it, {picks[1]['title']} "
-            f"for its {picks[1]['themes'][0].lower()}."
-        )
+        topic = " and ".join(sorted(keywords)) if keywords else "your mood"
+        if len(picks) >= 2:
+            reply = (
+                f"Got it — going with {topic}. I think {picks[0]['title']} and "
+                f"{picks[1]['title']} will hit the spot: {picks[0]['title']} for "
+                f"the {picks[0]['themes'][0].lower()} of it, {picks[1]['title']} "
+                f"for its {picks[1]['themes'][0].lower()}."
+            )
+        else:
+            only = picks[0] if picks else None
+            reply = (
+                f"Got it — going with {topic}. I think {only['title']} will hit "
+                f"the spot for its {only['themes'][0].lower()}."
+                if only
+                else f"Got it — going with {topic}. Tell me a bit more and I'll name some films."
+            )
         return {"reply": reply, "films": picks}
 
     def _question(self, context: ChatContext, messages: list[dict]) -> str:

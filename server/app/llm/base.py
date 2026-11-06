@@ -19,6 +19,10 @@ class ChatContext:
     memories: list[str] = field(default_factory=list)  # confirmed only
     display_name: str | None = None
     turn: int = 0  # how many user messages so far (deterministic selector)
+    # Discovery-only context: titles already in the user's library (never
+    # recommended again) and the personalised candidate pool to pick from.
+    library_titles: list[str] = field(default_factory=list)
+    suggestions: list[dict] = field(default_factory=list)
 
 
 class LLMProvider(ABC):

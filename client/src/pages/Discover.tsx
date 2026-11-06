@@ -10,15 +10,45 @@ import {
 } from '../lib/recommendations'
 
 // Discover (Phase 6: F8-F11): reflection-informed recommendation cards, each
-// with a why-line, a "Why am I seeing this?" provenance panel, TMDB ratings,
-// and hover thumbs (More like this / Not for me) that steer future picks. The
-// Film Assistant entry point opens the dedicated two-panel assistant page.
+// with a why-line, a TMDB critic rating next to the title, and a split pill
+// bar (thumbs up / thumbs down) that steers future picks. The Film Assistant
+// entry point opens the dedicated two-panel assistant page.
+// Outline thumb icons matching the wireframe's pill bar.
+function ThumbIcon({ down = false }: { down?: boolean }) {
+  return down ? (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M17 14V2" />
+      <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z" />
+    </svg>
+  ) : (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M7 10v12" />
+      <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
+    </svg>
+  )
+}
+
 export default function Discover() {
   const navigate = useNavigate()
   const [recs, setRecs] = useState<Recommendation[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [expanded, setExpanded] = useState<number | null>(null)
   const [feedback, setFeedback] = useState<Record<number, FeedbackSignal>>({})
   const [busy, setBusy] = useState<number | null>(null)
 
@@ -115,61 +145,42 @@ export default function Discover() {
                 ) : (
                   <span className="no-poster">{rec.title}</span>
                 )}
-                <div className={`rec-feedback${feedback[rec.tmdb_id] ? ' open' : ''}`}>
-                  <button
-                    className={`rec-thumb up${feedback[rec.tmdb_id] === 'more_like_this' ? ' active' : ''}`}
-                    disabled={busy === rec.tmdb_id}
-                    aria-label="More like this"
-                    title="More like this"
-                    onClick={() => giveFeedback(rec, 'more_like_this')}
-                  >
-                    👍
-                  </button>
-                  <button
-                    className={`rec-thumb down${feedback[rec.tmdb_id] === 'not_for_me' ? ' active' : ''}`}
-                    disabled={busy === rec.tmdb_id}
-                    aria-label="Not for me"
-                    title="Not for me"
-                    onClick={() => giveFeedback(rec, 'not_for_me')}
-                  >
-                    👎
-                  </button>
-                </div>
               </div>
               <h3>
                 {rec.title}
                 {rec.year ? ` (${rec.year})` : ''}
                 {rec.vote_average > 0 && (
                   <span className="rec-rating" title="TMDB rating (out of 5)">
-                    {' '}⭐ {(rec.vote_average / 2).toFixed(1)}
+                    {' '}
+                    <span className="star">★</span>{' '}
+                    {(rec.vote_average / 2).toFixed(1)}
                   </span>
                 )}
               </h3>
               {rec.genres.length > 0 && (
                 <p className="meta">{rec.genres.slice(0, 2).join(' · ')}</p>
               )}
-              <p className="why-line">{rec.why}</p>
-              <button
-                className="why-toggle"
-                onClick={() => setExpanded(expanded === rec.tmdb_id ? null : rec.tmdb_id)}
-              >
-                {expanded === rec.tmdb_id ? 'Hide explanation' : 'Why am I seeing this?'}
-              </button>
-              {expanded === rec.tmdb_id && (
-                <div className="why-panel">
-                  <p>{rec.why}</p>
-                  {rec.source_memories.length > 0 && (
-                    <>
-                      <p className="meta">Based on your confirmed insights:</p>
-                      <ul>
-                        {rec.source_memories.map((m) => (
-                          <li key={m.id}>{m.content}</li>
-                        ))}
-                      </ul>
-                    </>
-                  )}
-                </div>
-              )}
+              <p className="why-line">“{rec.why}”</p>
+              <div className="rec-actions">
+                <button
+                  className={`rec-btn up${feedback[rec.tmdb_id] === 'more_like_this' ? ' active' : ''}`}
+                  disabled={busy === rec.tmdb_id}
+                  aria-label="More like this"
+                  title="More like this"
+                  onClick={() => giveFeedback(rec, 'more_like_this')}
+                >
+                  <ThumbIcon />
+                </button>
+                <button
+                  className={`rec-btn down${feedback[rec.tmdb_id] === 'not_for_me' ? ' active' : ''}`}
+                  disabled={busy === rec.tmdb_id}
+                  aria-label="Not for me"
+                  title="Not for me"
+                  onClick={() => giveFeedback(rec, 'not_for_me')}
+                >
+                  <ThumbIcon down />
+                </button>
+              </div>
             </article>
           ))}
         </div>

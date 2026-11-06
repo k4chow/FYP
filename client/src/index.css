@@ -1949,48 +1949,6 @@ a.prompt-card:hover {
   line-height: 1.4;
 }
 
-.why-toggle {
-  background: none;
-  border: none;
-  padding: 0;
-  margin-top: 0.35rem;
-  color: var(--color-accent, #8ab4f8);
-  font-size: 0.8rem;
-  cursor: pointer;
-  text-align: left;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.why-panel {
-  margin-top: 0.5rem;
-  padding: 0.6rem 0.7rem;
-  border-radius: 0.6rem;
-  background: var(--color-surface-2);
-  border: 1px solid var(--color-border);
-  font-size: 0.82rem;
-}
-
-.why-panel p {
-  margin: 0 0 0.4rem;
-}
-
-.why-panel ul {
-  margin: 0.25rem 0 0;
-  padding-left: 1.1rem;
-}
-
-.why-panel li {
-  margin-bottom: 0.25rem;
-}
-
-.rec-actions {
-  display: flex;
-  gap: 0.4rem;
-  margin-top: auto;
-  padding-top: 0.55rem;
-}
-
 .btn.small {
   font-size: 0.78rem;
   padding: 0.3rem 0.55rem;
@@ -2112,8 +2070,15 @@ a.prompt-card:hover {
 .theme-tags {
   display: flex;
   flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.4rem 0 0.5rem;
+  padding: 0;
+  list-style: none;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
 
-/* Discover cards: TMDB rating + hover thumbs */
+/* Discover cards: TMDB rating next to the title + bottom pill thumbs */
 .rec-rating {
   color: var(--color-text-muted);
   font-size: 0.8rem;
@@ -2121,53 +2086,59 @@ a.prompt-card:hover {
   white-space: nowrap;
 }
 
-.rec-feedback {
-  position: absolute;
-  right: 0.5rem;
-  bottom: 0.5rem;
-  z-index: 1;
+.rec-rating .star {
+  color: #f5c518;
+}
+
+/* Split pill bar at the bottom of each Discover card (matches the mockup):
+   thumbs-up on the left, thumbs-down on the right, divider between. */
+.rec-actions {
   display: flex;
-  gap: 0.4rem;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-}
-
-.film-poster:hover .rec-feedback,
-.rec-feedback.open {
-  opacity: 1;
-}
-
-.rec-thumb {
-  width: 2.1rem;
-  height: 2.1rem;
-  padding: 0;
+  margin-top: auto;
   border: 1px solid var(--color-border);
   border-radius: 999px;
-  background: rgba(10, 12, 20, 0.7);
-  color: var(--color-text);
-  font-size: 0.95rem;
-  line-height: 1;
+  overflow: hidden;
+  background: var(--color-surface-2, rgba(255, 255, 255, 0.03));
+}
+
+.rec-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 0;
+  border: 0;
+  background: none;
+  color: var(--color-text-muted);
   cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
-.rec-thumb:hover {
-  border-color: var(--color-accent);
+.rec-btn + .rec-btn {
+  border-left: 1px solid var(--color-border);
 }
 
-.rec-thumb.active {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+.rec-btn svg {
+  width: 1.05rem;
+  height: 1.05rem;
 }
 
-.rec-thumb:disabled {
-  opacity: 0.7;
+.rec-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-text);
+}
+
+.rec-btn.up.active {
+  color: #4ade80;
+}
+
+.rec-btn.down.active {
+  color: #f87171;
+}
+
+.rec-btn:disabled {
+  opacity: 0.6;
   cursor: default;
-}
-
-@media (max-width: 700px) {
-  .rec-feedback {
-    opacity: 1;
-  }
 }
 
 /* Import page: watched vs watchlist mode toggle */
@@ -2202,10 +2173,6 @@ a.prompt-card:hover {
   .assistant-rec-card {
     grid-template-columns: 90px minmax(0, 1fr);
   }
-}
-
-  gap: 0.35rem;
-  margin: 0 0 0.5rem;
 }
 
 .theme-tag {

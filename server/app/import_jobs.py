@@ -6,6 +6,7 @@ successful rows are never intentionally rematched, failed rows can be resumed,
 and user_films remains idempotent through unique(user_id, film_id).
 """
 
+import re
 import threading
 from datetime import datetime, timezone
 
@@ -136,6 +137,26 @@ def _library_map(user_id: str) -> dict[str, dict]:
         offset += PAGE_SIZE
 
 
+def _norm_title(text: str) -> str:
+    """Lowercase, punctuation-stripped title without leading articles."""
+    lowered = re.sub(r"[^\w\s]", " ", (text or "").lower())
+    words = [w for w in lowered.split() if w not in ("the", "a", "an")]
+    return " ".join(words or lowered.split())
+
+
+def _close_title(query: str, candidate: object) -> bool:
+    """True when a TMDB result title closely matches the CSV row's name.
+
+    Guards the no-year path: without a release year, blindly trusting the
+    most popular search result once imported 'The Making of …' for a TV
+    show and a different same-title film for an unreleased one.
+    """
+    a, b = _norm_title(query), _norm_title(str(candidate or ""))
+    if not a or not b:
+        return False
+    return a == b or a.startswith(b) or b.startswith(a)
+
+
 def _match_film(row: dict, cache: dict) -> dict | None:
     name = row["name"]
     year = row.get("year")
@@ -144,27 +165,34 @@ def _match_film(row: dict, cache: dict) -> dict | None:
         return cache[key]
 
     # D15: catalogue first, then TMDB title+year. D32: when the CSV gives a
-    # year, a title-only result is only accepted if its release year matches —
-    # otherwise the most popular same-title film (usually a remake) is
-    # imported alongside the intended one on the next run, producing the
-    # duplicate-library bug. No year match anywhere => unmatched, not a guess.
+    # year, only results whose release year matches exactly are accepted —
+    # the most popular same-title film (usually a remake) must never be
+    # imported alongside the intended one. No year match => unmatched.
     query = supabase.table("films").select("*").ilike("title", name)
     if year:
         query = query.eq("year", year)
     found = query.limit(1).execute().data
     if found:
         film = found[0]
-    else:
-        results = tmdb.search_movies(name, year)
+    elif year:
+        results = [
+            r
+            for r in tmdb.search_movies(name, year)
+            if tmdb._year_from_release(r.get("release_date")) == year
+        ]
         if not results:
-            results = tmdb.search_movies(name)
-            if year:
-                results = [
-                    r
-                    for r in results
-                    if tmdb._year_from_release(r.get("release_date")) == year
-                ]
+            results = [
+                r
+                for r in tmdb.search_movies(name)
+                if tmdb._year_from_release(r.get("release_date")) == year
+            ]
         film = _ensure_film(results[0]["id"]) if results else None
+    else:
+        # No year in the CSV: only an unambiguous close title match is
+        # accepted; anything else is left unmatched rather than guessed.
+        results = tmdb.search_movies(name)
+        exact = [r for r in results if _close_title(name, r.get("title"))]
+        film = _ensure_film(exact[0]["id"]) if len(exact) == 1 else None
     cache[key] = film
     return film
 

@@ -8,6 +8,7 @@
 - F5/D5: replies come from the swappable provider seam (app/llm).
 """
 
+from dataclasses import replace
 from datetime import datetime, timezone
 from uuid import UUID
 
@@ -16,6 +17,7 @@ from pydantic import BaseModel, Field, field_validator
 
 from .. import context as context_svc
 from .. import memories as memory_svc
+from .. import recommendations as rec_svc
 from .. import tmdb
 from ..deps import get_current_user
 from ..llm import ChatContext, get_llm
@@ -93,6 +95,24 @@ def _display_name(user_id: str) -> str | None:
     return (res.data[0].get("display_name") if res.data else None) or None
 
 
+def _library_titles(user_id: str, limit: int = 80) -> list[str]:
+    """Titles already logged by the user — the assistant must not re-recommend
+    them (the recommendation engine excludes them too, but the LLM needs the
+    list spelled out so it cannot name watched films in its reply text)."""
+    res = (
+        supabase.table("user_films")
+        .select("films(title)")
+        .eq("user_id", user_id)
+        .limit(limit)
+        .execute()
+    )
+    return [
+        row["films"]["title"]
+        for row in (res.data or [])
+        if row.get("films") and row["films"].get("title")
+    ]
+
+
 def _chat_context(conv: dict, user_id: str, turn: int) -> ChatContext:
     return ChatContext(
         conversation_type=conv["type"],
@@ -102,7 +122,36 @@ def _chat_context(conv: dict, user_id: str, turn: int) -> ChatContext:
         memories=context_svc.confirmed_memories(user_id),
         display_name=_display_name(user_id),
         turn=turn,
+        library_titles=(
+            _library_titles(user_id) if conv["type"] == "discovery" else []
+        ),
     )
+
+
+def _candidate_pool(user_id: str, limit: int = 8) -> list[dict]:
+    """Personalised candidates for the Film Assistant to pick from.
+
+    The recommendation engine already excludes library films and every
+    "not for me" card, so anything the provider names from this pool is safe
+    to show. Best-effort: an engine failure must never break the chat.
+    """
+    try:
+        cards = rec_svc.get_recommendations(user_id, limit=limit)
+    except Exception:  # noqa: BLE001 - discovery chat must never fail here
+        return []
+    return [
+        {
+            "tmdb_id": card["tmdb_id"],
+            "title": card["title"],
+            "year": card.get("year"),
+            "genres": card.get("genres") or [],
+            "overview": (card.get("overview") or "")[:220],
+            "why": card.get("why") or "",
+            "poster_url": card.get("poster_url"),
+            "vote_average": card.get("vote_average", 0.0),
+        }
+        for card in cards
+    ]
 
 
 def _tmdb_year(release: object) -> int | None:
@@ -135,23 +184,35 @@ def _resolve_suggestions(specs: list[dict], user_id: str) -> list[dict]:
         if not title:
             continue
         year = spec.get("year")
-        try:
-            hits = tmdb.search_movies(title, year if isinstance(year, int) else None)
-        except Exception:  # noqa: BLE001 - grounding is best-effort per title
-            continue
-        match = next(
-            (
-                hit
-                for hit in hits
-                if str(hit.get("title") or "").casefold() == title.casefold()
-            ),
-            hits[0] if hits else None,
-        )
-        if match is None or match.get("id") in library_ids:
-            continue
-        details = tmdb.movie_details(match["id"])
-        if details is None:
-            continue
+        tmdb_id = spec.get("tmdb_id")
+        if isinstance(tmdb_id, int) and tmdb_id > 0:
+            # Providers grounded in the engine's candidate pool pass the TMDB
+            # id through directly — no search needed, no wrong-title risk.
+            if tmdb_id in library_ids:
+                continue
+            details = tmdb.movie_details(tmdb_id)
+            if details is None:
+                continue
+        else:
+            try:
+                hits = tmdb.search_movies(
+                    title, year if isinstance(year, int) else None
+                )
+            except Exception:  # noqa: BLE001 - grounding is best-effort per title
+                continue
+            match = next(
+                (
+                    hit
+                    for hit in hits
+                    if str(hit.get("title") or "").casefold() == title.casefold()
+                ),
+                hits[0] if hits else None,
+            )
+            if match is None or match.get("id") in library_ids:
+                continue
+            details = tmdb.movie_details(match["id"])
+            if details is None:
+                continue
         cards.append(
             {
                 "tmdb_id": details["id"],
@@ -168,24 +229,58 @@ def _resolve_suggestions(specs: list[dict], user_id: str) -> list[dict]:
     return cards
 
 
+def _pool_card(film: dict) -> dict:
+    """Shape an engine candidate into an assistant card (runtime unknown)."""
+    return {
+        "tmdb_id": film["tmdb_id"],
+        "title": film["title"],
+        "year": film.get("year"),
+        "genres": film.get("genres") or [],
+        "runtime": None,
+        "overview": film.get("overview") or "",
+        "poster_url": film.get("poster_url"),
+        "vote_average": film.get("vote_average", 0.0),
+        "themes": [],
+    }
+
+
 def _discovery_reply(
     history: list[dict], ctx: ChatContext, user_id: str
 ) -> tuple[str, dict]:
     """One Film Assistant turn: recommender reply + verified film cards.
 
-    Any provider or TMDB failure degrades to a plain chat reply — discovery
-    chat must never fail just because suggestions could not be grounded.
+    The provider picks from the personalised candidate pool (which already
+    excludes the user's library and every "not for me" card), so every turn
+    recommends films the user has not logged. Any provider or TMDB failure
+    degrades to the top of that pool — discovery chat stays a recommender —
+    and only a fully empty pool degrades to a plain chat reply.
     """
     llm = get_llm()
+    pool = _candidate_pool(user_id)
+    if pool:
+        ctx = replace(ctx, suggestions=pool)
     try:
         turn = llm.chat_discovery(history, ctx)
-    except (RuntimeError, AttributeError):
-        return llm.chat(history, ctx), {}
+        reply, specs = turn["reply"], turn.get("films") or []
+    except (RuntimeError, AttributeError, KeyError, TypeError):
+        specs, reply = [], None
     try:
-        cards = _resolve_suggestions(turn.get("films") or [], user_id)
+        cards = _resolve_suggestions(specs, user_id)
     except Exception:  # noqa: BLE001 - grounding is best-effort
         cards = []
-    return turn["reply"], {"kind": "suggestions", "recommendations": cards}
+    if not cards and pool:
+        # The provider named nothing groundable — fall back to the top of the
+        # personalised pool so every assistant turn still recommends films.
+        cards = [_pool_card(film) for film in pool[:2]]
+        titles = " and ".join(card["title"] for card in cards)
+        lead = cards[0]["genres"][0] if cards[0]["genres"] else "worth a look"
+        reply = (
+            f"Going with {titles}. {cards[0]['title']} — {lead.lower()}. "
+            "Which one grabs you, or shall I pull something different?"
+        )
+    if reply is None:
+        return llm.chat(history, ctx), {}
+    return reply, {"kind": "suggestions", "recommendations": cards}
 
 
 def _user_turn_count(conversation_id: str) -> int:

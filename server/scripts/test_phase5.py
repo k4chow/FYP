@@ -42,7 +42,9 @@ class WatchedWinsImportTests(unittest.TestCase):
             self.addCleanup(patcher.stop)
 
     def search(self, name, year=None):
-        return [{"id": 4242}]
+        return [
+            {"id": 4242, "release_date": "2000-01-01", "title": "Shared Film"}
+        ]
 
     def ensure_film(self, tmdb_id):
         film = next(
@@ -207,14 +209,60 @@ class YearStrictMatchingTests(unittest.TestCase):
         self.assertEqual(self.store.tables["user_films"], [])  # never guessed
         self.assertEqual(job["unmatched_count"], 1)
 
-    def test_row_without_year_still_uses_first_result(self):
+    def test_year_search_results_are_validated(self):
+        """Even when TMDB's year-filtered search returns something, the
+        accepted result's release year must match the CSV row exactly."""
+        def wrong_year(name, year=None):
+            return [{"id": 447277, "release_date": "2023-05-18"}]
+
+        with mock.patch.object(
+            import_jobs.tmdb, "search_movies", side_effect=wrong_year
+        ):
+            job = self.run_job(
+                {"name": "The Little Mermaid", "year": 1989, "rating": None, "watched_on": None}
+            )
+        self.assertEqual(self.store.tables["user_films"], [])  # never guessed
+        self.assertEqual(job["unmatched_count"], 1)
+
+    def test_row_without_year_is_unmatched_when_titles_are_ambiguous(self):
+        """D36: without a year, same-title candidates cannot be disambiguated.
+
+        Guessing the most popular result once imported 'The Making of …' for
+        a TV show and a different same-title film for an unreleased one.
+        """
         job = self.run_job(
             {"name": "The Little Mermaid", "year": None, "rating": None, "watched_on": None}
         )
+        self.assertEqual(self.store.tables["user_films"], [])  # never guessed
+        self.assertEqual(job["unmatched_count"], 1)
+
+    def test_row_without_year_accepts_single_close_title_match(self):
+        def unambiguous(name, year=None):
+            return [{"id": 999, "release_date": "2001-03-30", "title": "Arrival"}]
+
+        with mock.patch.object(
+            import_jobs.tmdb, "search_movies", side_effect=unambiguous
+        ):
+            job = self.run_job(
+                {"name": "Arrival", "year": None, "rating": None, "watched_on": None}
+            )
         rows = self.store.tables["user_films"]
         self.assertEqual(len(rows), 1)
-        self.assertEqual(rows[0]["film_id"], "film-447277")
+        self.assertEqual(rows[0]["film_id"], "film-999")
         self.assertEqual(job["added_count"], 1)
+
+    def test_row_without_year_rejects_loosely_matching_titles(self):
+        def making_of(name, year=None):
+            return [
+                {"id": 555, "release_date": "2024-10-01", "title": "The Making of Agatha All Along"}
+            ]
+
+        with mock.patch.object(import_jobs.tmdb, "search_movies", side_effect=making_of):
+            job = self.run_job(
+                {"name": "Agatha All Along", "year": None, "rating": None, "watched_on": None}
+            )
+        self.assertEqual(self.store.tables["user_films"], [])
+        self.assertEqual(job["unmatched_count"], 1)
 
 
 def _bank_for(context: ChatContext):

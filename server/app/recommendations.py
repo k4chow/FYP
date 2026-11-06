@@ -68,6 +68,9 @@ _GENRE_ALIASES = {"sci-fi": "Science Fiction", "scifi": "Science Fiction"}
 # Per-user result cache so repeated Discover loads do not hammer TMDB;
 # feedback or style changes invalidate it explicitly.
 _cache: dict[str, tuple[float, list[dict]]] = {}
+# Films shown in the user's most recent run. A refresh excludes them so the
+# grid genuinely changes instead of reordering the same picks.
+_last_served: dict[str, set[int]] = {}
 
 
 def invalidate(user_id: str) -> None:
@@ -209,6 +212,26 @@ def _why(
     return value if isinstance(value, int) else _DEFAULT_STYLE
 
 
+def _diverse(cards: list[dict], limit: int, cap: int = 2) -> list[dict]:
+    """Final grid selection with a genre spread: at most `cap` cards per
+    primary genre while candidates last, then backfill from the rest."""
+    chosen: list[dict] = []
+    genre_counts: Counter[str] = Counter()
+    skipped: list[dict] = []
+    for card in cards:
+        if len(chosen) >= limit:
+            break
+        primary = (card.get("genres") or [""])[0]
+        if genre_counts[primary] < cap:
+            chosen.append(card)
+            genre_counts[primary] += 1
+        else:
+            skipped.append(card)
+    while len(chosen) < limit and skipped:
+        chosen.append(skipped.pop(0))
+    return chosen
+
+
 def get_recommendations(
     user_id: str, limit: int = 12, refresh: bool = False
 ) -> list[dict]:
@@ -234,6 +257,9 @@ def get_recommendations(
     not_for_me = {row["tmdb_id"] for row in feedback if row["signal"] == "not_for_me"}
     more_like_this = [row for row in feedback if row["signal"] == "more_like_this"]
     excluded = library_ids | not_for_me
+    if refresh:
+        # A refresh must surface films the user has not just seen.
+        excluded |= _last_served.get(user_id, set())
 
     genre_counts: Counter[str] = Counter()
     for row in library:
@@ -365,5 +391,7 @@ def get_recommendations(
         for c in ranked
     ]
     _cache[user_id] = (time.monotonic() + _CACHE_TTL_SECONDS, cards)
-    return cards[:limit]
+    served = _diverse(cards, limit)
+    _last_served[user_id] = {card["tmdb_id"] for card in served}
+    return served
 

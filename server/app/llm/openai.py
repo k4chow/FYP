@@ -29,21 +29,22 @@ _SYSTEM_BASE = (
 )
 
 # Film Assistant conversations are recommender turns, not reflection turns
-# (F10): decisive picks, grounded in the user's taste, not an interview.
+# (F10): decisive picks from the server-provided candidate pool, grounded in
+# the user's taste — never a reflective interview, never the user's library.
 _SYSTEM_DISCOVERY = (
     "You are the Film Assistant inside a movie-journal app: a decisive, "
     "knowledgeable film recommender — not a reflective interviewer.\n"
     "Rules:\n"
-    "- Every reply must recommend one to three concrete, real films.\n"
+    "- Every reply must recommend one to three concrete films chosen FROM the "
+    "candidate list in the context. Never recommend anything else.\n"
+    "- Never recommend any film listed as being in the user's library.\n"
     "- Give each pick a one-line reason tied to what the user told you: "
     "their mood, taste, or the confirmed memories in the context.\n"
-    "- Be decisive: pick films instead of only asking questions. Ask at most "
-    "one short follow-up question, and only if you truly cannot pick yet.\n"
+    "- Be decisive: lead with the picks. Ask at most one short follow-up "
+    "question, and only if the candidate list is empty.\n"
     "- Keep replies under 120 words, warm and direct; no lectures, no "
     "spoilers.\n"
-    "- Never invent films, directors, or plot details; only recommend films "
-    "you are confident exist.\n"
-    "- Avoid films the user's memories suggest they have already seen."
+    "- Never invent films, directors, or plot details."
 )
 
 _KIND_DEFINITIONS = (
@@ -61,9 +62,34 @@ def _context_block(context: ChatContext) -> str:
     if context.conversation_type == "discovery":
         lines.append(
             "This is a Film Assistant discovery conversation: the user wants "
-            "help finding their next film. Explore their taste and current mood "
-            "through questions; suggesting films conversationally is welcome here."
+            "help finding their next film. Recommend decisively from the "
+            "candidate list below."
         )
+        if context.library_titles:
+            lines.append(
+                "Films already in the user's library — NEVER recommend any "
+                "of these:"
+            )
+            lines.append(", ".join(context.library_titles[:60]))
+        if context.suggestions:
+            lines.append(
+                "Candidate films — recommend ONLY from this list "
+                "(tmdb_id must be copied exactly into the JSON):"
+            )
+            for film in context.suggestions:
+                genres = ", ".join(film.get("genres") or [])
+                lines.append(
+                    f"- {film['title']}"
+                    + (f" ({film['year']})" if film.get("year") else "")
+                    + f" [tmdb_id {film['tmdb_id']}]"
+                    + (f" — {genres}" if genres else "")
+                    + (f" — fits because: {film['why']}" if film.get("why") else "")
+                )
+        else:
+            lines.append(
+                "No candidate list is available for this turn: name 1-3 "
+                "well-known real films that fit the mood instead."
+            )
     film = context.film or {}
     if film:
         genres = ", ".join(film.get("genres") or [])
@@ -163,12 +189,13 @@ class OpenAIProvider(LLMProvider):
                     "role": "user",
                     "content": (
                         "Reply now. Respond with JSON only: "
-                        '{"reply": str, "films": [{"title": str, '
-                        '"year": int | null, "themes": [str]}]}. '
+                        '{"reply": str, "films": [{"tmdb_id": int | null, '
+                        '"title": str, "year": int | null, "themes": [str]}]}. '
                         "`reply` is what the user reads (max 120 words, at "
                         "most one follow-up question); `films` lists the "
-                        "1-3 real films you recommend in it, each with 2-4 "
-                        "short mood/theme tags."
+                        "1-3 candidate films you recommend in it — copy each "
+                        "film's tmdb_id from the candidate list exactly — "
+                        "each with 2-4 short mood/theme tags."
                     ),
                 },
             ],
@@ -195,6 +222,7 @@ class OpenAIProvider(LLMProvider):
             if not title:
                 continue
             year = film.get("year")
+            tmdb_id = film.get("tmdb_id")
             themes = [
                 str(t).strip()
                 for t in (film.get("themes") or [])
@@ -204,6 +232,7 @@ class OpenAIProvider(LLMProvider):
                 {
                     "title": title,
                     "year": year if isinstance(year, int) else None,
+                    "tmdb_id": tmdb_id if isinstance(tmdb_id, int) and tmdb_id > 0 else None,
                     "themes": themes,
                 }
             )
@@ -224,6 +253,11 @@ class OpenAIProvider(LLMProvider):
             "their taste or values, or a sharp interpretation they could "
             "reasonably push back on. These must still be anchored in "
             "something the user actually said.\n"
+            "Do not simply repeat or rephrase what the user already knows "
+            "they said — every proposal should add something they could not "
+            "have written themselves, and at least one proposal should offer "
+            "an interpretation the user might disagree with and argue "
+            "against.\n"
             "Never invent biography and never diagnose the user.\n"
             "Rules: phrase `content` to the user in second person "
             "(\"You ...\"), max 500 characters; `explanation` briefly states "
