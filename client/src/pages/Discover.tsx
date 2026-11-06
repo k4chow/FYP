@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ApiError } from '../lib/api'
+import DisapprovalNote from '../components/DisapprovalNote'
 import {
   clearFeedback,
   getRecommendations,
@@ -161,6 +162,7 @@ export default function Discover() {
                 <p className="meta">{rec.genres.slice(0, 2).join(' · ')}</p>
               )}
               <p className="why-line">“{rec.why}”</p>
+              <DisapprovalNote title={rec.title} year={rec.year} />
               <div className="rec-actions">
                 <button
                   className={`rec-btn up${feedback[rec.tmdb_id] === 'more_like_this' ? ' active' : ''}`}

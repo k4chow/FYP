@@ -1,0 +1,5280 @@
+{
+  "feature_name": "Cherie's Disapproval",
+  "owner": "Cherie",
+  "version": 4,
+  "description": "A playful recommendation annotation layer. Flags films rated below 2.5 stars, exactly 2.5 stars, or exactly 3 stars (except Grand Theft Hamlet), plus listed directed works by Paul Thomas Anderson and Taika Waititi, while respecting explicit exclusions.",
+  "rules": {
+    "low_rating_rule": "Flag films Cherie rated below 2.5 stars.",
+    "borderline_rating_rule": "Flag films Cherie rated exactly 2.5 stars.",
+    "director_rule": "Flag all listed directed works by Paul Thomas Anderson and Taika Waititi, whether or not Cherie has watched or rated them.",
+    "director_flags": [
+      "Paul Thomas Anderson",
+      "Taika Waititi"
+    ],
+    "warning_text": "Cherie does not like this film and will judge you if you watch it.",
+    "recommendation_policy": "Do not suppress recommendations solely because they are flagged. Show the disclaimer as a playful personal-opinion annotation.",
+    "three_star_rating_rule": "Flag films Cherie rated exactly 3 stars, except Grand Theft Hamlet.",
+    "three_star_rating_exceptions": [
+      "Grand Theft Hamlet"
+    ],
+    "excluded_titles_and_franchises": [
+      "Bend It Like Beckham",
+      "Cinderella II",
+      "All Despicable Me films",
+      "Don't Worry Darling",
+      "Dune films",
+      "Friends with Benefits",
+      "All Iron Man films",
+      "Jinxed",
+      "Love, Simon",
+      "Materialists",
+      "Minions films",
+      "Paddington in Peru",
+      "All Shrek films"
+    ]
+  },
+  "source": "Letterboxd ratings.csv supplied by the user; director filmography list retained from version 2. Three-star ratings were added from the supplied ratings export, excluding Grand Theft Hamlet.",
+  "flagged_film_count": 476,
+  "flagged_films": [
+    {
+      "title": "101 Dalmatians",
+      "year": 1996,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "17 Again",
+      "year": 2009,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "2001: A Space Odyssey",
+      "year": 1968,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "28 Weeks Later",
+      "year": 2007,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "365 Days",
+      "year": 2020,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "A Bigger Splash",
+      "year": 2015,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "A Bug's Life",
+      "year": 1998,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "A Cinderella Story",
+      "year": 2004,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "A Complete Unknown",
+      "year": 2024,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "A Fairly Odd Summer",
+      "year": 2014,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "A Ghost Story",
+      "year": 2017,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "A Holiday Short: Best Christmas Ever",
+      "year": 2025,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "A Matter of Life and Death",
+      "year": 1946,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "A Minecraft Movie",
+      "year": 2025,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "A Page of Madness",
+      "year": 1926,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "A Rainy Day in New York",
+      "year": 2019,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "A Whisker Away",
+      "year": 2020,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Ace in the Hole",
+      "year": 1951,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Adventures in Babysitting",
+      "year": 2016,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "After",
+      "year": 2019,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "After the Hunt",
+      "year": 2025,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Aladdin",
+      "year": 2019,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Alice in Wonderland",
+      "year": 2010,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Alita: Battle Angel",
+      "year": 2019,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "All About Lily Chou-Chou",
+      "year": 2001,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Alpha and Omega",
+      "year": 2010,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Alvin and the Chipmunks: The Road Chip",
+      "year": 2015,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Always Be My Maybe",
+      "year": 2019,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "American Pie",
+      "year": 1999,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "An American in Paris",
+      "year": 1951,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Anima",
+      "year": 2019,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Animal House",
+      "year": 1978,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Annabelle",
+      "year": 2014,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Ant-Man and the Wasp",
+      "year": 2018,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Ant-Man and the Wasp: Quantumania",
+      "year": 2023,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Antz",
+      "year": 1998,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Aquaman",
+      "year": 2018,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Army of Shadows",
+      "year": 1969,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Asteroid City",
+      "year": 2023,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Astro Boy",
+      "year": 2009,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Avatar Aang: The Last Airbender",
+      "year": 2026,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Baby Driver",
+      "year": 2017,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Back Beyond",
+      "year": 2013,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Bad Hair Day",
+      "year": 2015,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Bad Teacher",
+      "year": 2011,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Bambi",
+      "year": 1942,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Barry Lyndon",
+      "year": 1975,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Batman v Superman: Dawn of Justice",
+      "year": 2016,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Baywatch",
+      "year": 2017,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Beautiful Boy",
+      "year": 2018,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Beauty and the Beast",
+      "year": 2017,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Beauty and the Beast: The Enchanted Christmas",
+      "year": 1997,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Bee Movie",
+      "year": 2007,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Belladonna of Sadness",
+      "year": 1973,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Beverly Hills Chihuahua",
+      "year": 2008,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Bicycle Thieves",
+      "year": 1948,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Black Mirror: Bandersnatch",
+      "year": 2018,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Black Mirror: Bête Noire",
+      "year": 2025,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Black Mirror: Hotel Reverie",
+      "year": 2025,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Black Mirror: Plaything",
+      "year": 2025,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Black Panther: Wakanda Forever",
+      "year": 2022,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Black Widow",
+      "year": 2021,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Blade Runner",
+      "year": 1982,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Blossoms and Blood",
+      "year": 2003,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Blue Moon",
+      "year": 2025,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Boogie Nights",
+      "year": 1997,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "feature",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Boy",
+      "year": 2010,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "feature",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Boyhood",
+      "year": 2014,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Bratz",
+      "year": 2007,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Bride Wars",
+      "year": 2009,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Bridget Jones's Baby",
+      "year": 2016,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Bridget Jones: Mad About the Boy",
+      "year": 2025,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Bridget Jones: The Edge of Reason",
+      "year": 2004,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Burn After Reading",
+      "year": 2008,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Captain America: Brave New World",
+      "year": 2025,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Captain Marvel",
+      "year": 2019,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Captain Underpants: The First Epic Movie",
+      "year": 2017,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Carmen",
+      "year": 2022,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Cars 3",
+      "year": 2017,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Catch Me If You Can",
+      "year": 2002,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Choose Love",
+      "year": 2023,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Cigarettes & Coffee",
+      "year": 1993,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Cinderella",
+      "year": 2015,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Cinderella II: Dreams Come True",
+      "year": 2002,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Circle",
+      "year": 2015,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Citrus",
+      "year": 2018,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Close",
+      "year": 2022,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Cloudy with a Chance of Meatballs 2",
+      "year": 2013,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Coffee and Cigarettes",
+      "year": 2003,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Confessions of a Shopaholic",
+      "year": 2009,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Confessions of a Teenage Drama Queen",
+      "year": 2004,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Couch",
+      "year": 2002,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Crazy, Stupid, Love.",
+      "year": 2011,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Cyberbully",
+      "year": 2011,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Dark Phoenix",
+      "year": 2019,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Dark Shadows",
+      "year": 2012,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "DARLING in the FRANXX",
+      "year": 2018,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Dating 101 with Viago",
+      "year": 2014,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Demon Slayer: Kimetsu no Yaiba",
+      "year": 2019,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Descendants 2",
+      "year": 2017,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Descendants 3",
+      "year": 2019,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Diary of a Wimpy Kid",
+      "year": 2010,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Diary of a Wimpy Kid: Dog Days",
+      "year": 2012,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Diary of a Wimpy Kid: The Long Haul",
+      "year": 2017,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Did You Hear About the Morgans?",
+      "year": 2009,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Dilan 1991",
+      "year": 2019,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Disclosure Day",
+      "year": 2026,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Doctor Strange in the Multiverse of Madness",
+      "year": 2022,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Doctor Who: The Curse of Fatal Death",
+      "year": 1999,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Don't Look Up",
+      "year": 2021,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Don't Worry Darling",
+      "year": 2022,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Donnie Darko",
+      "year": 2001,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Drifting",
+      "year": 2020,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Dungeons & Dragons: Honor Among Thieves",
+      "year": 2023,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Eagle vs Shark",
+      "year": 2007,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "feature",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Earwig and the Witch",
+      "year": 2020,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Empire Records",
+      "year": 1995,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Encanto",
+      "year": 2021,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Enola Holmes",
+      "year": 2020,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Eternals",
+      "year": 2021,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Everything in This Dream",
+      "year": 2015,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Everything, Everything",
+      "year": 2017,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "F for Fake",
+      "year": 1973,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "F*&% the Prom",
+      "year": 2017,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Fantastic Beasts and Where to Find Them",
+      "year": 2016,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Fantastic Beasts: The Crimes of Grindelwald",
+      "year": 2018,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Fantastic Beasts: The Secrets of Dumbledore",
+      "year": 2022,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Fifty Shades Darker",
+      "year": 2017,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Fifty Shades of Grey",
+      "year": 2015,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Final Destination Bloodlines",
+      "year": 2025,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Finding Dory",
+      "year": 2016,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "First Daughter",
+      "year": 2004,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Five Nights at Freddy's 2",
+      "year": 2025,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Flagpole Special",
+      "year": 1998,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Flavors of Youth",
+      "year": 2018,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "FLCL",
+      "year": 2000,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Foe",
+      "year": 2023,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "For Keeps",
+      "year": 1988,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "For the Hungry Boy",
+      "year": 2018,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Forbidden Fruits",
+      "year": 2026,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Forgetting Sarah Marshall",
+      "year": 2008,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Frozen II",
+      "year": 2019,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "G-Force",
+      "year": 2009,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Gayniggers from Outer Space",
+      "year": 1993,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Ghostbusters",
+      "year": 2016,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Ghostbusters II",
+      "year": 1989,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Ghostbusters: Afterlife",
+      "year": 2021,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "God's Creatures",
+      "year": 2022,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Good Boy",
+      "year": 2022,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Grease",
+      "year": 1978,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Greener Grass",
+      "year": 2019,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Gulliver Returns",
+      "year": 2021,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Hamilton",
+      "year": 2020,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Happy Death Day 2U",
+      "year": 2019,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Hard Eight",
+      "year": 1996,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "feature",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "He's All That",
+      "year": 2021,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "He's Just Not That Into You",
+      "year": 2009,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Heat",
+      "year": 1995,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Heinous Crime",
+      "year": 2004,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "High School Musical 3: Senior Year",
+      "year": 2008,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Home Alone 2: Lost in New York",
+      "year": 1992,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Horton Hears a Who!",
+      "year": 2008,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "How Do You Know",
+      "year": 2010,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "How to Make Millions Before Grandma Dies",
+      "year": 2024,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "How to Train Your Dragon 2",
+      "year": 2014,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "How to Train Your Dragon: The Hidden World",
+      "year": 2019,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Howl's Moving Castle",
+      "year": 2004,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Hulk",
+      "year": 2003,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Hunt for the Wilderpeople",
+      "year": 2016,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "feature",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "I Know What You Did Last Summer",
+      "year": 2025,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "I Not Stupid",
+      "year": 2002,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "I Saw the TV Glow",
+      "year": 2024,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "I Used to Be Funny",
+      "year": 2023,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "iCarly: iGo to Japan",
+      "year": 2008,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Ice Age",
+      "year": 2002,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Ice Age: Continental Drift",
+      "year": 2012,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Ice Age: The Meltdown",
+      "year": 2006,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "In the Tall Grass",
+      "year": 2019,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Inception",
+      "year": 2010,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Incredibles 2",
+      "year": 2018,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Inherent Vice",
+      "year": 2014,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "feature",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Insidious: The Red Door",
+      "year": 2023,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Instant Family",
+      "year": 2018,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Invisible Sister",
+      "year": 2015,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "iParty with Victorious",
+      "year": 2011,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Iron Lung",
+      "year": 2026,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Isn't It Romantic",
+      "year": 2019,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "It Ends with Us",
+      "year": 2024,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "It's Such a Beautiful Day",
+      "year": 2012,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Jeffrey Epstein: Filthy Rich",
+      "year": 2020,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Jesus Christ Superstar",
+      "year": 1973,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "John and Pogo",
+      "year": 2002,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "John Carter",
+      "year": 2012,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Jojo Rabbit",
+      "year": 2019,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "feature",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "JUJUTSU KAISEN",
+      "year": 2020,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Jumanji: The Next Level",
+      "year": 2019,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Jumanji: Welcome to the Jungle",
+      "year": 2017,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Junun",
+      "year": 2015,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "documentary",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Jurassic World: Fallen Kingdom",
+      "year": 2018,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Just Go with It",
+      "year": 2011,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Just My Luck",
+      "year": 2006,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Justice League",
+      "year": 2017,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Klara and the Sun",
+      "year": 2026,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "feature",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Kong: Skull Island",
+      "year": 2017,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "KPop Demon Hunters",
+      "year": 2025,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "L'Atalante",
+      "year": 1934,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Lady and the Tramp II: Scamp's Adventure",
+      "year": 2001,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Late Spring",
+      "year": 1949,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Legend of the Guardians: The Owls of Ga'Hoole",
+      "year": 2010,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Lemonade Blessing",
+      "year": 2025,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Let It Snow",
+      "year": 2019,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Licorice Pizza",
+      "year": 2021,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "feature",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Life of Pi",
+      "year": 2012,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Loki",
+      "year": 2021,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Lost in Translation",
+      "year": 2003,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Love Actually",
+      "year": 2003,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Love Letter",
+      "year": 1995,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Magnolia",
+      "year": 1999,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "feature",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Maid in Manhattan",
+      "year": 2002,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Mainstream",
+      "year": 2020,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Maleficent: Mistress of Evil",
+      "year": 2019,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Man of Steel",
+      "year": 2013,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Marie Antoinette",
+      "year": 2006,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "MaXXXine",
+      "year": 2024,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Meshes of the Afternoon",
+      "year": 1943,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Middle School: The Worst Years of My Life",
+      "year": 2016,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Midnight Sun",
+      "year": 2018,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Milea",
+      "year": 2020,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Mirror",
+      "year": 1975,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Miss Peregrine's Home for Peculiar Children",
+      "year": 2016,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Monster High: Why Do Ghouls Fall in Love?",
+      "year": 2012,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Monsters vs Aliens",
+      "year": 2009,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Monte Carlo",
+      "year": 2011,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Moon Knight",
+      "year": 2022,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Mulan",
+      "year": 2020,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Murder Mystery",
+      "year": 2019,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Murder on the Orient Express",
+      "year": 2017,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "My Girl",
+      "year": 1991,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "My Neighbors the Yamadas",
+      "year": 1999,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "My Oxford Year",
+      "year": 2025,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Nanny McPhee",
+      "year": 2005,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Nausicaä of the Valley of the Wind",
+      "year": 1984,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Next Goal Wins",
+      "year": 2023,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "feature",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Night Swim",
+      "year": 2024,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Night Train to Venice",
+      "year": 1993,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Nimic",
+      "year": 2019,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "No Strings Attached",
+      "year": 2011,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Nope",
+      "year": 2022,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Norbit",
+      "year": 2007,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Noroi: The Curse",
+      "year": 2005,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Nosferatu",
+      "year": 2024,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Now You See Me",
+      "year": 2013,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Ocean Waves",
+      "year": 1993,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "One Battle After Another",
+      "year": 2025,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "feature",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "One Day",
+      "year": 2011,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Only Yesterday",
+      "year": 1991,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Onward",
+      "year": 2020,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Open Season",
+      "year": 2006,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Other Side of the Box",
+      "year": 2018,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Oz the Great and Powerful",
+      "year": 2013,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Pacific Rim",
+      "year": 2013,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Palo Alto",
+      "year": 2013,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Pan",
+      "year": 2015,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Paper Towns",
+      "year": 2015,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Passengers",
+      "year": 2016,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "People We Meet on Vacation",
+      "year": 2026,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Pet Sematary",
+      "year": 1989,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Peter Rabbit",
+      "year": 2018,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Phantom Thread",
+      "year": 2017,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "feature",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Phineas and Ferb: Last Day of Summer",
+      "year": 2015,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Pitch Perfect 2",
+      "year": 2015,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Pitch Perfect 3",
+      "year": 2017,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Pixels",
+      "year": 2015,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Plainclothes",
+      "year": 2025,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Planes",
+      "year": 2013,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Planet 51",
+      "year": 2009,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Pride & Prejudice",
+      "year": 2005,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Punch-Drunk Love",
+      "year": 2002,
+      "letterboxd_rating": 1.5,
+      "director": "Paul Thomas Anderson",
+      "format": "feature",
+      "flag_reasons": [
+        "low_rating",
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Qorin",
+      "year": 2022,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Rampage",
+      "year": 2018,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Rascal Does Not Dream of Bunny Girl Senpai",
+      "year": 2018,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Ready or Not 2: Here I Come",
+      "year": 2026,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Red Eye",
+      "year": 2005,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Red Nose Day Actually",
+      "year": 2017,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Red River",
+      "year": 1948,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Return to Never Land",
+      "year": 2002,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Rio",
+      "year": 2011,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Ri¢hie Ri¢h",
+      "year": 1994,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Roald Dahl's Matilda the Musical",
+      "year": 2022,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "RoboCop",
+      "year": 2014,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Rushmore",
+      "year": 1998,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Satan's Slaves",
+      "year": 2017,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Say Anything...",
+      "year": 1989,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Scary Movie",
+      "year": 2000,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "SEISMA",
+      "year": 2025,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Sense and Sensibility",
+      "year": 1995,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Sex and the City",
+      "year": 2008,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Sex and the City 2",
+      "year": 2010,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Shang-Chi and the Legend of the Ten Rings",
+      "year": 2021,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Sharknado 3: Oh Hell No!",
+      "year": 2015,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Shazam!",
+      "year": 2019,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Sherlock Jr.",
+      "year": 1924,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Shikimori's Not Just a Cutie",
+      "year": 2022,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Sierra Burgess Is a Loser",
+      "year": 2018,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Sing",
+      "year": 2016,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Sinister",
+      "year": 2012,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Sleepless in Seattle",
+      "year": 1993,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Slender Man",
+      "year": 2018,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Smile",
+      "year": 2022,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Smurfs",
+      "year": 2025,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Smurfs: The Lost Village",
+      "year": 2017,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Snow White and the Seven Dwarfs",
+      "year": 1937,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Sonic the Hedgehog",
+      "year": 2020,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Space Jam",
+      "year": 1996,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Spider-Man: Far From Home",
+      "year": 2019,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Spider-Man: No Way Home",
+      "year": 2021,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Spy Kids",
+      "year": 2001,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Squid Game",
+      "year": 2021,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Stalker",
+      "year": 1979,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Star Wars: Episode I – The Phantom Menace",
+      "year": 1999,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Star Wars: Episode II – Attack of the Clones",
+      "year": 2002,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Star Wars: The Force Awakens",
+      "year": 2015,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Star Wars: The Last Jedi",
+      "year": 2017,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Star Wars: The Rise of Skywalker",
+      "year": 2019,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Storks",
+      "year": 2016,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Strange Way of Life",
+      "year": 2023,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Stranger Things 5: The Finale",
+      "year": 2025,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Stuart Little",
+      "year": 1999,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Submarine",
+      "year": 2010,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Suicide Squad",
+      "year": 2016,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Summer Palace",
+      "year": 2006,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Swiped",
+      "year": 2018,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Sydney White",
+      "year": 2007,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Tales from Earthsea",
+      "year": 2006,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Tall Girl",
+      "year": 2019,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Tama Tū",
+      "year": 2005,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Tangled Ever After",
+      "year": 2012,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Tarzan II",
+      "year": 2005,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Team Darryl",
+      "year": 2018,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Team Thor",
+      "year": 2016,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Team Thor: Part 2",
+      "year": 2017,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Teen Beach 2",
+      "year": 2015,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Teenage Mutant Ninja Turtles",
+      "year": 2014,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Teenage Mutant Ninja Turtles: Out of the Shadows",
+      "year": 2016,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Tenet",
+      "year": 2020,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Terminator 2: Judgment Day",
+      "year": 1991,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Terminator Genisys",
+      "year": 2015,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Terrifier",
+      "year": 2016,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The 5th Wave",
+      "year": 2016,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Addams Family",
+      "year": 2019,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Angry Birds Movie",
+      "year": 2016,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Batman",
+      "year": 2022,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Bengali Night",
+      "year": 1988,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Blair Witch Project",
+      "year": 1999,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Bling Ring",
+      "year": 2013,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Boogeyman",
+      "year": 2023,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Boss Baby",
+      "year": 2017,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Boy & the Octopus",
+      "year": 2024,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Boy, the Mole, the Fox and the Horse",
+      "year": 2022,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Caretaker",
+      "year": 2024,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Croods",
+      "year": 2013,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Crush",
+      "year": 1993,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Darkest Minds",
+      "year": 2018,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Death of Stalin",
+      "year": 2017,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Devil All the Time",
+      "year": 2020,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Dirk Diggler Story",
+      "year": 1988,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Emoji Movie",
+      "year": 2017,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Fairly OddParents: Channel Chasers",
+      "year": 2004,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Falcon and the Winter Soldier",
+      "year": 2021,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Fate of the Furious",
+      "year": 2017,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Fault in Our Stars",
+      "year": 2014,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Favourite",
+      "year": 2018,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Gentlemen",
+      "year": 2019,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Girl Who Leapt Through Time",
+      "year": 2006,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Godfather",
+      "year": 1972,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Good Dinosaur",
+      "year": 2015,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Great Gatsby",
+      "year": 2013,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Grinch",
+      "year": 2018,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Half of It",
+      "year": 2020,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Hangover",
+      "year": 2009,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Hate U Give",
+      "year": 2018,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Holiday",
+      "year": 2006,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The House",
+      "year": 2022,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The House Bunny",
+      "year": 2008,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Hunchback of Notre Dame",
+      "year": 1996,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Idea of You",
+      "year": 2024,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Incredible Hulk",
+      "year": 2008,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Intern",
+      "year": 2015,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The King",
+      "year": 2019,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Kissing Booth",
+      "year": 2018,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Kissing Booth 2",
+      "year": 2020,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Kissing Booth 3",
+      "year": 2021,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Last Airbender",
+      "year": 2010,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Lion King II: Simba's Pride",
+      "year": 1998,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Lobster",
+      "year": 2015,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Long Walk",
+      "year": 2025,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Lord of the Rings: The Fellowship of the Ring",
+      "year": 2001,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Man Who Sleeps",
+      "year": 1974,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Marine 3: Homefront",
+      "year": 2013,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Marvels",
+      "year": 2023,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Master",
+      "year": 2012,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "feature",
+      "flag_reasons": [
+        "director_flag",
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Mastermind",
+      "year": 2025,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Maze Runner",
+      "year": 2014,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Medium",
+      "year": 2021,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Meg",
+      "year": 2018,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Nun",
+      "year": 2018,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Nun II",
+      "year": 2023,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Passion of the Christ",
+      "year": 2004,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Perfect Date",
+      "year": 2019,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Princess Switch",
+      "year": 2018,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Purge",
+      "year": 2013,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Queen's Gambit",
+      "year": 2020,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Rat Catcher",
+      "year": 2023,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Return of Jafar",
+      "year": 1994,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Ring",
+      "year": 2002,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Secret Life of Pets",
+      "year": 2016,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Shape of Water",
+      "year": 2017,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Smurfs 2",
+      "year": 2013,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The SpongeBob Movie: Sponge Out of Water",
+      "year": 2015,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Sun Is Also a Star",
+      "year": 2019,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Swan",
+      "year": 2023,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Swap",
+      "year": 2016,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Thinning",
+      "year": 2016,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Time Traveler's Wife",
+      "year": 2009,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Twilight Saga: Breaking Dawn – Part 1",
+      "year": 2011,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Twilight Saga: Breaking Dawn – Part 2",
+      "year": 2012,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Twilight Saga: Eclipse",
+      "year": 2010,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Twilight Saga: New Moon",
+      "year": 2009,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "The Wildflower",
+      "year": 2022,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "There Will Be Blood",
+      "year": 2007,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "feature",
+      "flag_reasons": [
+        "director_flag",
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Thor: Love and Thunder",
+      "year": 2022,
+      "letterboxd_rating": 1.5,
+      "director": "Taika Waititi",
+      "format": "feature",
+      "flag_reasons": [
+        "low_rating",
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Thor: Ragnarok",
+      "year": 2017,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "feature",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Thumbelina",
+      "year": 1994,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "To All the Boys: Always and Forever",
+      "year": 2021,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "To Catch a Thief",
+      "year": 1955,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Together",
+      "year": 2025,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Tokyo Ghoul",
+      "year": 2014,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Tokyo Story",
+      "year": 1953,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Tomb Raider",
+      "year": 2018,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Too Many Cooks",
+      "year": 2014,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Totally F***ed Up",
+      "year": 1993,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Tower of God",
+      "year": 2020,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Toy Story 4",
+      "year": 2019,
+      "letterboxd_rating": 1.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Transformers",
+      "year": 2007,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Trap",
+      "year": 2024,
+      "letterboxd_rating": 1.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "True Beauty",
+      "year": 2020,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Twilight",
+      "year": 2008,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Two Cars, One Night",
+      "year": 2003,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Under the Sun",
+      "year": 2015,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Until Dawn",
+      "year": 2025,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Up",
+      "year": 2009,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Valentine",
+      "year": 2017,
+      "letterboxd_rating": null,
+      "director": "Paul Thomas Anderson",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Valentine's Day",
+      "year": 2010,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Vampire Hunter D: Bloodlust",
+      "year": 2000,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Vampire's Guide to Vellington",
+      "year": 2014,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Venom",
+      "year": 2018,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Weathering with You",
+      "year": 2019,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Werewolf by Night",
+      "year": 2022,
+      "letterboxd_rating": 0.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "What We Do in the Shadows",
+      "year": 2014,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "feature",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "What We Do in the Shadows: Interviews with Some Vampires",
+      "year": 2005,
+      "letterboxd_rating": null,
+      "director": "Taika Waititi",
+      "format": "short",
+      "flag_reasons": [
+        "director_flag"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "When We First Met",
+      "year": 2018,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Wonder",
+      "year": 2017,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Wonder Woman",
+      "year": 2017,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Work It",
+      "year": 2020,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Wuthering Heights",
+      "year": 2026,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "X",
+      "year": 2022,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "X-Men",
+      "year": 2000,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "X-Men: Apocalypse",
+      "year": 2016,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "X-Men: Days of Future Past",
+      "year": 2014,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "X-Men: First Class",
+      "year": 2011,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "X-Men: The Last Stand",
+      "year": 2006,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "X2",
+      "year": 2003,
+      "letterboxd_rating": 3.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "three_star_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Yes Man",
+      "year": 2008,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Yes, God, Yes",
+      "year": 2019,
+      "letterboxd_rating": 2.5,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "borderline_rating_2_5"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Yuki's Sun",
+      "year": 1972,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    },
+    {
+      "title": "Zapped",
+      "year": 2014,
+      "letterboxd_rating": 2.0,
+      "director": null,
+      "format": "film",
+      "flag_reasons": [
+        "low_rating"
+      ],
+      "warning": "Cherie does not like this film and will judge you if you watch it."
+    }
+  ]
+}

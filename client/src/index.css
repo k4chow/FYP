@@ -1949,6 +1949,33 @@ a.prompt-card:hover {
   line-height: 1.4;
 }
 
+/* Cherie's Disapproval™ — a playful, purely cosmetic recommendation note.
+   Muted burgundy so it reads as a personal disclaimer, not an error state. */
+.disapproval-note {
+  margin: 0.5rem 0 0;
+  padding: 0.42rem 0.62rem;
+  border: 1px solid rgba(124, 62, 62, 0.4);
+  border-left: 3px solid #a05a5a;
+  border-radius: 0.45rem;
+  background: rgba(84, 37, 37, 0.22);
+  color: #d3a3a3;
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.disapproval-heading {
+  display: block;
+  font-weight: 650;
+  font-size: 0.72rem;
+  letter-spacing: 0.01em;
+  color: #e0b4b4;
+}
+
+.disapproval-text {
+  display: block;
+  margin-top: 0.1rem;
+}
+
 .btn.small {
   font-size: 0.78rem;
   padding: 0.3rem 0.55rem;

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { ApiError } from '../lib/api'
+import DisapprovalNote from '../components/DisapprovalNote'
 import {
   createConversation,
   endConversation,
@@ -338,6 +339,7 @@ export default function Assistant() {
                     </div>
                   )}
                   <p className="overview">{rec.overview || 'No synopsis available.'}</p>
+                  <DisapprovalNote title={rec.title} year={rec.year} />
                   {expanded === rec.tmdb_id && (
                     <div className="assistant-rec-details">
                       <p className="meta">
