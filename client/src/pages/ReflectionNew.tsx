@@ -51,6 +51,7 @@ export default function ReflectionNew() {
   const preselectTmdb = Number(params.get('tmdb') ?? '') || null
 
   const [library, setLibrary] = useState<LibraryFilm[]>([])
+  const [loadingLibrary, setLoadingLibrary] = useState(true)
   const [genre, setGenre] = useState('All')
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
@@ -67,6 +68,7 @@ export default function ReflectionNew() {
     getMyFilms()
       .then((res) => setLibrary(res.films))
       .catch(() => setLibrary([]))
+      .finally(() => setLoadingLibrary(false))
   }, [])
 
   // Debounced TMDB search (same pattern as Add a film).
@@ -237,7 +239,9 @@ export default function ReflectionNew() {
           </div>
 
           <h2 className="picker-heading">Recently watched</h2>
-          {recentWatched.length === 0 ? (
+          {loadingLibrary ? (
+            <p className="muted">Loading your films…</p>
+          ) : recentWatched.length === 0 ? (
             <p className="muted">
               Nothing here yet — search above, or{' '}
               <Link className="link" to="/app/films?add=1">
@@ -260,7 +264,9 @@ export default function ReflectionNew() {
           )}
 
           <h2 className="picker-heading">From your watchlist</h2>
-          {watchlist.length === 0 ? (
+          {loadingLibrary ? (
+            <p className="muted">Loading your films…</p>
+          ) : watchlist.length === 0 ? (
             <p className="muted">
               Your watchlist is empty{genre !== 'All' ? ' for this genre' : ''}.
             </p>

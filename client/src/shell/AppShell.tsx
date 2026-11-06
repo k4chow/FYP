@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 
 interface NavItem {
@@ -71,9 +71,9 @@ export default function AppShell() {
       </aside>
       <main className="content">
         <header className="topbar">
-          <div className="avatar" title={user?.email}>
+          <Link to="/app/profile" className="avatar" title={user?.email} aria-label="My Profile">
             {initial}
-          </div>
+          </Link>
         </header>
         <Outlet />
       </main>

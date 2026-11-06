@@ -11,7 +11,7 @@
       "Paul Thomas Anderson",
       "Taika Waititi"
     ],
-    "warning_text": "Cherie does not like this film and will judge you if you watch it.",
+    "warning_text": "Cherie does not like this film.",
     "recommendation_policy": "Do not suppress recommendations solely because they are flagged. Show the disclaimer as a playful personal-opinion annotation.",
     "three_star_rating_rule": "Flag films Cherie rated exactly 3 stars, except Grand Theft Hamlet.",
     "three_star_rating_exceptions": [
@@ -45,7 +45,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "17 Again",
@@ -56,7 +56,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "2001: A Space Odyssey",
@@ -67,7 +67,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "28 Weeks Later",
@@ -78,7 +78,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "365 Days",
@@ -89,7 +89,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "A Bigger Splash",
@@ -100,7 +100,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "A Bug's Life",
@@ -111,7 +111,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "A Cinderella Story",
@@ -122,7 +122,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "A Complete Unknown",
@@ -133,7 +133,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "A Fairly Odd Summer",
@@ -144,7 +144,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "A Ghost Story",
@@ -155,7 +155,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "A Holiday Short: Best Christmas Ever",
@@ -166,7 +166,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "A Matter of Life and Death",
@@ -177,7 +177,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "A Minecraft Movie",
@@ -188,7 +188,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "A Page of Madness",
@@ -199,7 +199,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "A Rainy Day in New York",
@@ -210,7 +210,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "A Whisker Away",
@@ -221,7 +221,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Ace in the Hole",
@@ -232,7 +232,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Adventures in Babysitting",
@@ -243,7 +243,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "After",
@@ -254,7 +254,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "After the Hunt",
@@ -265,7 +265,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Aladdin",
@@ -276,7 +276,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Alice in Wonderland",
@@ -287,7 +287,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Alita: Battle Angel",
@@ -298,7 +298,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "All About Lily Chou-Chou",
@@ -309,7 +309,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Alpha and Omega",
@@ -320,7 +320,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Alvin and the Chipmunks: The Road Chip",
@@ -331,7 +331,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Always Be My Maybe",
@@ -342,7 +342,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "American Pie",
@@ -353,7 +353,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "An American in Paris",
@@ -364,7 +364,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Anima",
@@ -375,7 +375,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Animal House",
@@ -386,7 +386,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Annabelle",
@@ -397,7 +397,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Ant-Man and the Wasp",
@@ -408,7 +408,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Ant-Man and the Wasp: Quantumania",
@@ -419,7 +419,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Antz",
@@ -430,7 +430,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Aquaman",
@@ -441,7 +441,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Army of Shadows",
@@ -452,7 +452,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Asteroid City",
@@ -463,7 +463,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Astro Boy",
@@ -474,7 +474,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Avatar Aang: The Last Airbender",
@@ -485,7 +485,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Baby Driver",
@@ -496,7 +496,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Back Beyond",
@@ -507,7 +507,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Bad Hair Day",
@@ -518,7 +518,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Bad Teacher",
@@ -529,7 +529,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Bambi",
@@ -540,7 +540,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Barry Lyndon",
@@ -551,7 +551,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Batman v Superman: Dawn of Justice",
@@ -562,7 +562,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Baywatch",
@@ -573,7 +573,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Beautiful Boy",
@@ -584,7 +584,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Beauty and the Beast",
@@ -595,7 +595,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Beauty and the Beast: The Enchanted Christmas",
@@ -606,7 +606,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Bee Movie",
@@ -617,7 +617,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Belladonna of Sadness",
@@ -628,7 +628,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Beverly Hills Chihuahua",
@@ -639,7 +639,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Bicycle Thieves",
@@ -650,7 +650,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Black Mirror: Bandersnatch",
@@ -661,7 +661,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Black Mirror: Bête Noire",
@@ -672,7 +672,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Black Mirror: Hotel Reverie",
@@ -683,7 +683,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Black Mirror: Plaything",
@@ -694,7 +694,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Black Panther: Wakanda Forever",
@@ -705,7 +705,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Black Widow",
@@ -716,7 +716,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Blade Runner",
@@ -727,7 +727,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Blossoms and Blood",
@@ -738,7 +738,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Blue Moon",
@@ -749,7 +749,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Boogie Nights",
@@ -760,7 +760,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Boy",
@@ -771,7 +771,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Boyhood",
@@ -782,7 +782,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Bratz",
@@ -793,7 +793,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Bride Wars",
@@ -804,7 +804,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Bridget Jones's Baby",
@@ -815,7 +815,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Bridget Jones: Mad About the Boy",
@@ -826,7 +826,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Bridget Jones: The Edge of Reason",
@@ -837,7 +837,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Burn After Reading",
@@ -848,7 +848,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Captain America: Brave New World",
@@ -859,7 +859,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Captain Marvel",
@@ -870,7 +870,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Captain Underpants: The First Epic Movie",
@@ -881,7 +881,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Carmen",
@@ -892,7 +892,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Cars 3",
@@ -903,7 +903,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Catch Me If You Can",
@@ -914,7 +914,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Choose Love",
@@ -925,7 +925,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Cigarettes & Coffee",
@@ -936,7 +936,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Cinderella",
@@ -947,7 +947,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Cinderella II: Dreams Come True",
@@ -958,7 +958,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Circle",
@@ -969,7 +969,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Citrus",
@@ -980,7 +980,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Close",
@@ -991,7 +991,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Cloudy with a Chance of Meatballs 2",
@@ -1002,7 +1002,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Coffee and Cigarettes",
@@ -1013,7 +1013,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Confessions of a Shopaholic",
@@ -1024,7 +1024,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Confessions of a Teenage Drama Queen",
@@ -1035,7 +1035,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Couch",
@@ -1046,7 +1046,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Crazy, Stupid, Love.",
@@ -1057,7 +1057,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Cyberbully",
@@ -1068,7 +1068,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Dark Phoenix",
@@ -1079,7 +1079,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Dark Shadows",
@@ -1090,7 +1090,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "DARLING in the FRANXX",
@@ -1101,7 +1101,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Dating 101 with Viago",
@@ -1112,7 +1112,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Demon Slayer: Kimetsu no Yaiba",
@@ -1123,7 +1123,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Descendants 2",
@@ -1134,7 +1134,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Descendants 3",
@@ -1145,7 +1145,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Diary of a Wimpy Kid",
@@ -1156,7 +1156,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Diary of a Wimpy Kid: Dog Days",
@@ -1167,7 +1167,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Diary of a Wimpy Kid: The Long Haul",
@@ -1178,7 +1178,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Did You Hear About the Morgans?",
@@ -1189,7 +1189,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Dilan 1991",
@@ -1200,7 +1200,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Disclosure Day",
@@ -1211,7 +1211,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Doctor Strange in the Multiverse of Madness",
@@ -1222,7 +1222,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Doctor Who: The Curse of Fatal Death",
@@ -1233,7 +1233,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Don't Look Up",
@@ -1244,7 +1244,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Don't Worry Darling",
@@ -1255,7 +1255,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Donnie Darko",
@@ -1266,7 +1266,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Drifting",
@@ -1277,7 +1277,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Dungeons & Dragons: Honor Among Thieves",
@@ -1288,7 +1288,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Eagle vs Shark",
@@ -1299,7 +1299,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Earwig and the Witch",
@@ -1310,7 +1310,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Empire Records",
@@ -1321,7 +1321,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Encanto",
@@ -1332,7 +1332,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Enola Holmes",
@@ -1343,7 +1343,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Eternals",
@@ -1354,7 +1354,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Everything in This Dream",
@@ -1365,7 +1365,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Everything, Everything",
@@ -1376,7 +1376,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "F for Fake",
@@ -1387,7 +1387,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "F*&% the Prom",
@@ -1398,7 +1398,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Fantastic Beasts and Where to Find Them",
@@ -1409,7 +1409,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Fantastic Beasts: The Crimes of Grindelwald",
@@ -1420,7 +1420,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Fantastic Beasts: The Secrets of Dumbledore",
@@ -1431,7 +1431,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Fifty Shades Darker",
@@ -1442,7 +1442,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Fifty Shades of Grey",
@@ -1453,7 +1453,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Final Destination Bloodlines",
@@ -1464,7 +1464,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Finding Dory",
@@ -1475,7 +1475,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "First Daughter",
@@ -1486,7 +1486,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Five Nights at Freddy's 2",
@@ -1497,7 +1497,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Flagpole Special",
@@ -1508,7 +1508,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Flavors of Youth",
@@ -1519,7 +1519,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "FLCL",
@@ -1530,7 +1530,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Foe",
@@ -1541,7 +1541,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "For Keeps",
@@ -1552,7 +1552,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "For the Hungry Boy",
@@ -1563,7 +1563,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Forbidden Fruits",
@@ -1574,7 +1574,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Forgetting Sarah Marshall",
@@ -1585,7 +1585,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Frozen II",
@@ -1596,7 +1596,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "G-Force",
@@ -1607,7 +1607,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Gayniggers from Outer Space",
@@ -1618,7 +1618,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Ghostbusters",
@@ -1629,7 +1629,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Ghostbusters II",
@@ -1640,7 +1640,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Ghostbusters: Afterlife",
@@ -1651,7 +1651,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "God's Creatures",
@@ -1662,7 +1662,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Good Boy",
@@ -1673,7 +1673,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Grease",
@@ -1684,7 +1684,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Greener Grass",
@@ -1695,7 +1695,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Gulliver Returns",
@@ -1706,7 +1706,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Hamilton",
@@ -1717,7 +1717,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Happy Death Day 2U",
@@ -1728,7 +1728,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Hard Eight",
@@ -1739,7 +1739,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "He's All That",
@@ -1750,7 +1750,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "He's Just Not That Into You",
@@ -1761,7 +1761,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Heat",
@@ -1772,7 +1772,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Heinous Crime",
@@ -1783,7 +1783,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "High School Musical 3: Senior Year",
@@ -1794,7 +1794,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Home Alone 2: Lost in New York",
@@ -1805,7 +1805,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Horton Hears a Who!",
@@ -1816,7 +1816,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "How Do You Know",
@@ -1827,7 +1827,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "How to Make Millions Before Grandma Dies",
@@ -1838,7 +1838,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "How to Train Your Dragon 2",
@@ -1849,7 +1849,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "How to Train Your Dragon: The Hidden World",
@@ -1860,7 +1860,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Howl's Moving Castle",
@@ -1871,7 +1871,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Hulk",
@@ -1882,7 +1882,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Hunt for the Wilderpeople",
@@ -1893,7 +1893,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "I Know What You Did Last Summer",
@@ -1904,7 +1904,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "I Not Stupid",
@@ -1915,7 +1915,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "I Saw the TV Glow",
@@ -1926,7 +1926,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "I Used to Be Funny",
@@ -1937,7 +1937,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "iCarly: iGo to Japan",
@@ -1948,7 +1948,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Ice Age",
@@ -1959,7 +1959,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Ice Age: Continental Drift",
@@ -1970,7 +1970,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Ice Age: The Meltdown",
@@ -1981,7 +1981,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "In the Tall Grass",
@@ -1992,7 +1992,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Inception",
@@ -2003,7 +2003,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Incredibles 2",
@@ -2014,7 +2014,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Inherent Vice",
@@ -2025,7 +2025,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Insidious: The Red Door",
@@ -2036,7 +2036,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Instant Family",
@@ -2047,7 +2047,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Invisible Sister",
@@ -2058,7 +2058,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "iParty with Victorious",
@@ -2069,7 +2069,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Iron Lung",
@@ -2080,7 +2080,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Isn't It Romantic",
@@ -2091,7 +2091,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "It Ends with Us",
@@ -2102,7 +2102,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "It's Such a Beautiful Day",
@@ -2113,7 +2113,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Jeffrey Epstein: Filthy Rich",
@@ -2124,7 +2124,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Jesus Christ Superstar",
@@ -2135,7 +2135,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "John and Pogo",
@@ -2146,7 +2146,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "John Carter",
@@ -2157,7 +2157,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Jojo Rabbit",
@@ -2168,7 +2168,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "JUJUTSU KAISEN",
@@ -2179,7 +2179,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Jumanji: The Next Level",
@@ -2190,7 +2190,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Jumanji: Welcome to the Jungle",
@@ -2201,7 +2201,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Junun",
@@ -2212,7 +2212,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Jurassic World: Fallen Kingdom",
@@ -2223,7 +2223,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Just Go with It",
@@ -2234,7 +2234,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Just My Luck",
@@ -2245,7 +2245,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Justice League",
@@ -2256,7 +2256,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Klara and the Sun",
@@ -2267,7 +2267,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Kong: Skull Island",
@@ -2278,7 +2278,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "KPop Demon Hunters",
@@ -2289,7 +2289,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "L'Atalante",
@@ -2300,7 +2300,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Lady and the Tramp II: Scamp's Adventure",
@@ -2311,7 +2311,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Late Spring",
@@ -2322,7 +2322,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Legend of the Guardians: The Owls of Ga'Hoole",
@@ -2333,7 +2333,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Lemonade Blessing",
@@ -2344,7 +2344,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Let It Snow",
@@ -2355,7 +2355,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Licorice Pizza",
@@ -2366,7 +2366,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Life of Pi",
@@ -2377,7 +2377,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Loki",
@@ -2388,7 +2388,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Lost in Translation",
@@ -2399,7 +2399,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Love Actually",
@@ -2410,7 +2410,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Love Letter",
@@ -2421,7 +2421,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Magnolia",
@@ -2432,7 +2432,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Maid in Manhattan",
@@ -2443,7 +2443,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Mainstream",
@@ -2454,7 +2454,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Maleficent: Mistress of Evil",
@@ -2465,7 +2465,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Man of Steel",
@@ -2476,7 +2476,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Marie Antoinette",
@@ -2487,7 +2487,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "MaXXXine",
@@ -2498,7 +2498,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Meshes of the Afternoon",
@@ -2509,7 +2509,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Middle School: The Worst Years of My Life",
@@ -2520,7 +2520,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Midnight Sun",
@@ -2531,7 +2531,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Milea",
@@ -2542,7 +2542,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Mirror",
@@ -2553,7 +2553,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Miss Peregrine's Home for Peculiar Children",
@@ -2564,7 +2564,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Monster High: Why Do Ghouls Fall in Love?",
@@ -2575,7 +2575,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Monsters vs Aliens",
@@ -2586,7 +2586,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Monte Carlo",
@@ -2597,7 +2597,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Moon Knight",
@@ -2608,7 +2608,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Mulan",
@@ -2619,7 +2619,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Murder Mystery",
@@ -2630,7 +2630,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Murder on the Orient Express",
@@ -2641,7 +2641,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "My Girl",
@@ -2652,7 +2652,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "My Neighbors the Yamadas",
@@ -2663,7 +2663,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "My Oxford Year",
@@ -2674,7 +2674,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Nanny McPhee",
@@ -2685,7 +2685,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Nausicaä of the Valley of the Wind",
@@ -2696,7 +2696,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Next Goal Wins",
@@ -2707,7 +2707,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Night Swim",
@@ -2718,7 +2718,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Night Train to Venice",
@@ -2729,7 +2729,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Nimic",
@@ -2740,7 +2740,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "No Strings Attached",
@@ -2751,7 +2751,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Nope",
@@ -2762,7 +2762,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Norbit",
@@ -2773,7 +2773,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Noroi: The Curse",
@@ -2784,7 +2784,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Nosferatu",
@@ -2795,7 +2795,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Now You See Me",
@@ -2806,7 +2806,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Ocean Waves",
@@ -2817,7 +2817,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "One Battle After Another",
@@ -2828,7 +2828,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "One Day",
@@ -2839,7 +2839,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Only Yesterday",
@@ -2850,7 +2850,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Onward",
@@ -2861,7 +2861,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Open Season",
@@ -2872,7 +2872,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Other Side of the Box",
@@ -2883,7 +2883,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Oz the Great and Powerful",
@@ -2894,7 +2894,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Pacific Rim",
@@ -2905,7 +2905,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Palo Alto",
@@ -2916,7 +2916,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Pan",
@@ -2927,7 +2927,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Paper Towns",
@@ -2938,7 +2938,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Passengers",
@@ -2949,7 +2949,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "People We Meet on Vacation",
@@ -2960,7 +2960,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Pet Sematary",
@@ -2971,7 +2971,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Peter Rabbit",
@@ -2982,7 +2982,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Phantom Thread",
@@ -2993,7 +2993,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Phineas and Ferb: Last Day of Summer",
@@ -3004,7 +3004,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Pitch Perfect 2",
@@ -3015,7 +3015,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Pitch Perfect 3",
@@ -3026,7 +3026,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Pixels",
@@ -3037,7 +3037,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Plainclothes",
@@ -3048,7 +3048,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Planes",
@@ -3059,7 +3059,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Planet 51",
@@ -3070,7 +3070,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Pride & Prejudice",
@@ -3081,7 +3081,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Punch-Drunk Love",
@@ -3093,7 +3093,7 @@
         "low_rating",
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Qorin",
@@ -3104,7 +3104,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Rampage",
@@ -3115,7 +3115,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Rascal Does Not Dream of Bunny Girl Senpai",
@@ -3126,7 +3126,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Ready or Not 2: Here I Come",
@@ -3137,7 +3137,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Red Eye",
@@ -3148,7 +3148,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Red Nose Day Actually",
@@ -3159,7 +3159,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Red River",
@@ -3170,7 +3170,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Return to Never Land",
@@ -3181,7 +3181,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Rio",
@@ -3192,7 +3192,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Ri¢hie Ri¢h",
@@ -3203,7 +3203,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Roald Dahl's Matilda the Musical",
@@ -3214,7 +3214,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "RoboCop",
@@ -3225,7 +3225,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Rushmore",
@@ -3236,7 +3236,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Satan's Slaves",
@@ -3247,7 +3247,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Say Anything...",
@@ -3258,7 +3258,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Scary Movie",
@@ -3269,7 +3269,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "SEISMA",
@@ -3280,7 +3280,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Sense and Sensibility",
@@ -3291,7 +3291,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Sex and the City",
@@ -3302,7 +3302,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Sex and the City 2",
@@ -3313,7 +3313,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Shang-Chi and the Legend of the Ten Rings",
@@ -3324,7 +3324,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Sharknado 3: Oh Hell No!",
@@ -3335,7 +3335,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Shazam!",
@@ -3346,7 +3346,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Sherlock Jr.",
@@ -3357,7 +3357,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Shikimori's Not Just a Cutie",
@@ -3368,7 +3368,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Sierra Burgess Is a Loser",
@@ -3379,7 +3379,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Sing",
@@ -3390,7 +3390,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Sinister",
@@ -3401,7 +3401,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Sleepless in Seattle",
@@ -3412,7 +3412,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Slender Man",
@@ -3423,7 +3423,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Smile",
@@ -3434,7 +3434,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Smurfs",
@@ -3445,7 +3445,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Smurfs: The Lost Village",
@@ -3456,7 +3456,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Snow White and the Seven Dwarfs",
@@ -3467,7 +3467,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Sonic the Hedgehog",
@@ -3478,7 +3478,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Space Jam",
@@ -3489,7 +3489,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Spider-Man: Far From Home",
@@ -3500,7 +3500,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Spider-Man: No Way Home",
@@ -3511,7 +3511,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Spy Kids",
@@ -3522,7 +3522,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Squid Game",
@@ -3533,7 +3533,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Stalker",
@@ -3544,7 +3544,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Star Wars: Episode I – The Phantom Menace",
@@ -3555,7 +3555,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Star Wars: Episode II – Attack of the Clones",
@@ -3566,7 +3566,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Star Wars: The Force Awakens",
@@ -3577,7 +3577,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Star Wars: The Last Jedi",
@@ -3588,7 +3588,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Star Wars: The Rise of Skywalker",
@@ -3599,7 +3599,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Storks",
@@ -3610,7 +3610,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Strange Way of Life",
@@ -3621,7 +3621,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Stranger Things 5: The Finale",
@@ -3632,7 +3632,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Stuart Little",
@@ -3643,7 +3643,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Submarine",
@@ -3654,7 +3654,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Suicide Squad",
@@ -3665,7 +3665,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Summer Palace",
@@ -3676,7 +3676,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Swiped",
@@ -3687,7 +3687,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Sydney White",
@@ -3698,7 +3698,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Tales from Earthsea",
@@ -3709,7 +3709,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Tall Girl",
@@ -3720,7 +3720,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Tama Tū",
@@ -3731,7 +3731,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Tangled Ever After",
@@ -3742,7 +3742,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Tarzan II",
@@ -3753,7 +3753,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Team Darryl",
@@ -3764,7 +3764,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Team Thor",
@@ -3775,7 +3775,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Team Thor: Part 2",
@@ -3786,7 +3786,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Teen Beach 2",
@@ -3797,7 +3797,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Teenage Mutant Ninja Turtles",
@@ -3808,7 +3808,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Teenage Mutant Ninja Turtles: Out of the Shadows",
@@ -3819,7 +3819,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Tenet",
@@ -3830,7 +3830,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Terminator 2: Judgment Day",
@@ -3841,7 +3841,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Terminator Genisys",
@@ -3852,7 +3852,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Terrifier",
@@ -3863,7 +3863,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The 5th Wave",
@@ -3874,7 +3874,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Addams Family",
@@ -3885,7 +3885,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Angry Birds Movie",
@@ -3896,7 +3896,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Batman",
@@ -3907,7 +3907,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Bengali Night",
@@ -3918,7 +3918,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Blair Witch Project",
@@ -3929,7 +3929,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Bling Ring",
@@ -3940,7 +3940,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Boogeyman",
@@ -3951,7 +3951,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Boss Baby",
@@ -3962,7 +3962,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Boy & the Octopus",
@@ -3973,7 +3973,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Boy, the Mole, the Fox and the Horse",
@@ -3984,7 +3984,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Caretaker",
@@ -3995,7 +3995,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Croods",
@@ -4006,7 +4006,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Crush",
@@ -4017,7 +4017,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Darkest Minds",
@@ -4028,7 +4028,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Death of Stalin",
@@ -4039,7 +4039,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Devil All the Time",
@@ -4050,7 +4050,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Dirk Diggler Story",
@@ -4061,7 +4061,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Emoji Movie",
@@ -4072,7 +4072,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Fairly OddParents: Channel Chasers",
@@ -4083,7 +4083,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Falcon and the Winter Soldier",
@@ -4094,7 +4094,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Fate of the Furious",
@@ -4105,7 +4105,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Fault in Our Stars",
@@ -4116,7 +4116,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Favourite",
@@ -4127,7 +4127,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Gentlemen",
@@ -4138,7 +4138,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Girl Who Leapt Through Time",
@@ -4149,7 +4149,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Godfather",
@@ -4160,7 +4160,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Good Dinosaur",
@@ -4171,7 +4171,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Great Gatsby",
@@ -4182,7 +4182,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Grinch",
@@ -4193,7 +4193,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Half of It",
@@ -4204,7 +4204,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Hangover",
@@ -4215,7 +4215,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Hate U Give",
@@ -4226,7 +4226,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Holiday",
@@ -4237,7 +4237,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The House",
@@ -4248,7 +4248,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The House Bunny",
@@ -4259,7 +4259,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Hunchback of Notre Dame",
@@ -4270,7 +4270,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Idea of You",
@@ -4281,7 +4281,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Incredible Hulk",
@@ -4292,7 +4292,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Intern",
@@ -4303,7 +4303,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The King",
@@ -4314,7 +4314,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Kissing Booth",
@@ -4325,7 +4325,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Kissing Booth 2",
@@ -4336,7 +4336,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Kissing Booth 3",
@@ -4347,7 +4347,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Last Airbender",
@@ -4358,7 +4358,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Lion King II: Simba's Pride",
@@ -4369,7 +4369,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Lobster",
@@ -4380,7 +4380,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Long Walk",
@@ -4391,7 +4391,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Lord of the Rings: The Fellowship of the Ring",
@@ -4402,7 +4402,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Man Who Sleeps",
@@ -4413,7 +4413,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Marine 3: Homefront",
@@ -4424,7 +4424,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Marvels",
@@ -4435,7 +4435,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Master",
@@ -4447,7 +4447,7 @@
         "director_flag",
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Mastermind",
@@ -4458,7 +4458,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Maze Runner",
@@ -4469,7 +4469,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Medium",
@@ -4480,7 +4480,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Meg",
@@ -4491,7 +4491,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Nun",
@@ -4502,7 +4502,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Nun II",
@@ -4513,7 +4513,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Passion of the Christ",
@@ -4524,7 +4524,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Perfect Date",
@@ -4535,7 +4535,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Princess Switch",
@@ -4546,7 +4546,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Purge",
@@ -4557,7 +4557,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Queen's Gambit",
@@ -4568,7 +4568,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Rat Catcher",
@@ -4579,7 +4579,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Return of Jafar",
@@ -4590,7 +4590,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Ring",
@@ -4601,7 +4601,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Secret Life of Pets",
@@ -4612,7 +4612,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Shape of Water",
@@ -4623,7 +4623,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Smurfs 2",
@@ -4634,7 +4634,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The SpongeBob Movie: Sponge Out of Water",
@@ -4645,7 +4645,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Sun Is Also a Star",
@@ -4656,7 +4656,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Swan",
@@ -4667,7 +4667,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Swap",
@@ -4678,7 +4678,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Thinning",
@@ -4689,7 +4689,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Time Traveler's Wife",
@@ -4700,7 +4700,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Twilight Saga: Breaking Dawn – Part 1",
@@ -4711,7 +4711,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Twilight Saga: Breaking Dawn – Part 2",
@@ -4722,7 +4722,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Twilight Saga: Eclipse",
@@ -4733,7 +4733,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Twilight Saga: New Moon",
@@ -4744,7 +4744,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "The Wildflower",
@@ -4755,7 +4755,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "There Will Be Blood",
@@ -4767,7 +4767,7 @@
         "director_flag",
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Thor: Love and Thunder",
@@ -4779,7 +4779,7 @@
         "low_rating",
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Thor: Ragnarok",
@@ -4790,7 +4790,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Thumbelina",
@@ -4801,7 +4801,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "To All the Boys: Always and Forever",
@@ -4812,7 +4812,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "To Catch a Thief",
@@ -4823,7 +4823,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Together",
@@ -4834,7 +4834,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Tokyo Ghoul",
@@ -4845,7 +4845,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Tokyo Story",
@@ -4856,7 +4856,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Tomb Raider",
@@ -4867,7 +4867,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Too Many Cooks",
@@ -4878,7 +4878,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Totally F***ed Up",
@@ -4889,7 +4889,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Tower of God",
@@ -4900,7 +4900,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Toy Story 4",
@@ -4911,7 +4911,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Transformers",
@@ -4922,7 +4922,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Trap",
@@ -4933,7 +4933,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "True Beauty",
@@ -4944,7 +4944,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Twilight",
@@ -4955,7 +4955,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Two Cars, One Night",
@@ -4966,7 +4966,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Under the Sun",
@@ -4977,7 +4977,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Until Dawn",
@@ -4988,7 +4988,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Up",
@@ -4999,7 +4999,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Valentine",
@@ -5010,7 +5010,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Valentine's Day",
@@ -5021,7 +5021,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Vampire Hunter D: Bloodlust",
@@ -5032,7 +5032,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Vampire's Guide to Vellington",
@@ -5043,7 +5043,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Venom",
@@ -5054,7 +5054,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Weathering with You",
@@ -5065,7 +5065,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Werewolf by Night",
@@ -5076,7 +5076,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "What We Do in the Shadows",
@@ -5087,7 +5087,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "What We Do in the Shadows: Interviews with Some Vampires",
@@ -5098,7 +5098,7 @@
       "flag_reasons": [
         "director_flag"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "When We First Met",
@@ -5109,7 +5109,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Wonder",
@@ -5120,7 +5120,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Wonder Woman",
@@ -5131,7 +5131,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Work It",
@@ -5142,7 +5142,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Wuthering Heights",
@@ -5153,7 +5153,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "X",
@@ -5164,7 +5164,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "X-Men",
@@ -5175,7 +5175,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "X-Men: Apocalypse",
@@ -5186,7 +5186,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "X-Men: Days of Future Past",
@@ -5197,7 +5197,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "X-Men: First Class",
@@ -5208,7 +5208,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "X-Men: The Last Stand",
@@ -5219,7 +5219,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "X2",
@@ -5230,7 +5230,7 @@
       "flag_reasons": [
         "three_star_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Yes Man",
@@ -5241,7 +5241,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Yes, God, Yes",
@@ -5252,7 +5252,7 @@
       "flag_reasons": [
         "borderline_rating_2_5"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Yuki's Sun",
@@ -5263,7 +5263,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     },
     {
       "title": "Zapped",
@@ -5274,7 +5274,7 @@
       "flag_reasons": [
         "low_rating"
       ],
-      "warning": "Cherie does not like this film and will judge you if you watch it."
+      "warning": "Cherie does not like this film."
     }
   ]
 }

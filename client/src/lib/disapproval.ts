@@ -28,7 +28,7 @@ export interface DisapprovalMatch {
 
 const data = dataset as DisapprovalDataset
 
-const DEFAULT_WARNING = 'Cherie does not like this film and will judge you if you watch it.'
+const DEFAULT_WARNING = 'Cherie does not like this film.'
 
 // Lowercase and strip punctuation/whitespace so minor title formatting
 // differences (apostrophes, colons, dashes, commas, etc.) don't break matching.
