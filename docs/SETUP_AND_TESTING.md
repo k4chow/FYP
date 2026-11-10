@@ -28,8 +28,8 @@ domain or DNS setup is needed:
   registered; if one is ever pointed at the server, serve `dist` at the root
   with base `/` and proxy `/api/` instead of the path setup.
 
-`OPENAI_MODEL=gpt-6.1-luna` must be present in `~/noacf/server/.env` (the
-server reads it from `.env` / its process environment).
+`OPENAI_MODEL` must be set in `~/noacf/server/.env` or the server's process
+environment (defaults to `gpt-4o-mini`).
 
 To deploy an update:
 

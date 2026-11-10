@@ -75,9 +75,14 @@ export default function Assistant() {
       try {
         const list = await listConversations('active', 'discovery')
         const assistant = list.conversations.find((c) => !c.title)
-        const res = assistant
+        let res = assistant
           ? await getConversation(assistant.id)
           : await createConversation({ type: 'discovery' })
+        // A failed earlier creation can leave an empty conversation behind
+        // (no opening message). Start fresh instead of showing a blank chat.
+        if (res.messages.length === 0) {
+          res = await createConversation({ type: 'discovery' })
+        }
         if (cancelled) return
         setConversationId(res.conversation.id)
         setMessages(res.messages.map(toLocal))
