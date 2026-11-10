@@ -78,9 +78,10 @@ export default function Assistant() {
         let res = assistant
           ? await getConversation(assistant.id)
           : await createConversation({ type: 'discovery' })
-        // A failed earlier creation can leave an empty conversation behind
-        // (no opening message). Start fresh instead of showing a blank chat.
-        if (res.messages.length === 0) {
+        // A broken earlier attempt can leave a conversation with no assistant
+        // opening (an orphan user message may remain). Start fresh whenever
+        // there is no assistant message to greet the user.
+        if (!res.messages.some((m) => m.role === 'assistant')) {
           res = await createConversation({ type: 'discovery' })
         }
         if (cancelled) return
