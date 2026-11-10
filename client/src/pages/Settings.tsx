@@ -132,15 +132,15 @@ export default function Settings() {
               style={{ marginTop: '0.5rem' }}
             />
             <div className="slider-labels">
-              <span>More like what I love</span>
-              <span>Surprise me</span>
+              <span>More niche</span>
+              <span>More mainstream</span>
             </div>
             <p className="muted" style={{ fontSize: '0.85rem' }}>
               {styleState === 'saving'
                 ? 'Saving…'
                 : styleState === 'saved'
                   ? 'Saved — your next Discover refresh uses this.'
-                  : 'Weights your Discover picks towards the familiar or the unexpected.'}
+                  : 'Niche surfaces lesser-known films; mainstream leans towards widely watched ones.'}
             </p>
           </div>
         </section>

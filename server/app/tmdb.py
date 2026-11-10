@@ -105,6 +105,15 @@ def movie_recommendations(tmdb_id: int) -> list[dict]:
     return data.get("results", [])
 
 
+def movie_keywords(tmdb_id: int) -> list[str]:
+    """TMDB keywords for a film (used for emotional-theme tags, D36).
+
+    Returns the keyword *names* only; zero OpenAI credits are involved.
+    """
+    data = _get(f"/movie/{tmdb_id}/keywords", {}) or {}
+    return [kw.get("name") for kw in data.get("keywords", []) if kw.get("name")]
+
+
 def discover_movies(
     genre_ids: list[int] | None = None,
     sort_by: str = "popularity.desc",

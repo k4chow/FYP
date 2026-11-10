@@ -408,9 +408,9 @@ need an extra TMDB call.
 ← 200 {"recommendation_style": 85}
 → {"recommendation_style": 150} → 422
 ```
-The Settings similar ↔ exploratory slider (N6, D37). 0 = strictly similar to
-the library, 100 = exploratory; it scales the seed-similarity weight and the
-off-profile exploration bonus in the scoring formula.
+The Settings "More niche ↔ Mainstream" slider (N6, D37). 0 = most niche,
+100 = most mainstream; it scales a popularity term (TMDB `vote_count`) in the
+scoring formula, on top of the always-on taste/insight grounding.
 
 ### `POST /profile/questionnaire` (auth required)
 ```json

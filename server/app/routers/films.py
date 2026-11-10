@@ -37,16 +37,37 @@ def _flatten(row: dict) -> dict:
 
 
 def _ensure_film(tmdb_id: int) -> dict:
-    """Return the `films` row for a TMDB id, fetching + caching it if new."""
+    """Return the `films` row for a TMDB id, fetching + caching it if new.
+
+    Keywords are backfilled lazily for films cached before the theme tags
+    feature existed, so the profile's emotional-theme counts stay current.
+    """
     existing = (
         supabase.table("films").select("*").eq("tmdb_id", tmdb_id).limit(1).execute()
     )
     if existing.data:
-        return existing.data[0]
+        row = existing.data[0]
+        if not ((row.get("metadata") or {}).get("keywords")):
+            keywords = tmdb.movie_keywords(tmdb_id)
+            if keywords:
+                meta = dict(row.get("metadata") or {})
+                meta["keywords"] = keywords
+                updated = (
+                    supabase.table("films")
+                    .update({"metadata": meta})
+                    .eq("id", row["id"])
+                    .execute()
+                    .data
+                )
+                row = (updated or [row])[0]
+        return row
     details = tmdb.movie_details(tmdb_id)
     if details is None:
         raise HTTPException(status_code=404, detail="Film not found on TMDB")
     row = tmdb.film_row_from_details(details)
+    keywords = tmdb.movie_keywords(tmdb_id)
+    if keywords:
+        row["metadata"] = {**(row.get("metadata") or {}), "keywords": keywords}
     res = supabase.table("films").upsert(row, on_conflict="tmdb_id").execute()
     return res.data[0]
 

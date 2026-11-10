@@ -1,8 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ApiError } from '../lib/api'
 import DisapprovalNote from '../components/DisapprovalNote'
-import { assistantChat, assistantOpening } from '../lib/conversations'
-import type { AssistantRecommendation } from '../lib/conversations'
+import {
+  createConversation,
+  getConversation,
+  listConversations,
+  sendMessage,
+} from '../lib/conversations'
+import type {
+  AssistantRecommendation,
+  ChatMessage,
+} from '../lib/conversations'
 import { addFilm, formatRuntime } from '../lib/films'
 import { sendFeedback } from '../lib/recommendations'
 
@@ -18,11 +27,9 @@ const MOODS = [
 // (the assistant's own picks), not the Discover feed's scored/sorted cards.
 type AssistantRec = AssistantRecommendation
 
-// The assistant transcript is session-scoped (Phase 7): it survives navigation
-// within the tab but clears when the tab closes, and nothing is persisted on
-// the server. Shape of what we write to / read from sessionStorage.
-const STORAGE_KEY = 'noacf.assistant.transcript'
-
+// The assistant chat is persisted server-side as a discovery conversation;
+// nothing is stored in the browser (no sessionStorage transcript). We render
+// the backend messages, mapping any recommendation cards out of their metadata.
 interface LocalMessage {
   role: 'user' | 'assistant'
   content: string
@@ -30,21 +37,27 @@ interface LocalMessage {
   recommendations?: AssistantRec[]
 }
 
-function loadTranscript(): LocalMessage[] {
-  try {
-    const raw = sessionStorage.getItem(STORAGE_KEY)
-    const parsed = raw ? JSON.parse(raw) : []
-    return Array.isArray(parsed) ? parsed : []
-  } catch {
-    return []
+function toLocal(message: ChatMessage): LocalMessage {
+  const metadata = (message.metadata ?? {}) as {
+    recommendations?: AssistantRec[]
+  }
+  return {
+    role: message.role === 'assistant' ? 'assistant' : 'user',
+    content: message.content,
+    createdAt: message.created_at,
+    recommendations: Array.isArray(metadata.recommendations)
+      ? metadata.recommendations
+      : undefined,
   }
 }
-
-// Film Assistant (F10, Phase 7): chat on the left, live recommendation cards on
-// the right. The transcript is session-scoped — nothing is persisted to the
-// server — and the newest set of picks is always what the right panel shows.
+// Film Assistant (F10): chat on the left, live recommendation cards on the
+// right. Turns are saved to the backend (a discovery conversation); ending the
+// chat returns to Discover, leaving the transcript resumable from history.
 export default function Assistant() {
-  const [messages, setMessages] = useState<LocalMessage[]>(loadTranscript)
+  const navigate = useNavigate()
+  const [messages, setMessages] = useState<LocalMessage[]>([])
+  const [conversationId, setConversationId] = useState<string | null>(null)
+  const [ready, setReady] = useState(false)
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
   const [added, setAdded] = useState<Record<number, boolean>>({})
@@ -53,30 +66,38 @@ export default function Assistant() {
   const [error, setError] = useState('')
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  async function open() {
-    setError('')
-    try {
-      const res = await assistantOpening()
-      setMessages([
-        { role: 'assistant', content: res.reply, createdAt: new Date().toISOString() },
-      ])
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Could not open the Film Assistant.')
+  // Resume the most recent active assistant conversation, or open a new one
+  // (the create endpoint persists the assistant's opening message for us).
+  useEffect(() => {
+    let cancelled = false
+    async function init() {
+      setError('')
+      try {
+        const list = await listConversations('active', 'discovery')
+        const assistant = list.conversations.find((c) => !c.title)
+        const res = assistant
+          ? await getConversation(assistant.id)
+          : await createConversation({ type: 'discovery' })
+        if (cancelled) return
+        setConversationId(res.conversation.id)
+        setMessages(res.messages.map(toLocal))
+      } catch (err) {
+        if (!cancelled) {
+          setError(
+            err instanceof ApiError
+              ? err.message
+              : 'Could not open the Film Assistant.',
+          )
+        }
+      } finally {
+        if (!cancelled) setReady(true)
+      }
     }
-  }
-
-  // No saved transcript yet → greet with a fresh opening message.
-  useEffect(() => {
-    if (messages.length === 0) open()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    init()
+    return () => {
+      cancelled = true
+    }
   }, [])
-
-  // Persist the transcript to sessionStorage so tab navigation keeps it, and
-  // clear it when the chat is ended.
-  useEffect(() => {
-    if (messages.length) sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
-    else sessionStorage.removeItem(STORAGE_KEY)
-  }, [messages])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ block: 'end' })
@@ -86,51 +107,51 @@ export default function Assistant() {
   const recs = useMemo<AssistantRec[]>(() => {
     for (let i = messages.length - 1; i >= 0; i--) {
       const message = messages[i]
-      if (message.role === 'assistant' && (message.recommendations?.length ?? 0) > 0) {
+      if (
+        message.role === 'assistant' &&
+        (message.recommendations?.length ?? 0) > 0
+      ) {
         return message.recommendations as AssistantRec[]
       }
     }
     return []
   }, [messages])
 
+  // Every film already shown this session; we pass these each turn so the next
+  // reply (and every Regenerate) surfaces fresh films rather than repeats.
+  function collectShown(list: LocalMessage[]): number[] {
+    const shown = new Set<number>()
+    for (const message of list) {
+      for (const rec of message.recommendations ?? []) shown.add(rec.tmdb_id)
+    }
+    return Array.from(shown)
+  }
+
   async function send(raw: string) {
     const content = raw.trim()
-    if (!content || sending) return
+    if (!content || sending || !conversationId) return
     setSending(true)
     setError('')
     setInput('')
-    const history: LocalMessage[] = [
-      ...messages,
-      { role: 'user', content, createdAt: new Date().toISOString() },
-    ]
-    setMessages(history)
     try {
-      const res = await assistantChat(
-        history.map(({ role, content }) => ({ role, content })),
-      )
-      setMessages([
-        ...history,
-        {
-          role: 'assistant',
-          content: res.reply,
-          createdAt: new Date().toISOString(),
-          recommendations: res.recommendations,
-        },
+      const res = await sendMessage(conversationId, content, collectShown(messages))
+      setMessages((prev) => [
+        ...prev,
+        toLocal(res.user_message),
+        toLocal(res.assistant_message),
       ])
     } catch (err) {
-      setMessages(messages)
-      setError(err instanceof ApiError ? err.message : 'Could not send your message.')
+      setError(
+        err instanceof ApiError ? err.message : 'Could not send your message.',
+      )
     } finally {
       setSending(false)
     }
   }
 
-  async function end() {
-    // Ending is just discarding the session transcript (nothing is persisted).
-    setMessages([])
-    setError('')
-    setAdded({})
-    await open()
+  // Ending simply returns to Discover; the chat stays saved in the backend.
+  function end() {
+    navigate('/app/discover')
   }
 
   async function moreLikeThis(rec: AssistantRec) {
@@ -141,7 +162,9 @@ export default function Assistant() {
       await sendFeedback(rec.tmdb_id, 'more_like_this', rec.title)
       await send(`Something more like ${rec.title}, please.`)
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Could not save your feedback.')
+      setError(
+        err instanceof ApiError ? err.message : 'Could not save your feedback.',
+      )
     } finally {
       setBusyCard(null)
     }
@@ -155,13 +178,14 @@ export default function Assistant() {
       await addFilm(rec.tmdb_id, 'watchlist')
       setAdded((a) => ({ ...a, [rec.tmdb_id]: true }))
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Could not add the film.')
+      setError(
+        err instanceof ApiError ? err.message : 'Could not add the film.',
+      )
     } finally {
       setBusyCard(null)
     }
   }
-
-  return (
+return (
     <div className="assistant-layout">
       <section className="card chat-panel">
         <header className="chat-head">
@@ -178,8 +202,14 @@ export default function Assistant() {
         </header>
 
         <div className="chat-msgs">
+          {!ready && messages.length === 0 && (
+            <p className="muted">Loading your Film Assistant…</p>
+          )}
           {messages.map((m, i) => (
-            <div key={`${m.role}-${m.createdAt}-${i}`} className={`msg-row ${m.role}`}>
+            <div
+              key={`${m.role}-${m.createdAt}-${i}`}
+              className={`msg-row ${m.role}`}
+            >
               <div className="msg">
                 {m.content}
                 <span className="msg-meta">
@@ -207,7 +237,7 @@ export default function Assistant() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && send(input)}
             placeholder="What are you in the mood for…"
-            disabled={sending}
+            disabled={sending || !ready}
           />
           <button
             className="btn primary"
@@ -223,7 +253,7 @@ export default function Assistant() {
             <button
               key={mood}
               className="chip-btn"
-              disabled={sending}
+              disabled={sending || !ready}
               onClick={() => send(mood)}
             >
               {mood}
@@ -231,14 +261,12 @@ export default function Assistant() {
           ))}
         </div>
       </section>
-
-
-      <aside className="assistant-recs">
+<aside className="assistant-recs">
         <div className="assistant-recs-head">
           <h2>Here are some recommendations for you</h2>
           <button
             className="btn ghost small"
-            disabled={sending}
+            disabled={sending || !ready}
             onClick={() => send('Can you suggest something different?')}
           >
             ↻ Regenerate
@@ -256,7 +284,9 @@ export default function Assistant() {
             {recs.map((rec) => (
               <article
                 key={rec.tmdb_id}
-                className={`card assistant-rec-card${expanded === rec.tmdb_id ? ' expanded' : ''}`}
+                className={`card assistant-rec-card${
+                  expanded === rec.tmdb_id ? ' expanded' : ''
+                }`}
               >
                 <div className="assistant-rec-poster">
                   {rec.poster_url ? (
@@ -265,8 +295,14 @@ export default function Assistant() {
                     <span className="no-poster">{rec.title}</span>
                   )}
                   <button
-                    className={`bookmark-btn${added[rec.tmdb_id] ? ' active' : ''}`}
-                    title={added[rec.tmdb_id] ? 'On your watchlist' : 'Add to watchlist'}
+                    className={`bookmark-btn${
+                      added[rec.tmdb_id] ? ' active' : ''
+                    }`}
+                    title={
+                      added[rec.tmdb_id]
+                        ? 'On your watchlist'
+                        : 'Add to watchlist'
+                    }
                     aria-label="Add to watchlist"
                     disabled={busyCard === rec.tmdb_id || added[rec.tmdb_id]}
                     onClick={() => addToWatchlist(rec)}
@@ -280,7 +316,8 @@ export default function Assistant() {
                     {rec.year ? ` (${rec.year})` : ''}
                     {rec.vote_average > 0 && (
                       <span className="rec-rating" title="TMDB rating (out of 5)">
-                        {' '}⭐ {(rec.vote_average / 2).toFixed(1)}
+                        {' '}
+                        ⭐ {(rec.vote_average / 2).toFixed(1)}
                       </span>
                     )}
                   </h3>
@@ -301,12 +338,17 @@ export default function Assistant() {
                       ))}
                     </div>
                   )}
-                  <p className="overview">{rec.overview || 'No synopsis available.'}</p>
+                  <p className="overview">
+                    {rec.overview || 'No synopsis available.'}
+                  </p>
                   <DisapprovalNote title={rec.title} year={rec.year} />
                   {expanded === rec.tmdb_id && (
                     <div className="assistant-rec-details">
                       <p className="meta">
-                        TMDB rating: {rec.vote_average > 0 ? `${(rec.vote_average / 2).toFixed(1)} / 5` : 'unrated'}
+                        TMDB rating:{' '}
+                        {rec.vote_average > 0
+                          ? `${(rec.vote_average / 2).toFixed(1)} / 5`
+                          : 'unrated'}
                         {rec.themes.length > 2
                           ? ` · more themes: ${rec.themes.slice(2).join(', ')}`
                           : ''}
@@ -317,7 +359,9 @@ export default function Assistant() {
                     <button
                       className="btn ghost small"
                       onClick={() =>
-                        setExpanded(expanded === rec.tmdb_id ? null : rec.tmdb_id)
+                        setExpanded(
+                          expanded === rec.tmdb_id ? null : rec.tmdb_id,
+                        )
                       }
                     >
                       {expanded === rec.tmdb_id ? 'Hide details' : 'View details'}
@@ -346,4 +390,3 @@ export default function Assistant() {
     </div>
   )
 }
-

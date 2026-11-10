@@ -33,6 +33,10 @@ class ChatBody(BaseModel):
     # turn (the server bounds the LLM window, but the client needs the whole
     # thread to re-render after a reload).
     messages: list[ChatMessage] = Field(min_length=1)
+    # tmdb_ids already shown in the side panel this session; the engine drops
+    # them and widens its pool so each turn and every Regenerate surfaces
+    # films the user has not just seen.
+    exclude_tmdb_ids: list[int] = Field(default_factory=list)
 
 
 @router.post("/opening")
@@ -43,4 +47,4 @@ def opening(current: dict = Depends(get_current_user)) -> dict:
 @router.post("/chat")
 def chat(body: ChatBody, current: dict = Depends(get_current_user)) -> dict:
     history = [{"role": m.role, "content": m.content} for m in body.messages]
-    return discovery_turn(current["id"], history)
+    return discovery_turn(current["id"], history, body.exclude_tmdb_ids)

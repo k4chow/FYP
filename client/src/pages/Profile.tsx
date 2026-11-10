@@ -299,9 +299,28 @@ export default function Profile() {
             uses them to explain the films it recommends on your Discover page,
             which is why keeping the ones that feel true sharpens your picks.
           </p>
+
+          {stats.theme_counts.length > 0 && (
+            <>
+              <h3 style={{ marginTop: '1.25rem' }}>Your theme tags</h3>
+              <p className="muted" style={{ maxWidth: '44rem' }}>
+                Short moods drawn from the films you've watched, counted across
+                your library.
+              </p>
+              <div className="pills" style={{ marginBottom: '1.5rem' }}>
+                {stats.theme_counts.map((t) => (
+                  <span className="pill active" key={t.theme}>
+                    {t.theme} · {t.count}
+                  </span>
+                ))}
+              </div>
+            </>
+          )}
+
+          <h3>From your reflections</h3>
           {profile.groups.theme.length === 0 ? (
             <p className="muted">
-              You don't have any themes yet. They'll appear here as you complete
+              No reflection themes yet — they'll appear as you complete
               reflections and keep the insights that ring true.
             </p>
           ) : (

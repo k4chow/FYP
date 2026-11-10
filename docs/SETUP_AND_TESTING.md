@@ -28,10 +28,14 @@ domain or DNS setup is needed:
   registered; if one is ever pointed at the server, serve `dist` at the root
   with base `/` and proxy `/api/` instead of the path setup.
 
+`OPENAI_MODEL=gpt-6.1-luna` must be present in `~/noacf/server/.env` (the
+server reads it from `.env` / its process environment).
+
 To deploy an update:
 
 ```bash
 cd ~/noacf && git pull
+cd server && .venv/bin/python scripts/backfill_keywords.py   # one-off: cache TMDB keywords for film themes
 cd server && .venv/bin/pip install -r requirements.txt   # if deps changed
 sudo systemctl restart noacf                             # if server code changed
 cd ../client && npm install && \
@@ -343,7 +347,6 @@ Expected result: 13 tests, `OK`.
 
 ### Explicitly incomplete checks
 
-- Home profile themes are hard-coded examples.
 - There is no mood input or mood-aware recommendation behaviour to test.
 
 ### Onboarding (D38 flow)

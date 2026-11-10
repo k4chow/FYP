@@ -30,7 +30,7 @@ the UI screen(s) that surface it. Update the "Status" column per phase.
 | N3 | JSONB only for genuinely flexible metadata | `metadata`, `source_message_ids`, `genres` columns | ✅ Phase 0 |
 | N4 | pgvector only if plain SQL retrieval proves insufficient | Deferred decision (documented in 03-design-decisions) | Deferred |
 | N5 | Film preferences ≠ mental-health inference; contradictions flagged, never silently overwritten | Deterministic proposals describe observable film/reflection preferences only; review cannot overwrite confirmed memories or source messages | ✅ Phase 4 (side-by-side contradiction UI remains Phase 5) |
-| N6 | User-adjustable recommendation style (similar ↔ exploratory) | Settings slider → recommendation weights | ✅ Done (Phase 6) |
+| N6 | User-adjustable recommendation style (niche ↔ mainstream) | Settings slider → popularity weighting in the recommender | ✅ Done (Phase 6) |
 
 ## Onboarding flow (from notes + mockups)
 

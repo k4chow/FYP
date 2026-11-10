@@ -13,6 +13,7 @@ from pydantic import BaseModel, Field
 
 from .. import memories as memory_svc
 from .. import recommendations as rec_svc
+from .. import themes as theme_svc
 from ..deps import get_current_user
 from ..supabase_client import supabase
 
@@ -20,6 +21,7 @@ router = APIRouter()
 
 _PAGE = 1000
 _TOP_GENRES = 3
+_TOP_THEMES = 8
 _TOP_KIND_CONTENT = 3
 
 
@@ -61,6 +63,38 @@ def _genre_counts(user_id: str, limit: int | None = _TOP_GENRES) -> list[dict]:
     return [
         {"genre": genre, "count": count}
         for genre, count in counts.most_common(limit)
+    ]
+
+
+def _theme_counts(user_id: str, limit: int | None = _TOP_THEMES) -> list[dict]:
+    """Emotional-theme frequency across watched films (D36), commonest first.
+
+    Themes are the short human tags filtered from each film's cached TMDB
+    keywords (grief / loneliness / memory ...). ``limit=None`` returns every
+    theme for the profile's Themes tab; the default keeps the top few cues.
+    """
+    counts: Counter[str] = Counter()
+    offset = 0
+    while True:
+        page = (
+            supabase.table("user_films")
+            .select("films(metadata)")
+            .eq("user_id", user_id)
+            .eq("status", "watched")
+            .range(offset, offset + _PAGE - 1)
+            .execute()
+            .data
+        )
+        for row in page:
+            keywords = ((row.get("films") or {}).get("metadata") or {}).get("keywords")
+            for theme in theme_svc.filter_keywords(keywords):
+                counts[theme] += 1
+        if len(page) < _PAGE:
+            break
+        offset += _PAGE
+    return [
+        {"theme": theme, "count": count}
+        for theme, count in counts.most_common(limit)
     ]
 
 
@@ -129,6 +163,8 @@ def profile_summary(current: dict = Depends(get_current_user)) -> dict:
         ),
         "top_genres": _genre_counts(user_id),
         "genre_counts": _genre_counts(user_id, limit=None),
+        "top_themes": _theme_counts(user_id),
+        "theme_counts": _theme_counts(user_id, limit=None),
     }
     memories = memory_svc.list_for_user(user_id, "confirmed")
     groups = {
@@ -145,12 +181,12 @@ def profile_summary(current: dict = Depends(get_current_user)) -> dict:
 
 # --- Recommendation preferences (N6, Phase 6) --------------------------------
 
-_DEFAULT_STYLE = 30  # matches users.recommendation_style default
+_DEFAULT_STYLE = 30  # 0 = niche, 100 = mainstream (users.recommendation_style)
 
 
 class PreferencesBody(BaseModel):
     recommendation_style: int = Field(
-        ..., ge=0, le=100, description="0 = more like what I love, 100 = surprise me"
+        ..., ge=0, le=100, description="0 = more niche, 100 = more mainstream"
     )
 
 

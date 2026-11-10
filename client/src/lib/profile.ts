@@ -11,6 +11,10 @@ export interface ProfileStats {
   // Every genre across the watched library (the Genres tab); top_genres is
   // just the first few of these, kept for the summary sentence.
   genre_counts: { genre: string; count: number }[]
+  // Short emotional-theme tags (grief, longing, belonging, …) derived from
+  // TMDB keywords; top_themes is the summary set, theme_counts is the full one.
+  top_themes: { theme: string; count: number }[]
+  theme_counts: { theme: string; count: number }[]
 }
 
 // GET /profile/summary (F2): the reflective profile, built only from
@@ -29,9 +33,9 @@ export interface ProfileSummary {
 export const getProfileSummary = () =>
   api<ProfileSummary>('/profile/summary', { auth: true })
 
-// N6 (Phase 6): the recommendation style slider, persisted on the users row.
+// N6 (Phase 6): the niche↔mainstream preference, persisted on the users row.
 export interface Preferences {
-  recommendation_style: number // 0 = more like what I love, 100 = surprise me
+  recommendation_style: number // 0 = more niche, 100 = more mainstream
 }
 
 export const getPreferences = () =>

@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     # environment (.env locally, hosting env settings when deployed) and is
     # never committed or sent to the client.
     openai_api_key: str = ""
-    openai_model: str = "gpt-4o-mini"
+    openai_model: str = "gpt-6.1-luna"
 
 
 settings = Settings()

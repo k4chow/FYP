@@ -231,7 +231,7 @@ flowchart LR
     G[top genres] -->|TMDB /discover| C
     C --> X[Exclude library + not_for_me]
     M[(confirmed memories)] -->|keyword / genre-alias match| R[Scoring]
-    U[users.recommendation_style] -->|similarity weight + explore bonus| R
+    U[users.recommendation_style] -->|popularity term: niche vs mainstream| R
     X --> R
     R --> D[Discover cards with why + source_memories]
     D -.->|More like this / Not for me| FB
@@ -242,11 +242,11 @@ flowchart LR
    `/movie/{id}/recommendations`; a `/discover/movie` pool (vote_count ≥ 200)
    covers the library's three most frequent genres.
 2. Candidates already in the library or marked `not_for_me` are excluded.
-3. Score = `seed_score × (0.5 + similarity) + memory_bonus + explore_bonus`,
-   where `similarity = 1 − recommendation_style/100`. The memory bonus matches
-   confirmed-memory keywords and genre aliases against the candidate's genres,
-   title, and overview (capped at three memories per card); the explore bonus
-   rewards off-profile genres and scales with the slider.
+3. Score = `seed_score × 1.2 + memory_bonus + popularity_bonus + quality_bonus`.
+   The memory bonus matches confirmed-memory keywords and genre aliases against
+   the candidate's genres, title, and overview (capped at three memories per
+   card); the popularity bonus scales niche→mainstream with the slider and the
+   film's TMDB `vote_count`.
 4. Every card returns a human-readable `why` plus the `source_memories` it
    matched — the Discover "Why am I seeing this?" panel renders exactly these.
 5. An empty library returns popular TMDB picks with an honest cold-start

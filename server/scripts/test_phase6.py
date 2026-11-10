@@ -238,22 +238,23 @@ class RecommendationEngineTests(unittest.TestCase):
         die_hard = next(c for c in self.cards() if c["tmdb_id"] == 562)
         self.assertIn("films lead your library", die_hard["why"])
 
-    def test_style_slider_reweights_scores(self):
-        # style=30 (default): similarity-weighted seed score dominates.
-        base = {c["tmdb_id"]: c["score"] for c in self.cards()}
-        # style=0 ("More like what I love"): seed contribution maxed.
-        self.store.tables["users"][0]["recommendation_style"] = 0
+    def test_style_slider_reweights_popularity(self):
+        # The niche/mainstream slider now rebalances mainstream-ness via
+        # vote_count, while the taste/insight grounding stays constant.
+        dune = 438631  # the only candidate with a meaningful vote_count
+        martian = 286217  # a feedback seed with no vote metrics
+        self.store.tables["users"][0]["recommendation_style"] = 0  # niche
         rec.invalidate(USER)
-        similar = {c["tmdb_id"]: c["score"] for c in self.cards()}
-        # style=100 ("Surprise me"): seeds dampened, off-profile boosted.
-        self.store.tables["users"][0]["recommendation_style"] = 100
+        niche = {c["tmdb_id"]: c["score"] for c in self.cards()}
+        self.store.tables["users"][0]["recommendation_style"] = 100  # mainstream
         rec.invalidate(USER)
-        explore = {c["tmdb_id"]: c["score"] for c in self.cards()}
+        mainstream = {c["tmdb_id"]: c["score"] for c in self.cards()}
 
-        self.assertGreater(similar[335984], base[335984])
-        self.assertLess(explore[335984], base[335984])
-        # Die Hard shares no genre with the user's top genres: explore bonus.
-        self.assertGreater(explore[562], similar[562])
+        # A mainstream lean raises the popular film's score; niche lowers it.
+        self.assertGreater(mainstream[dune], niche[dune])
+        # Films without vote metrics are unaffected by popularity, so picks stay
+        # grounded in the reflective profile across every slider position.
+        self.assertEqual(niche[martian], mainstream[martian])
 
     def test_deterministic_ordering(self):
         first = [c["tmdb_id"] for c in self.cards()]

@@ -16,7 +16,7 @@ service role only).
 | id | uuid PK | References `auth.users(id)` — 1:1 with Supabase Auth |
 | display_name | text | |
 | onboarding_completed | boolean | default `false` for new signups (0004, D30) |
-| recommendation_style | smallint | 0–100 similar↔exploratory slider, default 30 (0005, D37) |
+| recommendation_style | smallint | 0–100 niche↔mainstream slider, default 30 (0005, D37) |
 | created_at | timestamptz | |
 
 ### films (shared catalogue)

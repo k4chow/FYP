@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ApiError } from '../lib/api'
 import DisapprovalNote from '../components/DisapprovalNote'
@@ -52,12 +52,18 @@ export default function Discover() {
   const [error, setError] = useState('')
   const [feedback, setFeedback] = useState<Record<number, FeedbackSignal>>({})
   const [busy, setBusy] = useState<number | null>(null)
+  // tmdb_ids currently on screen; a refresh sends them so the next grid rotates.
+  const shownRef = useRef<Set<number>>(new Set())
 
   const load = useCallback((refresh = false) => {
     setLoading(true)
     setError('')
-    getRecommendations(12, refresh)
-      .then((res) => setRecs(res.recommendations))
+    const exclude = refresh ? Array.from(shownRef.current) : undefined
+    getRecommendations(12, refresh, exclude)
+      .then((res) => {
+        setRecs(res.recommendations)
+        shownRef.current = new Set(res.recommendations.map((r) => r.tmdb_id))
+      })
       .catch((err) =>
         setError(err instanceof ApiError ? err.message : 'Could not load recommendations'),
       )

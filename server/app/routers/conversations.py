@@ -44,6 +44,9 @@ class CreateConversationBody(BaseModel):
 
 class MessageBody(BaseModel):
     content: str = Field(min_length=1, max_length=4000)
+    # Film Assistant turns pass the tmdb_ids already shown this session so the
+    # recommender drops them and widens its pool (rotation on Regenerate/new msgs).
+    exclude_tmdb_ids: list[int] = Field(default_factory=list)
 
     @field_validator("content")
     @classmethod
@@ -130,7 +133,10 @@ def _chat_context(conv: dict, user_id: str, turn: int) -> ChatContext:
 
 
 def _candidate_pool(
-    user_id: str, limit: int = 8, asked: dict | None = None
+    user_id: str,
+    limit: int = 8,
+    asked: dict | None = None,
+    exclude_tmdb_ids: list[int] | None = None,
 ) -> list[dict]:
     """Personalised candidates for the Film Assistant to pick from.
 
@@ -146,6 +152,10 @@ def _candidate_pool(
             limit=limit,
             genres=(asked or {}).get("genres") or None,
             person_id=(asked or {}).get("person_id"),
+            exclude_ids=set(exclude_tmdb_ids or []),
+            # Excluding already-shown films must widen the pool, otherwise a
+            # new turn or a Regenerate would just reshuffle the same top picks.
+            refresh=bool(exclude_tmdb_ids),
             # Chatting must not consume Discover's "don't repeat these" state.
             track_served=False,
         )
@@ -365,7 +375,10 @@ def _fallback_reply(cards: list[dict], note: str | None = None) -> str:
 
 
 def _discovery_reply(
-    history: list[dict], ctx: ChatContext, user_id: str
+    history: list[dict],
+    ctx: ChatContext,
+    user_id: str,
+    exclude_tmdb_ids: list[int] | None = None,
 ) -> tuple[str, dict]:
     """One Film Assistant turn: recommender reply + verified film cards.
 
@@ -378,7 +391,9 @@ def _discovery_reply(
     llm = get_llm()
     asked = constraint_svc.parse_constraints(_last_user_text(history))
     pool = _candidate_pool(
-        user_id, asked=asked if constraint_svc.has_constraint(asked) else None
+        user_id,
+        asked=asked if constraint_svc.has_constraint(asked) else None,
+        exclude_tmdb_ids=exclude_tmdb_ids,
     )
     if pool:
         ctx = replace(ctx, suggestions=pool)
@@ -437,7 +452,9 @@ def discovery_opening(user_id: str) -> str:
     return get_llm().opening(ctx)
 
 
-def discovery_turn(user_id: str, history: list[dict]) -> dict:
+def discovery_turn(
+    user_id: str, history: list[dict], exclude_tmdb_ids: list[int] | None = None
+) -> dict:
     """One Film Assistant turn with no persistence (Phase 7).
 
     The client owns the transcript (sessionStorage) and sends the bounded
@@ -451,7 +468,7 @@ def discovery_turn(user_id: str, history: list[dict]) -> dict:
         turn=sum(1 for m in history if m.get("role") == "user"),
         library_titles=_library_titles(user_id),
     )
-    reply, metadata = _discovery_reply(history, ctx, user_id)
+    reply, metadata = _discovery_reply(history, ctx, user_id, exclude_tmdb_ids)
     return {"reply": reply, "recommendations": metadata.get("recommendations", [])}
 
 
@@ -639,7 +656,9 @@ def post_message(
     reply = get_llm().chat(history, ctx)
     metadata: dict = {}
     if conv["type"] == "discovery":
-        reply, metadata = _discovery_reply(history, ctx, current["id"])
+        reply, metadata = _discovery_reply(
+            history, ctx, current["id"], body.exclude_tmdb_ids
+        )
     assistant_message = (
         supabase.table("messages")
         .insert(

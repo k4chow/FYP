@@ -13,9 +13,9 @@ Pipeline:
 3. Genre pool: /discover/movie restricted to the user's top library genres.
 4. Exclusions: anything already in the library and every "not_for_me"
    film is removed from the candidate set (F11).
-5. Scoring: seed similarity weighted by the style slider (N6), confirmed-
-   memory keyword affinity (F8), and an exploration bonus for off-profile
-   genres as the slider moves towards "Surprise me".
+5. Scoring: seed similarity from rated/watchlisted/feedback films, confirmed-
+   memory keyword affinity (F8), a popularity term weighted by the style
+   slider (0 = niche, 100 = mainstream, N6), and a TMDB quality prior.
 6. Explanations: every card carries a human-readable `why` plus the
    `source_memories` that influenced it, for "Why am I seeing this?" (F9).
 """
@@ -32,22 +32,25 @@ from .supabase_client import supabase
 # --- Tunable constants (D35) ------------------------------------------------
 _SEED_LIMIT = 6  # seeds that each pull a TMDB recommendations page
 _SEED_REC_LIMIT = 8  # candidates taken per seed, rank-weighted
+_SEED_REFRESH_EXTRA = 8  # extra seed recs pulled on refresh for fresh material
 _DISCOVER_LIMIT = 20  # raw discover rows considered per genre-pool page
 # Two deterministic pool pages by default (popularity + best-rated); a refresh
 # run adds a random year/page on top so it can surface different candidates.
 _DISCOVER_VOTE_SORT = "vote_average.desc"
 _QUALITY_WEIGHT = 0.5  # TMDB rating prior, confidence-scaled by vote_count
-_REFRESH_POOL_FACTOR = 4  # refresh samples from the top slice: factor x limit
+_REFRESH_POOL_FACTOR = 6  # refresh samples from a wide window: factor x limit
 _FEEDBACK_SEED_WEIGHT = 1.2  # explicit "more like this" beats implicit seeds
 _RATING_SEED_DIVISOR = 5.0  # a 5-star film seeds at weight 1.0
 _WATCHLIST_SEED_WEIGHT = 0.6
 _WATCHED_SEED_WEIGHT = 0.25  # watched but unrated
 _MEMORY_KEYWORD_BONUS = 0.45  # per matched confirmed memory
 _MEMORY_BONUS_CAP = 1.35  # at most three memories influence one card
-_EXPLORE_BONUS = 0.8  # full bonus at style=100 for off-profile genres
+_SEED_SIMILARITY_FACTOR = 1.2  # seed "more like what I love" weighting (fixed)
+_POPULARITY_WEIGHT = 0.6  # full popularity swing at the slider extremes
+_MAINSTREAM_VOTES = 20000.0  # vote_count at which a film counts as mainstream
 _DISCOVER_BASE = 0.5  # genre-pool candidates start here
 _TOP_GENRES = 3
-_DEFAULT_STYLE = 30  # matches users.recommendation_style default
+_DEFAULT_STYLE = 30  # 0 = niche, 100 = mainstream (users.recommendation_style)
 _CACHE_TTL_SECONDS = 300
 
 _WORD_RE = re.compile(r"[a-z']+")
@@ -209,8 +212,6 @@ def _why(
         return "Popular on TMDB right now — a starting point while your profile grows."
     return " — and ".join(parts) + "."
 
-    return value if isinstance(value, int) else _DEFAULT_STYLE
-
 
 def _diverse(cards: list[dict], limit: int, cap: int = 2) -> list[dict]:
     """Final grid selection with a genre spread: at most `cap` cards per
@@ -239,6 +240,7 @@ def get_recommendations(
     *,
     genres: list[str] | None = None,
     person_id: int | None = None,
+    exclude_ids: set[int] | None = None,
     track_served: bool = True,
 ) -> list[dict]:
     """Ranked, explained recommendation cards for the Discover grid.
@@ -254,6 +256,10 @@ def get_recommendations(
     bypass the cache and never record `_last_served`, so chatting cannot change
     what Discover shows. `track_served=False` lets the Assistant use the normal
     profile pool without disturbing Discover's refresh state either.
+
+    `exclude_ids` drops specific tmdb_ids (the Assistant's already-shown films)
+    from the candidate set; pass `refresh=True` alongside it so the pool widens
+    enough to replace them with fresh picks.
     """
     constrained = bool(genres or person_id)
     cached = _cache.get(user_id)
@@ -271,6 +277,10 @@ def get_recommendations(
     not_for_me = {row["tmdb_id"] for row in feedback if row["signal"] == "not_for_me"}
     more_like_this = [row for row in feedback if row["signal"] == "more_like_this"]
     excluded = library_ids | not_for_me
+    if exclude_ids:
+        # Films already shown this session (the Film Assistant rotates its
+        # side panel) are treated like library films: never repeated.
+        excluded |= {i for i in exclude_ids if isinstance(i, int)}
     if refresh:
         # A refresh must surface films the user has not just seen.
         excluded |= _last_served.get(user_id, set())
@@ -281,7 +291,6 @@ def get_recommendations(
     top_genres = [genre for genre, _ in genre_counts.most_common(_TOP_GENRES)]
 
     seeds = _build_seeds(library, more_like_this)
-    similarity = 1.0 - style / 100.0
 
     # candidate tmdb_id -> accumulating record
     candidates: dict[int, dict] = {}
@@ -301,7 +310,8 @@ def get_recommendations(
 
     # 1) Seed-driven candidates: TMDB's own recommendations per seed film.
     for seed in seeds:
-        recs = tmdb.movie_recommendations(seed["tmdb_id"])[:_SEED_REC_LIMIT]
+        take = _SEED_REC_LIMIT + (_SEED_REFRESH_EXTRA if refresh else 0)
+        recs = tmdb.movie_recommendations(seed["tmdb_id"])[:take]
         for rank, raw in enumerate(recs):
             if raw.get("id") in excluded:
                 continue
@@ -394,16 +404,16 @@ def get_recommendations(
             len(cand["matched_memories"]) * _MEMORY_KEYWORD_BONUS,
             _MEMORY_BONUS_CAP,
         )
-        explore_bonus = (
-            (style / 100.0) * _EXPLORE_BONUS
-            if top_genres and not (cand_genres & set(top_genres))
-            else 0.0
+        popularity_bonus = (
+            _POPULARITY_WEIGHT
+            * ((style / 100.0) * 2.0 - 1.0)
+            * min(1.0, cand.get("vote_count", 0) / _MAINSTREAM_VOTES)
         )
         best = cand["best_seed"][0] if cand["best_seed"] else None
         cand["score"] += (
-            cand["seed_score"] * (0.5 + similarity)
+            cand["seed_score"] * _SEED_SIMILARITY_FACTOR
             + memory_bonus
-            + explore_bonus
+            + popularity_bonus
             + quality_bonus
         )
         matched = sorted(cand["matched_memories"].values(), key=lambda m: m["id"])
@@ -417,8 +427,13 @@ def get_recommendations(
         key=lambda c: (-c["score"], -c["popularity"], c["tmdb_id"]),
     )
     if refresh and len(ranked) > limit:
-        pool = ranked[: max(limit * _REFRESH_POOL_FACTOR, limit + 6)]
-        chosen = random.sample(pool, k=min(limit, len(pool)))
+        # Re-roll the grid so a refresh visibly changes it: keep a handful of the
+        # strongest freshly-ranked picks, then sample the rest from a wide window
+        # (the extra seed recs + randomised discover pages feed fresh material
+        # into that window).
+        keep = ranked[: max(2, limit // 2)]
+        window = ranked[max(2, limit // 2) : max(limit * _REFRESH_POOL_FACTOR, len(ranked))]
+        chosen = keep + random.sample(window, k=min(limit - len(keep), len(window)))
         ranked = sorted(chosen, key=lambda c: -c["score"])
     cards = [
         {

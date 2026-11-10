@@ -66,10 +66,10 @@ export const getConversation = (id: string) =>
     auth: true,
   })
 
-export const sendMessage = (id: string, content: string) =>
+export const sendMessage = (id: string, content: string, exclude_tmdb_ids: number[] = []) =>
   api<{ user_message: ChatMessage; assistant_message: ChatMessage }>(
     `/conversations/${id}/messages`,
-    { method: 'POST', auth: true, body: { content } },
+    { method: 'POST', auth: true, body: { content, exclude_tmdb_ids } },
   )
 
 export const endConversation = (id: string) =>

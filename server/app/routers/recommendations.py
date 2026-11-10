@@ -28,10 +28,16 @@ class FeedbackBody(BaseModel):
 def list_recommendations(
     limit: int = Query(default=12, ge=1, le=24),
     refresh: bool = Query(default=False),
+    exclude_tmdb_ids: list[int] | None = Query(default=None),
     current: dict = Depends(get_current_user),
 ) -> dict:
     cards = rec_svc.get_recommendations(
-        current["id"], limit=limit, refresh=refresh
+        current["id"],
+        limit=limit,
+        refresh=refresh,
+        # Already-shown films this session (rotation): treated like library films,
+        # so a refresh genuinely surfaces fresh picks even across restarts.
+        exclude_ids=set(exclude_tmdb_ids or []),
     )
     return {"recommendations": cards}
 
