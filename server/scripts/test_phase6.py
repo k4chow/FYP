@@ -143,7 +143,7 @@ class RecommendationEngineTests(unittest.TestCase):
             mock.patch.object(rec, "list_for_user", return_value=[MEMORY]),
             mock.patch.object(
                 rec.tmdb, "movie_recommendations",
-                side_effect=lambda tmdb_id: TMDB_RECS.get(tmdb_id, []),
+                side_effect=lambda tmdb_id, page=1: TMDB_RECS.get(tmdb_id, []),
             ),
             mock.patch.object(
                 rec.tmdb, "discover_movies", side_effect=self._discover,
@@ -280,7 +280,7 @@ class ColdStartTests(unittest.TestCase):
             mock.patch.object(rec, "supabase", self.store),
             mock.patch.object(rec, "list_for_user", return_value=[]),
             mock.patch.object(
-                rec.tmdb, "movie_recommendations", side_effect=lambda _id: []
+                rec.tmdb, "movie_recommendations", side_effect=lambda _id, page=1: []
             ),
             mock.patch.object(
                 rec.tmdb, "discover_movies", side_effect=self._discover

@@ -320,6 +320,19 @@ def get_recommendations(
             cand["seed_score"] += contribution
             if cand["best_seed"] is None or contribution > cand["best_seed"][1]:
                 cand["best_seed"] = (seed, contribution)
+        if refresh:
+            # A second page of this seed's recommendations adds genuinely new
+            # films; the first page is stable, so a refresh would re-see it.
+            for rank, raw in enumerate(
+                tmdb.movie_recommendations(seed["tmdb_id"], page=2)[:_SEED_REFRESH_EXTRA]
+            ):
+                if raw.get("id") in excluded:
+                    continue
+                cand = candidate_for(raw)
+                contribution = seed["weight"] / (4 + rank)
+                cand["seed_score"] += contribution
+                if cand["best_seed"] is None or contribution > cand["best_seed"][1]:
+                    cand["best_seed"] = (seed, contribution)
 
     # 2) Genre pool: two deterministic discover pages (popularity + TMDB
     #    best-rated) within the user's top genres, or plain popular when the
@@ -353,22 +366,36 @@ def get_recommendations(
             tmdb.discover_movies(genre_ids or None, sort_by=_DISCOVER_VOTE_SORT),
         ]
         if refresh:
-            # A refresh broadens the pool with several randomised discover
-            # pages (varied sort, page and year) so the next grid genuinely
-            # changes instead of reshuffling the same high-scored candidates.
+            # A refresh broadens the pool with randomised discover pages (varied
+            # sort, page and year) — including genre-blind ones — so the next
+            # grid genuinely changes instead of reshuffling the same candidates.
             for sort_by in (
                 "popularity.desc",
                 _DISCOVER_VOTE_SORT,
                 "vote_count.desc",
+                "revenue.desc",
+                "popularity.desc",
             ):
                 pool_pages.append(
                     tmdb.discover_movies(
                         genre_ids or None,
                         sort_by=sort_by,
-                        page=random.randint(1, 5),
-                        year=random.randint(1970, 2026),
+                        page=random.randint(1, 8),
+                        year=random.randint(1960, 2025),
                     )
                 )
+            # Genre-blind pages surface films far outside the usual profile,
+            # which is where genuinely "fresh" picks come from.
+            pool_pages.append(
+                tmdb.discover_movies(
+                    None, sort_by="popularity.desc", page=random.randint(2, 10)
+                )
+            )
+            pool_pages.append(
+                tmdb.discover_movies(
+                    None, sort_by=_DISCOVER_VOTE_SORT, page=random.randint(1, 6)
+                )
+            )
     for page_index, raw_rows in enumerate(pool_pages):
         page_weight = 1.0 if page_index == 0 else 0.7
         for raw in raw_rows[:_DISCOVER_LIMIT]:
@@ -427,12 +454,12 @@ def get_recommendations(
         key=lambda c: (-c["score"], -c["popularity"], c["tmdb_id"]),
     )
     if refresh and len(ranked) > limit:
-        # Re-roll the grid so a refresh visibly changes it: keep a handful of the
-        # strongest freshly-ranked picks, then sample the rest from a wide window
-        # (the extra seed recs + randomised discover pages feed fresh material
-        # into that window).
-        keep = ranked[: max(2, limit // 2)]
-        window = ranked[max(2, limit // 2) : max(limit * _REFRESH_POOL_FACTOR, len(ranked))]
+        # Re-roll the grid so a refresh visibly changes it: keep just the top
+        # couple of quality picks, then sample the rest from a wide window (the
+        # deeper seed recs + broader randomised discover pages feed genuinely
+        # fresh material into that window).
+        keep = ranked[:2]
+        window = ranked[2 : max(limit * _REFRESH_POOL_FACTOR, len(ranked))]
         chosen = keep + random.sample(window, k=min(limit - len(keep), len(window)))
         ranked = sorted(chosen, key=lambda c: -c["score"])
     cards = [

@@ -12,7 +12,7 @@ everything through memories.normalise_proposals before persisting.
 
 import json
 
-from openai import OpenAI
+from openai import BadRequestError, OpenAI
 
 from ..config import settings
 from .base import ChatContext, LLMProvider
@@ -137,7 +137,15 @@ class OpenAIProvider(LLMProvider):
         kwargs: dict = {"model": self._model, "messages": messages}
         if json_mode:
             kwargs["response_format"] = {"type": "json_object"}
-        response = self._client.chat.completions.create(**kwargs)
+        try:
+            response = self._client.chat.completions.create(**kwargs)
+        except BadRequestError:
+            # Reasoning models sometimes reject `response_format json_object`;
+            # fall back to the prompt's own "respond with JSON only" instruction.
+            if not json_mode:
+                raise
+            kwargs.pop("response_format", None)
+            response = self._client.chat.completions.create(**kwargs)
         return (response.choices[0].message.content or "").strip()
 
 

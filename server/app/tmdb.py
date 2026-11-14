@@ -99,9 +99,12 @@ GENRE_IDS = {
 GENRE_NAMES = {genre_id: name for name, genre_id in GENRE_IDS.items()}
 
 
-def movie_recommendations(tmdb_id: int) -> list[dict]:
+def movie_recommendations(tmdb_id: int, page: int = 1) -> list[dict]:
     """TMDB's own recommendations for a film (Phase 6 candidate source)."""
-    data = _get(f"/movie/{tmdb_id}/recommendations", {"language": "en-US"}) or {}
+    data = (
+        _get(f"/movie/{tmdb_id}/recommendations", {"language": "en-US", "page": page})
+        or {}
+    )
     return data.get("results", [])
 
 

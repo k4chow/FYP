@@ -29,7 +29,7 @@ domain or DNS setup is needed:
   with base `/` and proxy `/api/` instead of the path setup.
 
 `OPENAI_MODEL` must be set in `~/noacf/server/.env` or the server's process
-environment (defaults to `gpt-4o-mini`).
+environment (defaults to `gpt-6-luna`).
 
 To deploy an update:
 

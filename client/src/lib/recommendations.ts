@@ -27,7 +27,8 @@ export const getRecommendations = (limit = 12, refresh = false, excludeTmdbIds?:
   const params = new URLSearchParams()
   params.set('limit', String(limit))
   if (refresh) params.set('refresh', '1')
-  if (excludeTmdbIds?.length) params.set('exclude_tmdb_ids', excludeTmdbIds.join(','))
+  // FastAPI parses list query params from repeated keys, not comma-joined ones.
+  for (const id of excludeTmdbIds ?? []) params.append('exclude_tmdb_ids', String(id))
   return api<{ recommendations: Recommendation[] }>(`/recommendations?${params.toString()}`, {
     auth: true,
   })
