@@ -24,6 +24,7 @@ import random
 import re
 import time
 from collections import Counter
+from datetime import datetime, timezone
 
 from . import constraints
 from . import tmdb
@@ -624,6 +625,29 @@ def record_recommendations(user_id: str, cards: list[dict], db=None) -> None:
         return
     try:
         db.table("recommendation_events").insert(rows).execute()
+    except Exception:  # noqa: BLE001 - non-critical persistence
+        return
+
+
+def mark_recommendations_watched(user_id: str, tmdb_ids, db=None) -> None:
+    """Stamp `watched_at` on recommendation events for films the user watches.
+
+    Called from the library router when a film is marked watched, so a later
+    reflection (or the recommender) can see whether a suggested film was acted
+    on. Best-effort; the pre-migration table absence is quietly ignored.
+    """
+    ids = [i for i in (tmdb_ids or []) if isinstance(i, int) and i > 0]
+    if not ids:
+        return
+    db = db or supabase
+    try:
+        (
+            db.table("recommendation_events")
+            .update({"watched_at": datetime.now(timezone.utc).isoformat()})
+            .eq("user_id", user_id)
+            .in_("tmdb_id", ids)
+            .execute()
+        )
     except Exception:  # noqa: BLE001 - non-critical persistence
         return
 

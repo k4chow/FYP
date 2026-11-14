@@ -189,10 +189,19 @@ Run from `server/`: `python scripts/test_personalisation.py`.
 - Migrations `0006`/`0007` must be applied; the code degrades gracefully if
   they are not (`.get()` access + try/except everywhere).
 
-## 9. Future work (separate from what is implemented)
+## 9. Follow-ups implemented (this phase)
+
+- **Discovery -> reflection closed loop:** when a film is marked watched
+  (`add_film` / `update_film`), `recommendations.mark_recommendations_watched`
+  stamps `watched_at` on matching recommendation events
+  (migration `0008_recommendation_events_watched.sql`); `user_context.
+  recent_recommendations` now returns `watched_at` so a later reflection can
+  see whether a suggestion was acted on.
+- **Plural/negation genre exclusions:** `constraints._excluded_genres` now
+  matches singular *and* plural forms ("no horror", "avoid slow dramas",
+  "not comedies") via `_genre_forms`.
+
+## 10. Remaining future work
 
 - Semantic retrieval once lexical retrieval proves insufficient (pgvector still
   deferred, per D8).
-- A write hook that marks a `recommendation_event` as watched when the user
-  logs the film, closing the discovery -> reflection loop end-to-end.
-- Plural/negation robustness for genre exclusions.

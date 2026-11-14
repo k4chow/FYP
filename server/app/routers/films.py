@@ -10,6 +10,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from .. import film_knowledge
+from .. import recommendations as rec_svc
 from .. import tmdb
 from ..deps import get_current_user
 from ..supabase_client import supabase
@@ -208,6 +209,13 @@ def add_film(body: AddFilmBody, current: dict = Depends(get_current_user)) -> di
         .upsert(row, on_conflict="user_id,film_id")
         .execute()
     )
+    if body.status == "watched":
+        try:
+            rec_svc.mark_recommendations_watched(
+                current["id"], [film["tmdb_id"]], db=supabase
+            )
+        except Exception:  # noqa: BLE001 - recommendation linkage is best-effort
+            pass
     return _response_row(res.data[0], film)
 
 
@@ -231,6 +239,26 @@ def update_film(
     )
     if not res.data:
         raise HTTPException(status_code=404, detail="Film not in your library")
+    if updates.get("status") == "watched":
+        # A recommendation that was acted on closes the discovery -> reflection
+        # loop: stamp it so later context knows the suggestion led to a watch.
+        try:
+            linked = (
+                supabase.table("user_films")
+                .select("films(tmdb_id)")
+                .eq("id", user_film_id)
+                .eq("user_id", current["id"])
+                .limit(1)
+                .execute()
+                .data
+            )
+            film = (linked or [{}])[0].get("films") or {}
+            if film.get("tmdb_id"):
+                rec_svc.mark_recommendations_watched(
+                    current["id"], [film["tmdb_id"]], db=supabase
+                )
+        except Exception:  # noqa: BLE001 - recommendation linkage is best-effort
+            pass
     return {"ok": True}
 
 

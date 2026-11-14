@@ -171,7 +171,7 @@ def recent_recommendations(user_id: str, limit: int = 10) -> list[dict]:
     try:
         rows = (
             supabase.table("recommendation_events")
-            .select("tmdb_id,title,reason,novelty_category,created_at")
+            .select("tmdb_id,title,reason,novelty_category,watched_at,created_at")
             .eq("user_id", user_id)
             .order("created_at", desc=True)
             .limit(limit)

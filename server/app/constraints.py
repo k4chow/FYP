@@ -199,16 +199,32 @@ _NOVELTY_TRIGGERS = {
 }
 
 
+def _genre_forms(genre: str) -> str:
+    """Singular + common plural forms of a genre name, as a regex alternation."""
+    g = genre.casefold()
+    forms = [g]
+    if g.endswith("y"):
+        forms.append(g[:-1] + "ies")
+    forms.append(g + "s")
+    if g.endswith("ch") or g.endswith("sh") or g.endswith("x"):
+        forms.append(g + "es")
+    return "|".join(re.escape(f) for f in dict.fromkeys(forms))
+
+
 def _excluded_genres(text: str) -> list[str]:
-    """Genres the user explicitly wants to avoid right now (soft exclusion)."""
+    """Genres the user explicitly wants to avoid right now (soft exclusion).
+
+    Matches singular and common plural forms ("no horror", "avoid slow
+    dramas", "not comedies") after a clear negation marker. Soft: it steers
+    ranking for this request rather than changing the stored profile.
+    """
     lowered = (text or "").casefold()
     excluded: list[str] = []
     for genre in tmdb.GENRE_IDS:
-        g = genre.casefold()
         pattern = re.compile(
             rf"(?:don'?t\s+(?:really\s+)?(?:want|like)|do\s+not|no|not|avoid|"
             rf"without|hate|never|nothing\s+too)\s+(?:[a-z]+[']?[a-z]*\s+){{0,3}}"
-            rf"{re.escape(g)}\b"
+            rf"(?:{_genre_forms(genre)})\b"
         )
         if pattern.search(lowered):
             excluded.append(genre)

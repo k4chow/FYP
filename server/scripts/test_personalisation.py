@@ -56,6 +56,16 @@ class IntentParsingTests(unittest.TestCase):
         self.assertIn("comfort", intent["moods"])
         self.assertEqual(intent["exclude_genres"], ["Horror"])
 
+    def test_plural_genre_exclusion(self):
+        self.assertEqual(
+            constraints.parse_intent("avoid slow dramas")["exclude_genres"],
+            ["Drama"],
+        )
+        self.assertEqual(
+            constraints.parse_intent("not comedies")["exclude_genres"],
+            ["Comedy"],
+        )
+
     def test_explicit_directive_is_not_a_hard_constraint(self):
         ask = constraints.parse_constraints("something comforting please")
         self.assertFalse(constraints.has_constraint(ask))
@@ -315,6 +325,18 @@ class RecommendationEventsTests(unittest.TestCase):
         self.assertEqual(rows[0]["tmdb_id"], 1)
         self.assertEqual(rows[0]["reason"], "loneliness")
         self.assertEqual(rows[0]["match_dimensions"], ["taste"])
+
+    def test_mark_recommendations_watched(self):
+        db = mock.MagicMock()
+        rec.mark_recommendations_watched(USER, [1, 2], db=db)
+        db.table.assert_called_with("recommendation_events")
+        db.table.return_value.update.assert_called_once()
+        db.table.return_value.update.return_value.eq.assert_called_once_with(
+            "user_id", USER
+        )
+        db.table.return_value.update.return_value.eq.return_value.in_.assert_called_once_with(
+            "tmdb_id", [1, 2]
+        )
 
 
 if __name__ == "__main__":
