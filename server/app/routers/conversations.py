@@ -403,12 +403,18 @@ def _discovery_reply(
     try:
         turn = llm.chat_discovery(history, ctx)
         reply, specs = turn["reply"], turn.get("films") or []
-    except (RuntimeError, AttributeError, KeyError, TypeError):
+    except Exception:  # noqa: BLE001 - a model/API error must never break chat
         specs, reply = [], None
     try:
         cards = _resolve_suggestions(specs, user_id)
     except Exception:  # noqa: BLE001 - grounding is best-effort
         cards = []
+    if exclude_tmdb_ids:
+        # Drop anything the user has already seen this session (the provider may
+        # re-name an old title from the transcript; the candidate pool already
+        # excludes it, but grounding by title can bring it back).
+        shown = set(exclude_tmdb_ids)
+        cards = [c for c in cards if c["tmdb_id"] not in shown]
     # A named film is answered directly — and if it is already logged, the
     # assistant acknowledges it with close alternatives instead of refusing.
     named_cards: list[dict] = []
