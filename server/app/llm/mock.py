@@ -385,6 +385,7 @@ class MockLLMProvider(LLMProvider):
 
         film = context.film or {}
         film_title = film.get("title") or "this film"
+        film_tmdb = film.get("tmdb_id")
         existing = {memory.strip().casefold() for memory in context.memories}
         proposals: list[dict] = []
 
@@ -403,6 +404,10 @@ class MockLLMProvider(LLMProvider):
                     "kind": kind,
                     "explanation": explanation,
                     "source_message_ids": source_ids(sources),
+                    "evidence_type": "inferred",
+                    "scope": "stable",
+                    "confidence": 0.5,
+                    "source_film_tmdb_id": film_tmdb,
                 }
             )
 

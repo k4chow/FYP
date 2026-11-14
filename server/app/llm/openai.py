@@ -48,10 +48,13 @@ _SYSTEM_DISCOVERY = (
 )
 
 _KIND_DEFINITIONS = (
-    '- "theme": an idea or motif the user kept returning to.\n'
-    '- "preference": something the user explicitly liked or disliked.\n'
-    '- "insight": an observation connecting the film to the user\'s own '
-    "experience or values."
+    '- "theme": a recurring idea or motif in the films they discuss.\n'
+    '- "preference": something they explicitly liked or disliked.\n'
+    '- "insight": an observation connecting a film to their own experience or values.\n'
+    '- "aesthetic": cinematography, atmosphere, sound, or visual style they respond to.\n'
+    '- "narrative": storytelling structure, pacing, characters, or endings they care about.\n'
+    '- "emotional_response": their felt reaction to a film (sadness, delight, catharsis).\n'
+    '- "viewing_intention": what they seek from a viewing experience (comfort, novelty, etc.).'
 )
 
 
@@ -111,9 +114,77 @@ def _context_block(context: ChatContext) -> str:
             lines.append("The user has SEEN this film and is reflecting on it.")
     elif context.title:
         lines.append(f"Free reflection titled \"{context.title}\".")
-    if context.memories:
+    if context.memories_detail:
+        lines.append(
+            "Confirmed memories (shown as: content [kind, evidence]; use them "
+            "naturally, never quote, and never claim to remember anything not "
+            "listed here):"
+        )
+        for m in context.memories_detail:
+            kind = str(m.get("kind") or "memory")
+            evidence = str(m.get("evidence_type") or "inferred")
+            scope = str(m.get("scope") or "stable")
+            tag = f"{kind}, {evidence}"
+            if scope != "stable":
+                tag += f", {scope}"
+            lines.append(f"- {m['content']} [{tag}]")
+    elif context.memories:
         lines.append("Confirmed memories about the user (use naturally, never quote):")
         lines.extend(f"- {memory}" for memory in context.memories)
+
+    if context.mentioned_films:
+        lines.append(
+            "Other films the user just mentioned (discuss the connection; "
+            "avoid spoilers for films they have not said they watched):"
+        )
+        for film in context.mentioned_films:
+            name = film.get("title") or ""
+            if name:
+                lines.append(
+                    f"- {name}"
+                    + (f" ({film.get('year')})" if film.get("year") else "")
+                )
+
+    if context.discussed_films:
+        titles = [f.get("title") for f in context.discussed_films if f.get("title")]
+        if titles:
+            lines.append("Films the user has recently reflected on: " + ", ".join(titles[:12]))
+
+    if context.recurring_themes:
+        lines.append("Themes that recur across the user's reflections:")
+        for theme in context.recurring_themes:
+            lines.append(f"- {theme['theme']} (in {', '.join(theme['films'])})")
+
+    if context.recently_recommended:
+        names = [r.get("title") for r in context.recently_recommended if r.get("title")]
+        if names:
+            lines.append("The user was recently recommended: " + ", ".join(names[:10]))
+
+    if context.viewing_history:
+        watched = [f.get("title") for f in context.viewing_history.get("watched") or []]
+        watchlist = [f.get("title") for f in context.viewing_history.get("watchlist") or []]
+        if watched:
+            lines.append("Films the user has watched: " + ", ".join(watched[:15]))
+        if watchlist:
+            lines.append("Films on the user's watchlist (not yet watched): " + ", ".join(watchlist[:10]))
+
+    if context.film_context:
+        fc = context.film_context
+        if fc.get("tmdb_id"):
+            lines.append(f"Film TMDB id: {fc['tmdb_id']} (use as source_film_tmdb_id).")
+        notes = []
+        if fc.get("director"):
+            notes.append(f"directed by {fc['director']}")
+        if fc.get("cast"):
+            notes.append("featuring " + ", ".join(fc["cast"]))
+        if fc.get("themes"):
+            notes.append("themes: " + ", ".join(fc["themes"]))
+        if fc.get("runtime"):
+            notes.append(f"{fc['runtime']} min")
+        if notes:
+            lines.append("Film notes: " + "; ".join(notes) + ".")
+        if fc.get("synopsis"):
+            lines.append("Synopsis: " + fc["synopsis"])
     return "\n".join(lines)
 
 
@@ -255,31 +326,40 @@ class OpenAIProvider(LLMProvider):
         self, messages: list[dict], context: ChatContext
     ) -> list[dict]:
         prompt = (
-            "Read this reflection transcript and propose up to 5 insights "
-            "worth remembering about the user.\n"
+            "Read this reflection transcript and propose up to 5 memories worth "
+            "keeping about the user's film taste and responses.\n"
             + _KIND_DEFINITIONS
-            + "\nMix two kinds of proposals:\n"
-            "- Faithful observations: what the user revealed, phrased in "
-            "fresh words — some rephrasing is welcome.\n"
-            "- Bolder interpretive reads: go one step beyond the transcript — "
-            "a pattern across their films or reactions, a hypothesis about "
-            "their taste or values, or a sharp interpretation they could "
-            "reasonably push back on. These must still be anchored in "
-            "something the user actually said.\n"
-            "Do not simply repeat or rephrase what the user already knows "
-            "they said — every proposal should add something they could not "
-            "have written themselves, and at least one proposal should offer "
-            "an interpretation the user might disagree with and argue "
-            "against.\n"
-            "Never invent biography and never diagnose the user.\n"
-            "Rules: phrase `content` to the user in second person "
-            "(\"You ...\"), max 500 characters; `explanation` briefly states "
-            "which of their messages ground it; `source_message_ids` must "
-            "only contain ids from the transcript below; skip anything "
-            "already in the confirmed memories.\n\n"
+            + "\nFor each proposal also give:\n"
+            "- `evidence_type`: \"explicit\" if the user literally stated it, "
+            "\"inferred\" if it is your interpretation of what they said.\n"
+            "- `scope`: \"stable\" for a lasting trait, \"film_specific\" for a "
+            "reaction to THIS film, \"session\" for a one-off mood. Never turn "
+            "a temporary mood into a stable trait.\n"
+            "- `confidence`: a coarse number from 0 to 1 reflecting how well "
+            "grounded it is; inferred readings should score lower than explicit "
+            "statements.\n"
+            "- `source_film_tmdb_id`: the film being reflected on, when the "
+            "context gives a TMDB id.\n\n"
+            "Mix two kinds of proposals: faithful observations (what they "
+            "revealed, in fresh words) and one or two bolder interpretive reads "
+            "they could reasonably push back on. When the context lists themes "
+            "recurring across their films, propose that pattern if the "
+            "transcript supports it - but only as an interpretation, never as a "
+            "fact about their private life.\n"
+            "Every proposal must be anchored in something they actually said. "
+            "Do not simply restate what they already know; add something they "
+            "could not have written themselves.\n"
+            "Never invent biography, never diagnose the user, and never infer "
+            "their emotional state from a film preference.\n\n"
+            "Rules: phrase `content` to the user in second person (\"You ...\"), "
+            "max 500 characters; `explanation` briefly states which of their "
+            "messages ground it; `source_message_ids` must only contain ids from "
+            "the transcript below; skip anything already in the confirmed "
+            "memories.\n\n"
             "Respond with JSON only: "
             '{"insights": [{"content", "kind", "explanation", '
-            '"source_message_ids"}]}.\n\n'
+            '"source_message_ids", "evidence_type", "scope", "confidence", '
+            '"source_film_tmdb_id"}]}.\n\n'
             "Transcript:\n" + _transcript(messages)
         )
         raw = self._complete(

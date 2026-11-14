@@ -746,6 +746,12 @@ def end_conversation(
                 conv, current["id"], turn=_user_turn_count(conversation_id_text)
             )
             try:
+                ctx = replace(
+                    ctx, recurring_themes=memory_svc.recurring_themes(current["id"])
+                )
+            except Exception:  # noqa: BLE001 - cross-film context is best effort
+                pass
+            try:
                 raw = get_llm().extract_insights(records, ctx)
             except Exception as exc:
                 raise HTTPException(

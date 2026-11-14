@@ -82,11 +82,39 @@ The reflection `messages` endpoint now passes the latest message as `query` to
 the reflection assistant can detect "this reminded me of *Eternal Sunshine*"
 and discuss the connection using grounded metadata.
 
-## 4. Planned (subsequent commits)
+## 4. Memory improvements (Part C)
 
-- Memory kinds, evidence/confidence/scope, cross-film memories (Part C).
+`app/memories.py` now represents *why* and *how well* we know something, not
+just the raw statement:
+
+| Field | Values | Meaning |
+|---|---|---|
+| `kind` | `theme`, `preference`, `insight`, `aesthetic`, `narrative`, `emotional_response`, `viewing_intention` | The original three plus four new categories (migration widens the CHECK, keeps old rows). |
+| `evidence_type` | `explicit` / `inferred` | Did the user say it, or did we interpret it? User-authored (onboarding) memories are explicit; system-proposed ones stay inferred even after confirmation. |
+| `scope` | `stable` / `film_specific` / `session` | Lasting trait vs reaction to one film vs one-off mood. A temporary mood is never promoted to a trait. |
+| `confidence` | coarse `0..1` | An ordinal, not a calibrated probability; `normalise_proposals` coerces it and defaults explicit→0.9, inferred→0.5. |
+| `source_film_tmdb_id` | TMDB id | The film that prompted the memory. |
+
+Rules preserved: never invent biography, never diagnose, never turn mood into
+personality, and speculative reads stay marked `inferred` until the user
+confirms them through the existing review workflow.
+
+`recurring_themes(user_id)` detects focus words that appear in confirmed
+memories from **two or more distinct films** (cross-film memory). It is purely
+descriptive — a theme that recurs in the films the user discusses is never
+assumed to describe their private life. It is wired into the reflection
+extraction context so the extraction prompt can propose a cross-film pattern
+only when the transcript supports it.
+
+The OpenAI `extract_insights` prompt and the mock now emit `evidence_type`,
+`scope`, `confidence` and `source_film_tmdb_id`.
+
+Migration: `supabase/migrations/0006_personalisation_memories.sql`.
+
+## 5. Planned (subsequent commits)
+
 - Request-aware recommendation ranking, diversity tiers, match dimensions and
   recommendation events (Part D).
-- Rewritten reflection/discovery prompts and structured-output hardening
+- Rewritten reflection/discovery system prompts and structured-output hardening
   (Parts G/H).
-- Migration `0006_…`, `0007_…` and the `test_personalisation.py` suite.
+- Migration `0007_…` and the `test_personalisation.py` suite.

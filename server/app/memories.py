@@ -5,13 +5,25 @@ derived from validated `source_message_ids`, so review edits never rewrite or
 disconnect the append-only messages an insight came from.
 """
 
+import re
 from datetime import datetime, timezone
 from uuid import UUID
 
 from .supabase_client import supabase
 
 MAX_PROPOSALS = 5
-_KINDS = {"theme", "preference", "insight"}
+# Memory kinds (Part C). The original three remain for compatibility; the new
+# four capture aesthetics, narrative taste, felt reactions and viewing
+# intentions without shoehorning every reflection into "preference".
+_KINDS = {
+    "theme", "preference", "insight",
+    "aesthetic", "narrative", "emotional_response", "viewing_intention",
+}
+# Evidence, scope and confidence (Part C): explicit = the user stated it;
+# inferred = an interpretation proposed from their words. Confidence is a coarse
+# ordinal in [0, 1], not a calibrated probability.
+_EVIDENCE = {"explicit", "inferred"}
+_SCOPE = {"stable", "film_specific", "session"}
 _SOURCE_SELECT = "id,conversation_id,role,content,created_at"
 
 
@@ -20,6 +32,29 @@ def _uuid_text(value: object) -> str | None:
         return str(UUID(str(value)))
     except (TypeError, ValueError, AttributeError):
         return None
+
+
+def _coerce_confidence(value: object) -> float | None:
+    """A coarse ordinal (0..1); never treated as a calibrated probability."""
+    if value is None:
+        return None
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    if number < 0 or number > 1:
+        return None
+    return round(number, 2)
+
+
+def _coerce_tmdb_id(value: object) -> int | None:
+    if isinstance(value, bool):
+        return None
+    try:
+        number = int(value)  # type: ignore[arg-type]
+    except (TypeError, ValueError):
+        return None
+    return number if number > 0 else None
 
 
 def _excerpt(text: object, limit: int = 120) -> str:
@@ -57,6 +92,17 @@ def normalise_proposals(raw: object, source_messages: list[dict]) -> list[dict]:
             message_id = _uuid_text(value)
             if message_id and message_id in allowed and message_id not in ids:
                 ids.append(message_id)
+        evidence = str(item.get("evidence_type", "")).strip().lower() or "inferred"
+        if evidence not in _EVIDENCE:
+            evidence = "inferred"
+        scope = str(item.get("scope", "")).strip().lower() or "stable"
+        if scope not in _SCOPE:
+            scope = "stable"
+        confidence = _coerce_confidence(item.get("confidence"))
+        if confidence is None:
+            confidence = 0.9 if evidence == "explicit" else 0.5
+        source_film_tmdb_id = _coerce_tmdb_id(item.get("source_film_tmdb_id"))
+
         key = content.casefold()
         if ids and key not in seen:
             seen.add(key)
@@ -66,6 +112,10 @@ def normalise_proposals(raw: object, source_messages: list[dict]) -> list[dict]:
                     "kind": kind,
                     "explanation": explanation,
                     "source_message_ids": ids,
+                    "evidence_type": evidence,
+                    "scope": scope,
+                    "confidence": confidence,
+                    "source_film_tmdb_id": source_film_tmdb_id,
                 }
             )
         if len(proposals) == MAX_PROPOSALS:
@@ -83,6 +133,10 @@ def insert_proposals(user_id: str, proposals: list[dict]) -> list[dict]:
             "kind": item["kind"],
             "status": "proposed",
             "source_message_ids": item["source_message_ids"],
+            "evidence_type": item.get("evidence_type", "inferred"),
+            "scope": item.get("scope", "stable"),
+            "confidence": item.get("confidence"),
+            "source_film_tmdb_id": item.get("source_film_tmdb_id"),
         }
         for item in proposals
     ]
@@ -182,6 +236,10 @@ def serialise_rows(
                 ],
                 "created_at": row["created_at"],
                 "updated_at": row["updated_at"],
+                "evidence_type": row.get("evidence_type") or "inferred",
+                "scope": row.get("scope") or "stable",
+                "confidence": row.get("confidence"),
+                "source_film_tmdb_id": row.get("source_film_tmdb_id"),
             }
         )
     return payloads
@@ -302,4 +360,54 @@ def review(memory_id: str, status: str, content: str | None = None) -> dict:
     if content is not None:
         update["content"] = content
     return supabase.table("memories").update(update).eq("id", memory_id).execute().data[0]
+
+
+_RECURRING_STOPWORDS = {
+    "about", "after", "again", "also", "because", "before", "being", "between",
+    "could", "every", "films", "going", "into", "like", "many", "maybe",
+    "might", "more", "movie", "movies", "much", "never", "only", "really",
+    "should", "still", "that", "their", "there", "these", "thing", "things",
+    "think", "this", "those", "through", "watch", "watched", "watching",
+    "were", "what", "when", "where", "which", "while", "with", "would",
+    "your", "yours", "you're", "you've",
+}
+
+_WORD_RE_COMPILED = re.compile(r"[a-z']+")
+
+
+def recurring_themes(user_id: str, limit: int = 3) -> list[dict]:
+    """Surface themes the user keeps returning to across different films.
+
+    Groups confirmed memories by their source film, extracts focus words, and
+    returns the words (with examples and the films involved) that appear in
+    reflections on at least two distinct films. Purely descriptive — a theme
+    that recurs in the films the user discusses is never assumed to describe
+    the user's own life.
+    """
+    rows = list_for_user(user_id, "confirmed")
+    focus: dict[str, list[dict]] = {}
+    for row in rows:
+        film = (row.get("source_reflection") or {}).get("film_title")
+        if not film:
+            continue
+        words = _WORD_RE_COMPILED.findall(str(row.get("content") or "").casefold())
+        for word in dict.fromkeys(words):
+            if len(word) < 4 or word in _RECURRING_STOPWORDS:
+                continue
+            bucket = focus.setdefault(word, [])
+            if not any(e["film_title"] == film for e in bucket):
+                bucket.append({"film_title": film, "content": row.get("content")})
+    recurring: list[dict] = []
+    for word, entries in focus.items():
+        films = {e["film_title"] for e in entries}
+        if len(films) >= 2:
+            recurring.append(
+                {
+                    "theme": word,
+                    "films": sorted(films),
+                    "examples": [e["content"] for e in entries[:2]],
+                }
+            )
+    recurring.sort(key=lambda r: (-len(r["films"]), r["theme"]))
+    return recurring[:limit]
 

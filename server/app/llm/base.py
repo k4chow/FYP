@@ -39,6 +39,7 @@ class ChatContext:
     viewing_history: dict = field(default_factory=dict)
     discussed_films: list[dict] = field(default_factory=list)
     recently_recommended: list[dict] = field(default_factory=list)
+    recurring_themes: list[dict] = field(default_factory=list)
 
 
 class LLMProvider(ABC):
