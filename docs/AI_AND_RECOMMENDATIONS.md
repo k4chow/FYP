@@ -1,10 +1,12 @@
 # NOACF — AI, Chat Context, Memory, and Recommendations
 
-> **Status note:** as of Phase 7 the assistant runs behind a provider
-> abstraction (mock or OpenAI, D33), the deterministic recommendation engine
-> (D35) is live, and the Film Assistant is ephemeral with explicit-constraint
-> parsing (F12). Mood-based recommendations remain unimplemented. Sections
-> below describe current behavior unless marked otherwise.
+> **Status note:** as of the personalisation phase the assistant runs behind a
+> provider abstraction (mock or OpenAI, D33) and the deterministic
+> recommendation engine (D35) is live. A shared personalisation layer
+> (`app/user_context.py`, `app/film_knowledge.py`) now feeds both assistants
+> relevance-ranked memories, viewing history, film dossiers and film-mention
+> resolution; request-aware (mood/experience/novelty) ranking is implemented.
+> Full details live in `docs/08-personalisation.md`.
 
 ## 1. Implementation status
 
@@ -14,10 +16,10 @@
 | Reflective assistant replies | **Implemented, mocked** | `server/app/llm/mock.py` |
 | Real external model calls | **Implemented (OpenAI)** | `server/app/llm/openai.py`, `LLM_PROVIDER=openai` (D33) |
 | Bounded chat context | **Implemented** | `server/app/context.py` |
-| Confirmed-memory retrieval | **Implemented read path only** | `confirmed_memories` |
-| Memory extraction/review/edit/forget | **Implemented** | Mock keyword proposals + review endpoints/UI (Phases 4–5) |
+| Confirmed-memory retrieval | **Implemented (relevance-ranked)** | `user_context.relevant_memories`, `context.confirmed_memories` |
+| Memory extraction/review/edit/forget | **Implemented** | Kinds + evidence/scope/confidence in `memories.py`; review endpoints/UI |
 | Recommendations and explanations | **Implemented (deterministic)** | `server/app/recommendations.py`, Discover page (Phase 6, D35) |
-| Mood-based recommendations | **Not implemented** | No mood field, extraction, or scoring |
+| Mood / intention-based recommendations | **Implemented (lexical)** | `constraints.parse_intent`, request-aware weights in `recommendations.py` (docs/08) |
 | Recommendation feedback + style slider | **Implemented** | `recommendation_feedback` table, `/profile/preferences` (Phase 6, D36/D37) |
 | Persisted Film Assistant (F10) | **Implemented** | saved as `type="discovery"` conversations via `/conversations`; `exclude_tmdb_ids` rotation on Regenerate/replies (Phase 7) |
 | Explicit-constraint recommendations (F12) | **Implemented** | `server/app/constraints.py`; director/title/genre parsing validated against TMDB (Phase 7) |

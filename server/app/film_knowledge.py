@@ -35,8 +35,9 @@ _lock = threading.Lock()
 
 _QUOTED = re.compile(r"[“\"'‘]([^“”\"'‘’]{2,60})[”\"'’]")
 _LEAD_IN = re.compile(
-    r"\b(?:like|similar\s+to|reminded\s+me\s+of|reminds\s+me\s+of|"
-    r"in\s+the\s+style\s+of|compared\s+to|versus|vs\.?)\s+"
+    r"\b(?:like|similar\s+to|reminded\s+me\b[^.!?]{0,20}?\bof|"
+    r"reminds\s+me\b[^.!?]{0,20}?\bof|in\s+the\s+style\s+of|"
+    r"compared\s+to|versus|vs\.?)\s+"
     r"([A-Z0-9][A-Za-z0-9'.&+:!?\- ]{1,60})",
     re.IGNORECASE,
 )

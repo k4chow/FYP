@@ -140,8 +140,59 @@ candidates → personalised ranking → explanation → feedback**.
 
 Migration: `supabase/migrations/0007_recommendation_events.sql`.
 
-## 6. Planned (subsequent commits)
+## 6. Prompts and structured output (Parts G/H)
 
-- Rewritten reflection/discovery system prompts and structured-output hardening
-  (Parts G/H).
-- The `test_personalisation.py` suite.
+- `_SYSTEM_BASE` (reflection) now describes a warm, conversational,
+  memory-aware, film-knowledgeable, spoiler-conscious companion. The rigid
+  "ask exactly one follow-up question" rule is gone ("you may ask one genuine
+  question when it deepens the reflection, but do not end every reply with
+  one").
+- `_SYSTEM_DISCOVERY` resolves the old empty-pool contradiction: recommend
+  **only** from the candidate list, and if the list is empty ask one short
+  clarifying question instead of inventing a film.
+- `_context_block` renders the richer shared context (film dossier, mentioned
+  films, discussed films, recurring themes, recent recommendations, viewing
+  history) with `[kind, evidence[, scope]]` markers on memories.
+- Cards now carry `match_dimensions`, `novelty_category` and
+  `recommendation_reason` (additive — the frontend ignores unknown fields).
+- A provider's named films are validated against the candidate pool; anything
+  the model invents (even a real film) is dropped before display. `tmdb_id` is
+  copied from the pool, never trusted from the model.
+- The mock provider stays an unchanged deterministic fixture. Its
+  "always asks a question" behaviour is a tested Phase-5 contract, while the
+  production assistant's natural-conversation behaviour lives in the OpenAI
+  prompt (the correct boundary between the dev double and the real model).
+
+## 7. Tests (Part J)
+
+New suite `server/scripts/test_personalisation.py` (19 tests; in-memory
+Supabase + mocked TMDB, no live requests) covers:
+
+- mood vs historical preference (Test 1), genre exclusion (4), watched
+  exclusion (7), dimensions + diversity categories (5/8), graceful empty pool
+  (6), evidence/confidence coercion (13/15), cross-film recurring themes (11),
+  film dossier + mention resolution (9/10), conversational prompts (14), no
+  fabricated memories (13), and recommendation-event persistence.
+
+Run from `server/`: `python scripts/test_personalisation.py`.
+
+## 8. Limitations
+
+- Mood/experience affinity is **lexical** (overview/genre/title vocabulary), a
+  deliberate, deterministic proxy — not semantic retrieval.
+- `exclude_genres` matches singular genre names ("no horror") and may miss
+  pluralised forms ("dramas").
+- Assistant card themes/runtime come from the cached catalogue; a brand-new
+  TMDB candidate shows overview-derived themes until it is cached (never
+  fabricated).
+- `recurring_themes` is keyword-based and purely descriptive.
+- Migrations `0006`/`0007` must be applied; the code degrades gracefully if
+  they are not (`.get()` access + try/except everywhere).
+
+## 9. Future work (separate from what is implemented)
+
+- Semantic retrieval once lexical retrieval proves insufficient (pgvector still
+  deferred, per D8).
+- A write hook that marks a `recommendation_event` as watched when the user
+  logs the film, closing the discovery -> reflection loop end-to-end.
+- Plural/negation robustness for genre exclusions.

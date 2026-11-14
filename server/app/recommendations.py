@@ -500,11 +500,16 @@ def get_recommendations(
         for m in memories
     ]
 
+    if excluded_genres:
+        # Request-level genre exclusion ("no horror"): remove before ranking so
+        # those films are never served (an explicit request outranks the profile).
+        for tmdb_id in list(candidates):
+            if set(candidates[tmdb_id].get("genres") or []) & excluded_genres:
+                del candidates[tmdb_id]
+
     for cand in candidates.values():
         text = f"{cand['title']} {cand['overview']}".lower()
         cand_genres = set(cand["genres"])
-        if excluded_genres and cand_genres & excluded_genres:
-            continue  # request-level genre exclusion ("no horror"), applied pre-ranking
         for memory in memory_rows:
             if memory["genres"] & cand_genres or any(
                 kw in text for kw in memory["keywords"]

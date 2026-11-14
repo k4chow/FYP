@@ -501,6 +501,11 @@ def _discovery_reply(
         # excludes it, but grounding by title can bring it back).
         shown = set(exclude_tmdb_ids)
         cards = [c for c in cards if c["tmdb_id"] not in shown]
+    if pool:
+        # The provider may name only films from the candidate pool; anything
+        # else it dreamt up (even a real film) is dropped before display.
+        pool_ids = {c["tmdb_id"] for c in pool}
+        cards = [c for c in cards if c["tmdb_id"] in pool_ids]
     # A named film is answered directly — and if it is already logged, the
     # assistant acknowledges it with close alternatives instead of refusing.
     named_cards: list[dict] = []
