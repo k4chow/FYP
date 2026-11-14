@@ -47,15 +47,14 @@ not perform such inference.
   keyword signals and conversation stats; the server validates and stores them
   as `proposed` memories for the Review & Edit screen (confirm, edit, reject,
   "Why am I seeing this?").
-- Home’s “Your profile themes” values are hard-coded placeholders
-  (`client/src/pages/Home.tsx`).
+- Home’s “Your profile themes” are real short tags derived from TMDB keyword
+  themes (`server/app/themes.py`; cached on `films.metadata.keywords`).
 - Home’s prompt of the day is a client-side seven-item rotation, not an
   AI-generated or personalized prompt.
 
 ### Planned / absent in the current code
 
 - Contradiction resolution between stored insights.
-- A reflective profile UI and real themes/insights on Home (Phase 5).
 - Mood-based recommendations (no mood field, extraction, or scoring). The rest
   of Phase 6 is done: `/app/discover` renders the deterministic recommendation
   engine with why-lines, feedback toggles, and a Film Assistant discovery chat;

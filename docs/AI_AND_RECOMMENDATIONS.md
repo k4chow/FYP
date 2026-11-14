@@ -19,7 +19,7 @@
 | Recommendations and explanations | **Implemented (deterministic)** | `server/app/recommendations.py`, Discover page (Phase 6, D35) |
 | Mood-based recommendations | **Not implemented** | No mood field, extraction, or scoring |
 | Recommendation feedback + style slider | **Implemented** | `recommendation_feedback` table, `/profile/preferences` (Phase 6, D36/D37) |
-| Ephemeral Film Assistant (F10) | **Implemented** | `server/app/routers/assistant.py`; client transcript in sessionStorage, no persisted discovery conversations (Phase 7) |
+| Persisted Film Assistant (F10) | **Implemented** | saved as `type="discovery"` conversations via `/conversations`; `exclude_tmdb_ids` rotation on Regenerate/replies (Phase 7) |
 | Explicit-constraint recommendations (F12) | **Implemented** | `server/app/constraints.py`; director/title/genre parsing validated against TMDB (Phase 7) |
 | Named-film answers without refusal | **Implemented** | `_requested_title_cards`; already-logged films return close alternatives (Phase 7) |
 
@@ -28,7 +28,7 @@
 `get_llm()` is the only provider factory used by the conversation router. It is
 cached with `lru_cache` and accepts `LLM_PROVIDER=mock` (default, deterministic)
 or `openai` (D33, key via `OPENAI_API_KEY`, model via `OPENAI_MODEL`, default
-`gpt-4o-mini`); any other value raises `RuntimeError`
+`gpt-6-luna`); any other value raises `RuntimeError`
 (`server/app/llm/__init__.py`). There is no automatic fallback chain.
 
 The abstract `LLMProvider` defines:

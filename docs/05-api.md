@@ -427,11 +427,14 @@ when anything is saved. Max 8 answers, 500 chars each.
 
 ## Phase 7
 
-The Film Assistant is **ephemeral**: it writes no `conversations` or `messages`
-rows, so it never appears in My Reflections, reflection history, or the Discover
-grid. The client owns the transcript (sessionStorage) and re-sends the full,
-oldest-first history each turn; the server only bounds the provider window.
-"Ending" the chat is the client discarding its transcript.
+The Film Assistant is a **persisted discovery conversation**: the client creates a
+`type="discovery"` conversation via `POST /conversations` and turns via
+`POST /conversations/{id}/messages`. The server owns the transcript (no
+`sessionStorage`), so the chat survives reloads and can be resumed from history;
+"End chat" returns to Discover and leaves the conversation active. Each turn
+sends `exclude_tmdb_ids` (the films already shown this session) so Regenerate and
+follow-up replies rotate to fresh films. The older `/assistant/opening` and
+`/assistant/chat` endpoints still exist as stateless helpers (used by tests).
 
 ### `POST /assistant/opening` (auth required)
 ```json

@@ -272,7 +272,7 @@ onboarding questionnaire (`POST /profile/questionnaire` → confirmed
 preferences in `/profile/summary`). Saved result: 25/25 checks in
 `server/scripts/e2e_phase6_output.txt`.
 
-### 6.7 Isolated Phase 7 suite (explicit constraints + ephemeral assistant)
+### 6.7 Isolated Phase 7 suite (explicit constraints + Film Assistant)
 
 ```powershell
 cd server
@@ -290,9 +290,9 @@ writes no rows. It covers (13 tests):
   Discover engine's `_cache` or `_last_served` state;
 - named-film answers that are never refused: a film the user named is offered
   directly, and a film already in their library returns close alternatives;
-- the stateless `discovery_turn`: it returns a reply and recommendations and
-  writes no `conversations`/`messages` rows, so the ephemeral Film Assistant
-  leaves reflection history and the Discover grid untouched.
+- `discovery_turn`: it returns a reply and recommendations for a persisted
+  discovery conversation and drops already-shown `exclude_tmdb_ids`, so
+  Regenerate and follow-up replies rotate to fresh films.
 
 Expected result: 13 tests, `OK`.
 
@@ -399,7 +399,7 @@ These require migration `0005_recommendations.sql` applied to Supabase first.
 The saved outputs are useful development evidence, not a complete acceptance
 suite. Missing coverage includes browser/component tests, direct RLS tests for
 every table, real LLM behavior, memory lifecycle, recommendations, live/browser
-E2E for the ephemeral Phase 7 assistant endpoints, accessibility,
+E2E for the Phase 7 assistant endpoints, accessibility,
 production deployment, and concurrent multi-worker import behavior. The
 repository’s `docs/07-evaluation.md` remains a plan for later evaluation rather
 than a record of completed user research.
