@@ -27,6 +27,18 @@ class ChatContext:
     # "only Paul Thomas Anderson films") so providers answer in scope rather
     # than falling back to the generic taste profile.
     request: str | None = None
+    # Personalisation (Part A-B). film_context is the compact truth dossier for
+    # the linked film (director/cast/themes); memories_detail keeps kind,
+    # evidence_type and scope so prompts can distinguish explicit preferences
+    # from inferred ones; mentioned_films are other films named in the current
+    # message; viewing_history / discussed_films / recently_recommended make the
+    # shared user model visible to both assistants.
+    film_context: dict | None = None
+    memories_detail: list[dict] = field(default_factory=list)
+    mentioned_films: list[dict] = field(default_factory=list)
+    viewing_history: dict = field(default_factory=dict)
+    discussed_films: list[dict] = field(default_factory=list)
+    recently_recommended: list[dict] = field(default_factory=list)
 
 
 class LLMProvider(ABC):

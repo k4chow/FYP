@@ -22,5 +22,22 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
     openai_model: str = "gpt-6-luna"
 
+    # Personalisation budgets and request-aware ranking weights (Parts A-D).
+    # llm_context_mentioned_films caps how many other films one message may pull
+    # into a reflection; llm_context_watched / _watchlist bound the viewing
+    # history passed to discovery; recommendation_pool_size_chat is the chat
+    # candidate pool the Film Assistant picks from; the weights below are the
+    # conceptual scoring dimensions from the recommendation pipeline (defaults
+    # keep prior behaviour until a request is stated).
+    llm_context_mentioned_films: int = 3
+    llm_context_watched: int = 15
+    llm_context_watchlist: int = 10
+    recommendation_pool_size_chat: int = 40
+    recommendation_weights_mood: float = 0.20
+    recommendation_weights_taste: float = 0.30
+    recommendation_weights_reflection: float = 0.20
+    recommendation_weights_experience: float = 0.15
+    recommendation_weights_novelty: float = 0.15
+
 
 settings = Settings()

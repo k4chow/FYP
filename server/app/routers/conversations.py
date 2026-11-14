@@ -17,9 +17,12 @@ from pydantic import BaseModel, Field, field_validator
 
 from .. import constraints as constraint_svc
 from .. import context as context_svc
+from .. import film_knowledge
 from .. import memories as memory_svc
 from .. import recommendations as rec_svc
 from .. import tmdb
+from .. import user_context
+from ..config import settings
 from ..deps import get_current_user
 from ..llm import ChatContext, get_llm
 from ..supabase_client import supabase
@@ -117,18 +120,50 @@ def _library_titles(user_id: str, limit: int = 80) -> list[str]:
     ]
 
 
-def _chat_context(conv: dict, user_id: str, turn: int) -> ChatContext:
+def _chat_context(conv: dict, user_id: str, turn: int, query: str | None = None) -> ChatContext:
+    """Assemble bounded, shared user context for one turn (Parts A/B).
+
+    `query` is the latest user message; when present it ranks memories for
+    relevance and (for reflections) resolves other films mentioned in it.
+    """
+    if query:
+        rich = user_context.relevant_memories(user_id, query, settings.llm_context_memories)
+    else:
+        rich = user_context.confirmed_memories_rich(user_id, settings.llm_context_memories)
+
+    film = conv.get("films") or None
+    mentioned: list[dict] = []
+    viewing: dict = {}
+    discussed: list[dict] = []
+    recent: list[dict] = []
+    if conv["type"] == "reflection":
+        if query:
+            try:
+                mentioned = film_knowledge.resolve_film_mentions(
+                    query, settings.llm_context_mentioned_films
+                )
+            except Exception:  # noqa: BLE001 - mention resolution is best effort
+                mentioned = []
+        discussed = user_context.discussed_films(user_id)
+        recent = user_context.recent_recommendations(user_id)
+    else:
+        viewing = user_context.viewing_history(user_id)
+
     return ChatContext(
         conversation_type=conv["type"],
         title=conv.get("title"),
-        film=conv.get("films") or None,
+        film=film,
+        film_context=film_knowledge.film_context(film),
         watch_type=conv.get("watch_type"),
-        memories=context_svc.confirmed_memories(user_id),
+        memories=[m["content"] for m in rich],
+        memories_detail=rich,
         display_name=_display_name(user_id),
         turn=turn,
-        library_titles=(
-            _library_titles(user_id) if conv["type"] == "discovery" else []
-        ),
+        library_titles=_library_titles(user_id) if conv["type"] == "discovery" else [],
+        mentioned_films=mentioned,
+        viewing_history=viewing,
+        discussed_films=discussed,
+        recently_recommended=recent,
     )
 
 
@@ -657,7 +692,8 @@ def post_message(
     # F4: bounded context — recent N messages + confirmed memories only.
     history = context_svc.recent_messages(conversation_id_text)
     ctx = _chat_context(
-        conv, current["id"], turn=_user_turn_count(conversation_id_text)
+        conv, current["id"], turn=_user_turn_count(conversation_id_text),
+        query=body.content,
     )
     reply = get_llm().chat(history, ctx)
     metadata: dict = {}

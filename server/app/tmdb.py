@@ -74,6 +74,15 @@ def movie_details(tmdb_id: int) -> dict | None:
     return _get(f"/movie/{tmdb_id}", {})
 
 
+def movie_credits(tmdb_id: int) -> dict:
+    """Director and principal cast for a film (for the reflection dossier)."""
+    data = _get(f"/movie/{tmdb_id}/credits", {}) or {}
+    crew = data.get("crew") or []
+    directors = [c.get("name") for c in crew if c.get("job") == "Director"]
+    cast = [c.get("name") for c in (data.get("cast") or [])[:5] if c.get("name")]
+    return {"director": directors[0] if directors else None, "cast": cast}
+
+
 # TMDB genre ids are stable catalogue constants; name -> id for /discover/movie.
 GENRE_IDS = {
     "Action": 28,
