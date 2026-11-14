@@ -117,6 +117,21 @@ def film_context(film: dict | None) -> dict | None:
     }
 
 
+def themes_from_overview(text: str) -> list[str]:
+    """Deterministic theme tags from free text (network-free fallback).
+
+    Used when a candidate has no cached keywords yet; matches only the curated
+    theme vocabulary, so it never invents tags the film does not carry.
+    """
+    if not text:
+        return []
+    tokens = re.findall(r"[a-z']+", (text or "").casefold())
+    grams: list[str] = list(tokens)
+    for n in (2, 3):
+        grams += [" ".join(tokens[i : i + n]) for i in range(max(0, len(tokens) - n + 1))]
+    return theme_svc.filter_keywords(grams)
+
+
 def _catalogue_titles() -> list[str]:
     with _lock:
         until, titles = _titles_snapshot

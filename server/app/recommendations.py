@@ -25,7 +25,9 @@ import re
 import time
 from collections import Counter
 
+from . import constraints
 from . import tmdb
+from .config import settings
 from .memories import list_for_user
 from .supabase_client import supabase
 
@@ -233,6 +235,83 @@ def _diverse(cards: list[dict], limit: int, cap: int = 2) -> list[dict]:
     return chosen
 
 
+def _dimension_words(dimension: str) -> set[str]:
+    """Mood/experience vocabulary for affinity scoring (shared with constraints)."""
+    if dimension == "mood":
+        names = {"comfort", "light"}
+    else:
+        names = set(constraints._MOOD_VOCAB) - {"comfort", "light"}
+    words: set[str] = set()
+    for name in names:
+        words |= constraints._MOOD_VOCAB.get(name, set())
+    return words
+
+
+def _affinity(cand: dict, words: set[str]) -> float:
+    text = " ".join(
+        [
+            str(cand.get("title") or ""),
+            str(cand.get("overview") or ""),
+            " ".join(cand.get("genres") or []),
+            " ".join(cand.get("themes") or []),
+        ]
+    ).casefold()
+    hits = sum(1 for w in words if w in text)
+    return min(1.0, hits * 0.34)
+
+
+def _request_weights(intent_active: bool) -> dict:
+    """Request-aware weights; a stated intention outweighs historical taste."""
+    if intent_active:
+        return {
+            "mood": settings.recommendation_weights_mood * 1.5,
+            "experience": settings.recommendation_weights_experience * 2.0,
+            "novelty": settings.recommendation_weights_novelty,
+            "taste": settings.recommendation_weights_taste * 0.5,
+            "reflection": settings.recommendation_weights_reflection * 0.5,
+        }
+    return {
+        "mood": settings.recommendation_weights_mood,
+        "experience": settings.recommendation_weights_experience,
+        "novelty": settings.recommendation_weights_novelty,
+        "taste": settings.recommendation_weights_taste,
+        "reflection": settings.recommendation_weights_reflection,
+    }
+
+
+def _novelty_term(cand: dict, style: int, intent: dict | None) -> float:
+    if not (intent and intent.get("novelty")):
+        return 0.0
+    votes = cand.get("vote_count", 0) or 0
+    obscurity = 1.0 - min(1.0, votes / _MAINSTREAM_VOTES)
+    out = 0.5 + 0.5 * obscurity
+    out *= 1.0 - 0.6 * (style / 100.0)
+    return out
+
+
+def _match_dimensions(cand: dict, best: dict | None, matched: list[dict]) -> list[str]:
+    dims: list[str] = []
+    if best:
+        dims.append("taste")
+    if matched:
+        dims.append("reflection")
+    if cand.get("mood", 0.0) > 0:
+        dims.append("mood")
+    if cand.get("experience", 0.0) > 0:
+        dims.append("experience")
+    if cand.get("novelty", 0.0) > 0:
+        dims.append("novelty")
+    return dims or ["exploration"]
+
+
+def _novelty_category(cand: dict, best: dict | None, top_genres: list[str]) -> str:
+    if best:
+        return "familiar"
+    if set(cand.get("genres") or []) & set(top_genres):
+        return "adjacent"
+    return "exploratory"
+
+
 def get_recommendations(
     user_id: str,
     limit: int = 12,
@@ -242,6 +321,8 @@ def get_recommendations(
     person_id: int | None = None,
     exclude_ids: set[int] | None = None,
     track_served: bool = True,
+    intent: dict | None = None,
+    exclude_genres: list[str] | None = None,
 ) -> list[dict]:
     """Ranked, explained recommendation cards for the Discover grid.
 
@@ -270,6 +351,12 @@ def get_recommendations(
     feedback = _feedback_rows(user_id)
     memories = list_for_user(user_id, "confirmed")
     style = _style(user_id)
+
+    intent_active = constraints.intent_is_active(intent)
+    weights = _request_weights(intent_active)
+    mood_words = _dimension_words("mood")
+    experience_words = _dimension_words("experience")
+    excluded_genres = set(exclude_genres or []) | set((intent or {}).get("exclude_genres") or [])
 
     library_ids = {
         row["films"]["tmdb_id"] for row in library if row["films"].get("tmdb_id")
@@ -416,6 +503,8 @@ def get_recommendations(
     for cand in candidates.values():
         text = f"{cand['title']} {cand['overview']}".lower()
         cand_genres = set(cand["genres"])
+        if excluded_genres and cand_genres & excluded_genres:
+            continue  # request-level genre exclusion ("no horror"), applied pre-ranking
         for memory in memory_rows:
             if memory["genres"] & cand_genres or any(
                 kw in text for kw in memory["keywords"]
@@ -437,17 +526,34 @@ def get_recommendations(
             * min(1.0, cand.get("vote_count", 0) / _MAINSTREAM_VOTES)
         )
         best = cand["best_seed"][0] if cand["best_seed"] else None
-        cand["score"] += (
-            cand["seed_score"] * _SEED_SIMILARITY_FACTOR
-            + memory_bonus
-            + popularity_bonus
-            + quality_bonus
-        )
+        taste = cand["seed_score"] * _SEED_SIMILARITY_FACTOR
+        mood = _affinity(cand, mood_words) if intent_active else 0.0
+        experience = _affinity(cand, experience_words) if intent_active else 0.0
+        novelty = _novelty_term(cand, style, intent) if intent_active else 0.0
+        cand["mood"] = mood
+        cand["experience"] = experience
+        cand["novelty"] = novelty
+        if intent_active:
+            cand["score"] += (
+                weights["taste"] * taste
+                + weights["reflection"] * memory_bonus
+                + weights["mood"] * mood
+                + weights["experience"] * experience
+                + weights["novelty"] * novelty
+                + quality_bonus
+                + popularity_bonus
+            )
+        else:
+            cand["score"] += (
+                taste + memory_bonus + popularity_bonus + quality_bonus
+            )
         matched = sorted(cand["matched_memories"].values(), key=lambda m: m["id"])
         cand["why"] = _why(best, matched, top_genres)
         cand["source_memories"] = [
             {"id": m["id"], "content": m["content"]} for m in matched
         ]
+        cand["match_dimensions"] = _match_dimensions(cand, best, matched)
+        cand["novelty_category"] = _novelty_category(cand, best, top_genres)
 
     ranked = sorted(
         candidates.values(),
@@ -474,6 +580,8 @@ def get_recommendations(
             "score": round(c["score"], 3),
             "why": c["why"],
             "source_memories": c["source_memories"],
+            "match_dimensions": c.get("match_dimensions", []),
+            "novelty_category": c.get("novelty_category"),
         }
         for c in ranked
     ]
@@ -485,4 +593,32 @@ def get_recommendations(
     if track_served and not constrained:
         _last_served[user_id] = {card["tmdb_id"] for card in served}
     return served
+
+
+def record_recommendations(user_id: str, cards: list[dict], db=None) -> None:
+    """Persist what was recommended and why (discovery -> reflection linkage).
+
+    Best-effort: if the table does not exist yet (pre-migration) or the write
+    fails, discovery chat is unaffected. `db` is injected by the caller so the
+    conversation router can pass its own (mockable) client in tests.
+    """
+    db = db or supabase
+    rows = [
+        {
+            "user_id": user_id,
+            "tmdb_id": c.get("tmdb_id"),
+            "title": c.get("title") or "",
+            "reason": c.get("why") or c.get("recommendation_reason") or "",
+            "match_dimensions": c.get("match_dimensions") or [],
+            "novelty_category": c.get("novelty_category"),
+        }
+        for c in cards
+        if c.get("tmdb_id")
+    ]
+    if not rows:
+        return
+    try:
+        db.table("recommendation_events").insert(rows).execute()
+    except Exception:  # noqa: BLE001 - non-critical persistence
+        return
 

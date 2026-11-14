@@ -73,6 +73,11 @@ def _context_block(context: ChatContext) -> str:
                 "Explicit request to honour: " + context.request + " "
                 "Recommend only films that satisfy it."
             )
+        if context.intent:
+            lines.append(
+                context.intent + " Prefer films that fit this intention, but "
+                "candidate quality and fit still matter."
+            )
         if context.library_titles:
             lines.append(
                 "Films already in the user's library — NEVER recommend any "

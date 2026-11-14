@@ -169,8 +169,9 @@ def _chat_context(conv: dict, user_id: str, turn: int, query: str | None = None)
 
 def _candidate_pool(
     user_id: str,
-    limit: int = 8,
+    limit: int | None = None,
     asked: dict | None = None,
+    intent: dict | None = None,
     exclude_tmdb_ids: list[int] | None = None,
 ) -> list[dict]:
     """Personalised candidates for the Film Assistant to pick from.
@@ -178,9 +179,11 @@ def _candidate_pool(
     The recommendation engine already excludes library films and every
     "not for me" card, so anything the provider names from this pool is safe
     to show. When the user stated a constraint (`asked`), the pool is built
-    from that request instead of the taste profile. Best-effort: an engine
-    failure must never break the chat.
+    from that request instead of the taste profile; a soft intention (`intent`)
+    reweights ranking without filtering. Best-effort: an engine failure must
+    never break the chat.
     """
+    limit = limit or settings.recommendation_pool_size_chat
     try:
         cards = rec_svc.get_recommendations(
             user_id,
@@ -193,6 +196,8 @@ def _candidate_pool(
             refresh=bool(exclude_tmdb_ids),
             # Chatting must not consume Discover's "don't repeat these" state.
             track_served=False,
+            intent=intent,
+            exclude_genres=(intent or {}).get("exclude_genres") or None,
         )
     except Exception:  # noqa: BLE001 - discovery chat must never fail here
         return []
@@ -206,6 +211,8 @@ def _candidate_pool(
             "why": card.get("why") or "",
             "poster_url": card.get("poster_url"),
             "vote_average": card.get("vote_average", 0.0),
+            "match_dimensions": card.get("match_dimensions") or [],
+            "novelty_category": card.get("novelty_category"),
         }
         for card in cards
     ]
@@ -298,7 +305,45 @@ def _pool_card(film: dict) -> dict:
         "poster_url": film.get("poster_url"),
         "vote_average": film.get("vote_average", 0.0),
         "themes": [],
+        "recommendation_reason": film.get("why") or "",
+        "match_dimensions": film.get("match_dimensions") or [],
+        "novelty_category": film.get("novelty_category"),
     }
+
+
+def _enrich_cards(cards: list[dict]) -> list[dict]:
+    """Fill themes (and runtime when cached) for the cards actually shown.
+
+    Network-free: themes come from the overview we already have or the cached
+    catalogue keywords; runtime only from cached metadata. Nothing invented.
+    """
+    for card in cards:
+        if not card.get("themes"):
+            card["themes"] = film_knowledge.themes_from_overview(card.get("overview") or "")
+        try:
+            res = (
+                supabase.table("films")
+                .select("metadata")
+                .eq("tmdb_id", card["tmdb_id"])
+                .limit(1)
+                .execute()
+            )
+            rows = res.data if isinstance(res.data, list) else []
+            meta = rows[0].get("metadata") if rows and isinstance(rows[0], dict) else None
+            meta = meta if isinstance(meta, dict) else {}
+            runtime = meta.get("runtime")
+            if isinstance(runtime, int) and not card.get("runtime"):
+                card["runtime"] = runtime
+            keywords = meta.get("keywords")
+            if isinstance(keywords, list) and keywords:
+                tags = film_knowledge.film_context(
+                    {"metadata": meta, "genres": card.get("genres") or []}
+                )
+                if tags and tags.get("themes"):
+                    card["themes"] = tags["themes"][:4]
+        except Exception:  # noqa: BLE001 - enrichment is best-effort
+            pass
+    return cards
 
 
 def _library_ids(user_id: str) -> set[int]:
@@ -424,10 +469,13 @@ def _discovery_reply(
     and only a fully empty pool degrades to a plain chat reply.
     """
     llm = get_llm()
-    asked = constraint_svc.parse_constraints(_last_user_text(history))
+    last_text = _last_user_text(history)
+    asked = constraint_svc.parse_constraints(last_text)
+    intent = constraint_svc.parse_intent(last_text)
     pool = _candidate_pool(
         user_id,
         asked=asked if constraint_svc.has_constraint(asked) else None,
+        intent=intent,
         exclude_tmdb_ids=exclude_tmdb_ids,
     )
     if pool:
@@ -435,6 +483,9 @@ def _discovery_reply(
     hint = constraint_svc.describe(asked)
     if hint:
         ctx = replace(ctx, request=hint)
+    intent_hint = constraint_svc.describe_intent(intent)
+    if intent_hint:
+        ctx = replace(ctx, intent=intent_hint)
     try:
         turn = llm.chat_discovery(history, ctx)
         reply, specs = turn["reply"], turn.get("films") or []
@@ -479,6 +530,23 @@ def _discovery_reply(
         reply = _fallback_reply(cards, named_note)
     elif named_note:
         reply = f"{reply}\n\n{named_note}"
+    if cards:
+        excluded_genres = set((intent or {}).get("exclude_genres") or [])
+        if excluded_genres:
+            cards = [
+                c for c in cards if not (set(c.get("genres") or []) & excluded_genres)
+            ]
+        if cards:
+            cards = _enrich_cards(cards)
+            try:
+                rec_svc.record_recommendations(user_id, cards, db=supabase)
+            except Exception:  # noqa: BLE001 - persistence is best-effort
+                pass
+        else:
+            reply = (
+                "I couldn't find a solid pick without the genres you asked me to "
+                "avoid — shall we try a different direction?"
+            )
     return reply, {"kind": "suggestions", "recommendations": cards}
 
 

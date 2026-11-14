@@ -156,3 +156,90 @@ def describe(constraints: dict) -> str:
     if genres:
         return f"The user asked for {' / '.join(genres)} films specifically."
     return ""
+
+
+# --- Viewing intention (Part D, Stage 1) -------------------------------------
+# Soft signals parsed from the current request. They steer ranking; only a hard
+# constraint (director/title/genre) rebuilds the candidate pool. A mood is a
+# transient signal and never becomes a permanent user trait.
+
+_MOOD_VOCAB = {
+    "comfort": {
+        "comfort", "comforting", "cozy", "cosy", "warm", "soothing",
+        "heartwarming", "heart-warming", "uplifting", "feel good",
+        "feel-good", "feelgood", "tender", "gentle", "wholesome",
+    },
+    "catharsis": {
+        "cry", "catharsis", "cathartic", "tears", "tearjerker", "tear jerker",
+        "heartbreak", "heartbreaking", "moving", "grief", "sad",
+    },
+    "intellectual": {
+        "think", "thinking", "intellectual", "mind bending", "mind-bending",
+        "mindbending", "thought provoking", "thought-provoking",
+        "philosophical", "cerebral", "ambiguous", "puzzle", "twist",
+    },
+    "excitement": {
+        "exciting", "thrilling", "thrill", "suspense", "suspenseful", "tense",
+        "action", "adrenaline", "heist", "edge of my seat",
+    },
+    "escapism": {
+        "escapism", "escapist", "escape", "immersive", "fantasy", "epic",
+        "adventure", "magical", "otherworldly", "other world", "transport",
+    },
+    "light": {
+        "light", "lighthearted", "light-hearted", "fun", "funny", "laugh",
+        "whimsical",
+    },
+}
+
+_NOVELTY_TRIGGERS = {
+    "surprise me", "surprise", "something new", "something different",
+    "new to me", "obscure", "lesser known", "less known", "hidden gem",
+    "underrated", "off the beaten", "unfamiliar", "outside my usual",
+}
+
+
+def _excluded_genres(text: str) -> list[str]:
+    """Genres the user explicitly wants to avoid right now (soft exclusion)."""
+    lowered = (text or "").casefold()
+    excluded: list[str] = []
+    for genre in tmdb.GENRE_IDS:
+        g = genre.casefold()
+        pattern = re.compile(
+            rf"(?:don'?t\s+(?:really\s+)?(?:want|like)|do\s+not|no|not|avoid|"
+            rf"without|hate|never|nothing\s+too)\s+(?:[a-z]+[']?[a-z]*\s+){{0,3}}"
+            rf"{re.escape(g)}\b"
+        )
+        if pattern.search(lowered):
+            excluded.append(genre)
+    return excluded
+
+
+def parse_intent(text: str) -> dict:
+    """Extract soft viewing intention: moods, novelty, and excluded genres."""
+    lowered = (text or "").casefold()
+    moods = [
+        name for name, words in _MOOD_VOCAB.items() if any(w in lowered for w in words)
+    ]
+    novelty = any(t in lowered for t in _NOVELTY_TRIGGERS)
+    return {"moods": moods, "novelty": novelty, "exclude_genres": _excluded_genres(text)}
+
+
+def intent_is_active(intent: dict | None) -> bool:
+    return bool(
+        intent
+        and (intent.get("moods") or intent.get("novelty") or intent.get("exclude_genres"))
+    )
+
+
+def describe_intent(intent: dict | None) -> str:
+    if not intent:
+        return ""
+    parts: list[str] = []
+    if intent.get("moods"):
+        parts.append("mood: " + "/".join(intent["moods"]))
+    if intent.get("novelty"):
+        parts.append("wants something new or less familiar")
+    if intent.get("exclude_genres"):
+        parts.append("wants to avoid " + "/".join(intent["exclude_genres"]))
+    return "Current viewing intention: " + "; ".join(parts) + "." if parts else ""

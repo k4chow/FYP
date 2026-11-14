@@ -27,6 +27,10 @@ class ChatContext:
     # "only Paul Thomas Anderson films") so providers answer in scope rather
     # than falling back to the generic taste profile.
     request: str | None = None
+    # Soft viewing intention (Part D): a rendered restatement of the current
+    # mood / desired experience / exclusions, kept separate from the hard
+    # `request` constraint above.
+    intent: str | None = None
     # Personalisation (Part A-B). film_context is the compact truth dossier for
     # the linked film (director/cast/themes); memories_detail keeps kind,
     # evidence_type and scope so prompts can distinguish explicit preferences

@@ -111,10 +111,37 @@ The OpenAI `extract_insights` prompt and the mock now emit `evidence_type`,
 
 Migration: `supabase/migrations/0006_personalisation_memories.sql`.
 
-## 5. Planned (subsequent commits)
+## 5. Request-aware recommendation pipeline (Part D)
 
-- Request-aware recommendation ranking, diversity tiers, match dimensions and
-  recommendation events (Part D).
+The discovery assistant now follows the staged pipeline: **request → context →
+candidates → personalised ranking → explanation → feedback**.
+
+- **Request interpretation** — `constraints.parse_intent(text)` parses soft
+  signals (mood, desired experience, novelty, explicit "no horror" style
+  exclusions) separately from hard constraints. A mood never filters the pool
+  and never becomes a permanent trait.
+- **Candidate retrieval** — the chat pool widened to a configurable
+  `recommendation_pool_size_chat` (default 40) instead of a hard-coded 8.
+- **Personalised ranking** — the score is now
+  `w_m·mood + w_t·taste + w_r·reflection + w_e·experience + w_n·novelty`,
+  with weights from `config.py`. When a viewing intention is stated the weights
+  are re-balanced to favour the current request over historical taste (a request
+  for a "comforting comedy" outweighs a horror-leaning library; Test 1).
+  Reflection memories are matched against candidate text (the "why", Test 9).
+- **Diversity** — each card carries a `novelty_category`
+  (`familiar / adjacent / exploratory`) and `match_dimensions`
+  (`taste/reflection/mood/experience/novelty`) for transparent, non-identical
+  picks (Tests 2, 5).
+- **Explicit constraints before ranking** — library films, "not for me"
+  feedback and request-level genre exclusions are removed pre-scoring (Test 4).
+- **Record** — `record_recommendations` writes each served card to the new
+  `recommendation_events` table (reason + dimensions + category), feeding
+  discovery → reflection and discovery → discovery linkage.
+
+Migration: `supabase/migrations/0007_recommendation_events.sql`.
+
+## 6. Planned (subsequent commits)
+
 - Rewritten reflection/discovery system prompts and structured-output hardening
   (Parts G/H).
-- Migration `0007_…` and the `test_personalisation.py` suite.
+- The `test_personalisation.py` suite.
