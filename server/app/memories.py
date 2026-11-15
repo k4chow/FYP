@@ -24,6 +24,14 @@ _KINDS = {
 # ordinal in [0, 1], not a calibrated probability.
 _EVIDENCE = {"explicit", "inferred"}
 _SCOPE = {"stable", "film_specific", "session"}
+# Legacy kind for proposals whose richer kind a pre-migration schema cannot
+# store (see insert_proposals). Kept coarse so an old DB still keeps the memory.
+_LEGACY_KIND_FALLBACK = {
+    "aesthetic": "preference",
+    "narrative": "preference",
+    "emotional_response": "insight",
+    "viewing_intention": "preference",
+}
 _SOURCE_SELECT = "id,conversation_id,role,content,created_at"
 
 
@@ -140,7 +148,29 @@ def insert_proposals(user_id: str, proposals: list[dict]) -> list[dict]:
         }
         for item in proposals
     ]
-    return supabase.table("memories").insert(rows).execute().data
+    try:
+        return supabase.table("memories").insert(rows).execute().data
+    except Exception:
+        # Migration 0006 not applied yet: the personalisation columns do not
+        # exist and the kind CHECK is still the original three. Store the core
+        # fields so memory extraction keeps working, folding the richer kinds
+        # onto their closest legacy kind. Once the migration is applied the
+        # full insert above succeeds and this path is never reached.
+        legacy = [
+            {
+                "user_id": user_id,
+                "content": item["content"],
+                "kind": (
+                    item["kind"]
+                    if item["kind"] in ("theme", "preference", "insight")
+                    else _LEGACY_KIND_FALLBACK.get(item["kind"], "insight")
+                ),
+                "status": "proposed",
+                "source_message_ids": item["source_message_ids"],
+            }
+            for item in proposals
+        ]
+        return supabase.table("memories").insert(legacy).execute().data
 
 
 def _row_source_ids(row: dict) -> list[str]:

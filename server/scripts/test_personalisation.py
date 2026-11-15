@@ -234,6 +234,34 @@ class MemoryEvidenceTests(unittest.TestCase):
         proposals = memory_svc.normalise_proposals(raw, self._messages())
         self.assertEqual(proposals[0]["source_message_ids"], [self.MSG])
 
+    def test_insert_falls_back_on_pre_migration_schema(self):
+        """Without migration 0006 the rich insert fails; the fallback stores
+        core fields and folds a new kind onto a legacy one."""
+        memo = [
+            {
+                "content": "You respond to atmosphere.",
+                "kind": "aesthetic",
+                "explanation": "anchored",
+                "source_message_ids": [self.MSG],
+                "evidence_type": "explicit",
+                "scope": "stable",
+                "confidence": 0.9,
+                "source_film_tmdb_id": None,
+            }
+        ]
+        db = mock.MagicMock()
+        # First insert (rich columns) raises; the retry (core columns) succeeds.
+        db.table.return_value.insert.return_value.execute.side_effect = [
+            RuntimeError("column evidence_type does not exist"),
+            mock.MagicMock(data=[{"id": "m", "kind": "preference"}]),
+        ]
+        with mock.patch.object(memory_svc, "supabase", db):
+            memory_svc.insert_proposals(USER, memo)
+        self.assertEqual(db.table.return_value.insert.call_count, 2)
+        legacy_rows = db.table.return_value.insert.call_args_list[1][0][0]
+        self.assertNotIn("evidence_type", legacy_rows[0])
+        self.assertEqual(legacy_rows[0]["kind"], "preference")
+
 
 class CrossFilmThemeTests(unittest.TestCase):
     """Test 11: recurring themes across distinct films."""
