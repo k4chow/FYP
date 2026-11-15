@@ -521,10 +521,19 @@ def _discovery_reply(
         seen = {c["tmdb_id"] for c in named_cards}
         cards = named_cards + [c for c in cards if c["tmdb_id"] not in seen]
         cards = cards[:3]
-    if not cards and pool:
-        # The provider named nothing groundable — fall back to the top of the
-        # personalised pool so every assistant turn still recommends films.
-        cards = [_pool_card(film) for film in pool[:2]]
+    if pool and len(cards) < 3:
+        # Always serve up to three distinct picks. Whatever the provider named
+        # (or failed to name) gets topped up from the ranked, library-filtered
+        # pool, so a turn never leaves the user with a single card and the
+        # side panel always shows a healthy spread.
+        shown = {c["tmdb_id"] for c in cards}
+        for film in pool:
+            if len(cards) >= 3:
+                break
+            if film["tmdb_id"] in shown:
+                continue
+            cards.append(_pool_card(film))
+            shown.add(film["tmdb_id"])
     if reply is None:
         # The provider failed: without any candidate pool to fall back on, the
         # turn degrades to a plain chat reply rather than an empty recommender.

@@ -1,7 +1,14 @@
 import { api } from './api'
 
 export type MemoryStatus = 'proposed' | 'confirmed' | 'rejected'
-export type MemoryKind = 'theme' | 'preference' | 'insight'
+export type MemoryKind =
+  | 'theme'
+  | 'preference'
+  | 'insight'
+  | 'aesthetic'
+  | 'narrative'
+  | 'emotional_response'
+  | 'viewing_intention'
 
 export interface MemorySourceMessage {
   id: string

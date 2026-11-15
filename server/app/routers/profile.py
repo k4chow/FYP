@@ -24,6 +24,18 @@ _TOP_GENRES = 3
 _TOP_THEMES = 8
 _TOP_KIND_CONTENT = 3
 
+# Every memory kind the reflective profile surfaces. Matches the kind CHECK in
+# supabase/migrations/0006 (the original three plus the personalisation kinds).
+_MEMORY_KINDS = (
+    "theme",
+    "preference",
+    "insight",
+    "aesthetic",
+    "narrative",
+    "emotional_response",
+    "viewing_intention",
+)
+
 
 def _count(table: str, user_id: str, **filters: str) -> int:
     query = (
@@ -169,7 +181,7 @@ def profile_summary(current: dict = Depends(get_current_user)) -> dict:
     memories = memory_svc.list_for_user(user_id, "confirmed")
     groups = {
         kind: [m for m in memories if m["kind"] == kind]
-        for kind in ("theme", "preference", "insight")
+        for kind in _MEMORY_KINDS
     }
     return {
         "display_name": display_name,

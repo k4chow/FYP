@@ -367,5 +367,51 @@ class RecommendationEventsTests(unittest.TestCase):
         )
 
 
+class DiscoveryBackfillTests(unittest.TestCase):
+    """Bug fix: a discovery turn always serves up to three distinct picks by
+    topping up whatever the provider named from the ranked, filtered pool."""
+
+    def test_single_or_missing_pick_is_backfilled_to_three(self):
+        pool = [
+            {
+                "tmdb_id": 1, "title": "Alpha", "year": 2000, "genres": ["Drama"],
+                "overview": "A.", "poster_url": "", "vote_average": 7.0, "why": "",
+            },
+            {
+                "tmdb_id": 2, "title": "Beta", "year": 2001, "genres": ["Comedy"],
+                "overview": "B.", "poster_url": "", "vote_average": 6.0, "why": "",
+            },
+            {
+                "tmdb_id": 3, "title": "Gamma", "year": 2002, "genres": ["Thriller"],
+                "overview": "C.", "poster_url": "", "vote_average": 6.5, "why": "",
+            },
+        ]
+        provider = mock.MagicMock()
+        provider.chat_discovery.return_value = {"reply": "Try these.", "films": []}
+        provider.chat.return_value = "plain"
+
+        store = mock.MagicMock()
+        store.table.return_value.select.return_value.eq.return_value.limit.return_value.execute.return_value.data = []
+
+        with (
+            mock.patch.object(conversations_router, "supabase", store),
+            mock.patch.object(conversations_router, "get_llm", return_value=provider),
+            mock.patch.object(
+                conversations_router.rec_svc, "get_recommendations", return_value=pool
+            ),
+            mock.patch.object(conversations_router.rec_svc, "record_recommendations"),
+        ):
+            reply, metadata = conversations_router._discovery_reply(
+                [{"role": "user", "content": "something good"}],
+                ChatContext(conversation_type="discovery"),
+                USER,
+            )
+
+        cards = metadata["recommendations"]
+        self.assertEqual(len(cards), 3)
+        self.assertEqual(len({c["tmdb_id"] for c in cards}), 3)
+        self.assertEqual({c["tmdb_id"] for c in cards}, {1, 2, 3})
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

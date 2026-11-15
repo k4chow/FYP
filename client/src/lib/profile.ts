@@ -27,6 +27,10 @@ export interface ProfileSummary {
     theme: Memory[]
     preference: Memory[]
     insight: Memory[]
+    aesthetic: Memory[]
+    narrative: Memory[]
+    emotional_response: Memory[]
+    viewing_intention: Memory[]
   }
 }
 

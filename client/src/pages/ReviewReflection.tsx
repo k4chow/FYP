@@ -11,7 +11,13 @@ const KIND_META: Record<MemoryKind, { label: string; icon: string }> = {
   theme: { label: 'Theme', icon: '✦' },
   preference: { label: 'Viewing preference', icon: '▦' },
   insight: { label: 'Reflection insight', icon: '♡' },
+  aesthetic: { label: 'Visual style', icon: '✳' },
+  narrative: { label: 'Story & pacing', icon: '▤' },
+  emotional_response: { label: 'Emotional response', icon: '♥' },
+  viewing_intention: { label: 'Viewing intention', icon: '◈' },
 }
+
+const KIND_FALLBACK: { label: string; icon: string } = { label: 'Memory', icon: '✒' }
 
 // Guided review (F3/D12): every generated insight stays proposed until the
 // user keeps it, edits and keeps it, or removes it. Source messages are shown
@@ -194,7 +200,7 @@ export default function ReviewReflection() {
 
           <div className="insight-list">
             {memories.map((memory) => {
-              const meta = KIND_META[memory.kind]
+              const meta = KIND_META[memory.kind] ?? KIND_FALLBACK
               const editing = editingId === memory.id
               const saving = savingId === memory.id
               const showingWhy = whyId === memory.id

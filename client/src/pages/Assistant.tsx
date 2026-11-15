@@ -139,10 +139,18 @@ export default function Assistant() {
     setSending(true)
     setError('')
     setInput('')
+    // Show the user's message immediately — the LLM round-trip can take seconds,
+    // so the typed message must appear before the reply arrives.
+    const optimisticUser: LocalMessage = {
+      role: 'user',
+      content,
+      createdAt: new Date().toISOString(),
+    }
+    setMessages((prev) => [...prev, optimisticUser])
     try {
       const res = await sendMessage(conversationId, content, collectShown(messages))
       setMessages((prev) => [
-        ...prev,
+        ...prev.filter((message) => message !== optimisticUser),
         toLocal(res.user_message),
         toLocal(res.assistant_message),
       ])
@@ -150,6 +158,9 @@ export default function Assistant() {
       setError(
         err instanceof ApiError ? err.message : 'Could not send your message.',
       )
+      // Undo the optimistic bubble and hand the text back so it can be retried.
+      setMessages((prev) => prev.filter((message) => message !== optimisticUser))
+      setInput(content)
     } finally {
       setSending(false)
     }

@@ -10,8 +10,20 @@ const KIND_META: Record<MemoryKind, { label: string; icon: string; heading: stri
   theme: { label: 'Theme', icon: '✦', heading: 'Recurring themes' },
   preference: { label: 'Viewing preference', icon: '▦', heading: 'How you like to watch' },
   insight: { label: 'Reflection insight', icon: '♡', heading: 'Insights about you' },
+  aesthetic: { label: 'Visual style', icon: '✳', heading: 'How you want films to look' },
+  narrative: { label: 'Story & pacing', icon: '▤', heading: 'Stories and pacing you enjoy' },
+  emotional_response: { label: 'Emotional response', icon: '♥', heading: 'How films make you feel' },
+  viewing_intention: { label: 'Viewing intention', icon: '◈', heading: 'What you watch films for' },
 }
-const KIND_ORDER: MemoryKind[] = ['theme', 'preference', 'insight']
+const KIND_ORDER: MemoryKind[] = [
+  'theme',
+  'preference',
+  'insight',
+  'aesthetic',
+  'narrative',
+  'emotional_response',
+  'viewing_intention',
+]
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString(undefined, {
@@ -91,7 +103,10 @@ export default function Profile() {
   if (!profile) return <p className="form-error">{error || 'Could not load your profile.'}</p>
 
   const { stats } = profile
-  const confirmedTotal = KIND_ORDER.reduce((n, k) => n + profile.groups[k].length, 0)
+  const confirmedTotal = KIND_ORDER.reduce(
+    (n, k) => n + (profile.groups[k] ?? []).length,
+    0,
+  )
   const maxGenreCount = stats.genre_counts[0]?.count ?? 1
 
   return (
@@ -189,7 +204,7 @@ export default function Profile() {
         </section>
       ) : (
         KIND_ORDER.map((kind) => {
-          const items = profile.groups[kind]
+          const items = profile.groups[kind] ?? []
           if (items.length === 0) return null
           const meta = KIND_META[kind]
           return (
