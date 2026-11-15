@@ -142,14 +142,22 @@ Migration: `supabase/migrations/0007_recommendation_events.sql`.
 
 ## 6. Prompts and structured output (Parts G/H)
 
-- `_SYSTEM_BASE` (reflection) now describes a warm, conversational,
-  memory-aware, film-knowledgeable, spoiler-conscious companion. The rigid
-  "ask exactly one follow-up question" rule is gone ("you may ask one genuine
-  question when it deepens the reflection, but do not end every reply with
-  one").
-- `_SYSTEM_DISCOVERY` resolves the old empty-pool contradiction: recommend
-  **only** from the candidate list, and if the list is empty ask one short
-  clarifying question instead of inventing a film.
+- `_SYSTEM_BASE` (reflection) is a warm, patient, introspective companion that
+  practises **adaptive probing** — emotional connections, personal experiences,
+  recurring patterns, alternative interpretations, and meaning — with at most
+  one genuine question at a time, never two in a row, and no fixed sequence. It
+  explicitly refuses to recommend or hand off ("Do NOT then recommend films …
+  finding films is the other assistant's job"), distinguishes film facts from
+  interpretation, and stops when the user is hesitant.
+- `_SYSTEM_DISCOVERY` is a warm, **emotionally aware** recommender — not a
+  therapist, not a reflection partner — that reads the user's viewing intention
+  (comfort, escapism, excitement, intellectual stimulation, existential
+  exploration, catharsis, meaning, curiosity), honours contrast-with-mood
+  requests, and gives personalised reasons ("given your interest in X, I think
+  this might resonate …"). It never assumes a mood reveals mental health and
+  matches its tone to the conversation. It still recommends **only** from the
+  candidate list (three distinct picks) and asks a clarifying question only
+  when the list is empty.
 - `_context_block` renders the richer shared context (film dossier, mentioned
   films, discussed films, recurring themes, recent recommendations, viewing
   history) with `[kind, evidence[, scope]]` markers on memories.
@@ -165,16 +173,17 @@ Migration: `supabase/migrations/0007_recommendation_events.sql`.
 
 ## 7. Tests (Part J)
 
-New suite `server/scripts/test_personalisation.py` (23 tests; in-memory
+New suite `server/scripts/test_personalisation.py` (28 tests; in-memory
 Supabase + mocked TMDB, no live requests) covers:
 
 - mood vs historical preference (Test 1), genre exclusion incl. plural forms
   (4), watched exclusion (7), dimensions + diversity categories (5/8), graceful
   empty pool (6), evidence/confidence coercion (13/15), cross-film recurring
-  themes (11), film dossier + mention resolution (9/10), conversational prompts
-  (14), no fabricated memories (13), recommendation-event persistence and the
-  watched-linkage write, the pre-migration `insert_proposals` fallback, and the
-  discovery backfill-to-three behaviour.
+  themes (11), film dossier + mention resolution (9/10), conversational and
+  adaptive-probing prompts incl. the reflection "no recommendation" boundary
+  and discovery emotional awareness (14), no fabricated memories (13),
+  recommendation-event persistence and the watched-linkage write, the
+  pre-migration `insert_proposals` fallback, and the discovery backfill-to-three.
 
 Run from `server/`: `python scripts/test_personalisation.py`.
 

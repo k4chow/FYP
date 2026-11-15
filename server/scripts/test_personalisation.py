@@ -336,6 +336,47 @@ class PromptTests(unittest.TestCase):
         self.assertNotIn("you told me", block)
         self.assertNotIn("Confirmed memories", block)
 
+    def test_reflection_prompt_has_adaptive_probing(self):
+        prompt = openai_mod._SYSTEM_BASE
+        for phrase in (
+            "emotional connections",
+            "recurring patterns",
+            "alternative interpretations",
+            "at most one genuine question",
+            "never two questions in a row",
+        ):
+            self.assertIn(phrase, prompt)
+
+    def test_reflection_prompt_does_not_take_over_discovery(self):
+        prompt = openai_mod._SYSTEM_BASE
+        self.assertNotIn("in the mood to watch", prompt)
+        self.assertNotIn("watch instead", prompt)
+        self.assertIn("Do NOT then recommend", prompt)
+        self.assertIn("other assistant's job", prompt)
+
+    def test_reflection_prompt_respects_boundaries(self):
+        prompt = openai_mod._SYSTEM_BASE
+        self.assertIn("hesitant", prompt)
+        self.assertIn("Never diagnose", prompt)
+
+    def test_discovery_prompt_is_emotionally_aware_not_therapeutic(self):
+        prompt = openai_mod._SYSTEM_DISCOVERY
+        self.assertIn("emotionally aware", prompt)
+        self.assertIn("NOT a therapist", prompt)
+        for phrase in (
+            "comfort and reassurance",
+            "catharsis",
+            "intellectual stimulation",
+            "curiosity",
+        ):
+            self.assertIn(phrase, prompt)
+
+    def test_discovery_prompt_handles_mood_and_contrast(self):
+        prompt = openai_mod._SYSTEM_DISCOVERY
+        self.assertIn("contrasts", prompt)
+        self.assertIn("Never assume their mood", prompt)
+        self.assertIn("resonate", prompt)
+
 
 class RecommendationEventsTests(unittest.TestCase):
     """Discovery -> reflection: persist what was recommended and why."""
