@@ -62,9 +62,13 @@ service role only).
 |---|---|---|
 | user_id | uuid FK | owner (RLS) |
 | content | text | the insight, user-editable |
-| kind | text | `theme` \| `preference` \| `insight` |
+| kind | text | `theme` \| `preference` \| `insight` \| `aesthetic` \| `narrative` \| `emotional_response` \| `viewing_intention` (0006 widens the CHECK) |
 | status | text | `proposed` → `confirmed` \| `rejected` (user-only transitions) |
 | source_message_ids | jsonb | validated source-message UUIDs; provides both "Why am I seeing this?" traceability and the durable reflection linkage |
+| evidence_type | text | `explicit` \| `inferred` (0006); user-authored memories are explicit |
+| scope | text | `stable` \| `film_specific` \| `session` (0006) |
+| confidence | real, nullable | coarse ordinal 0..1, not a calibrated probability (0006) |
+| source_film_tmdb_id | int, nullable | the film that prompted the memory (0006) |
 
 No separate insight table or conversation column is used: a memory is linked to
 its reflection through the immutable `source_message_ids`, which the server
@@ -99,6 +103,19 @@ unmatched/failure details. RLS owner policies cover select/insert/update/delete.
 | signal | text | `more_like_this` \| `not_for_me` (check constraint) |
 | created_at | timestamptz | |
 
+### recommendation_events (0007/0008, Parts D/F)
+| Column | Type | Notes |
+|---|---|---|
+| id | uuid PK | |
+| user_id | uuid FK | owner (RLS) |
+| tmdb_id | int | the recommended film |
+| title | text | denormalised card title |
+| reason | text | why it was recommended |
+| match_dimensions | jsonb | e.g. `["taste", "mood"]` |
+| novelty_category | text | `familiar` \| `adjacent` \| `exploratory` |
+| watched_at | timestamptz, nullable | stamped when the film is later marked watched (0008) |
+| created_at | timestamptz | |
+
 ## Indexes
 - `user_films(user_id, status)` — library views
 - `conversations(user_id, status, updated_at desc)` — My Reflections list
@@ -107,6 +124,7 @@ unmatched/failure details. RLS owner policies cover select/insert/update/delete.
 - `import_jobs(user_id, created_at desc)` — user job history
 - `import_jobs(status, updated_at)` — startup recovery and stale-job checks
 - `recommendation_feedback(user_id)` — per-user feedback loads for the engine
+- `recommendation_events(user_id, created_at desc)` — recent recommendations
 
 ## Future
 - pgvector embedding column on `memories`/`films` **only if** SQL retrieval

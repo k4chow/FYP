@@ -165,14 +165,16 @@ Migration: `supabase/migrations/0007_recommendation_events.sql`.
 
 ## 7. Tests (Part J)
 
-New suite `server/scripts/test_personalisation.py` (19 tests; in-memory
+New suite `server/scripts/test_personalisation.py` (23 tests; in-memory
 Supabase + mocked TMDB, no live requests) covers:
 
-- mood vs historical preference (Test 1), genre exclusion (4), watched
-  exclusion (7), dimensions + diversity categories (5/8), graceful empty pool
-  (6), evidence/confidence coercion (13/15), cross-film recurring themes (11),
-  film dossier + mention resolution (9/10), conversational prompts (14), no
-  fabricated memories (13), and recommendation-event persistence.
+- mood vs historical preference (Test 1), genre exclusion incl. plural forms
+  (4), watched exclusion (7), dimensions + diversity categories (5/8), graceful
+  empty pool (6), evidence/confidence coercion (13/15), cross-film recurring
+  themes (11), film dossier + mention resolution (9/10), conversational prompts
+  (14), no fabricated memories (13), recommendation-event persistence and the
+  watched-linkage write, the pre-migration `insert_proposals` fallback, and the
+  discovery backfill-to-three behaviour.
 
 Run from `server/`: `python scripts/test_personalisation.py`.
 
@@ -180,14 +182,13 @@ Run from `server/`: `python scripts/test_personalisation.py`.
 
 - Mood/experience affinity is **lexical** (overview/genre/title vocabulary), a
   deliberate, deterministic proxy — not semantic retrieval.
-- `exclude_genres` matches singular genre names ("no horror") and may miss
-  pluralised forms ("dramas").
 - Assistant card themes/runtime come from the cached catalogue; a brand-new
   TMDB candidate shows overview-derived themes until it is cached (never
   fabricated).
 - `recurring_themes` is keyword-based and purely descriptive.
-- Migrations `0006`/`0007` must be applied; the code degrades gracefully if
-  they are not (`.get()` access + try/except everywhere).
+- The richer columns/tables need migrations `0006`/`0007`/`0008`; the code
+  degrades gracefully if they are not applied (`.get()` access, try/except,
+  and the `insert_proposals` legacy fallback).
 
 ## 9. Follow-ups implemented (this phase)
 
@@ -200,6 +201,17 @@ Run from `server/`: `python scripts/test_personalisation.py`.
 - **Plural/negation genre exclusions:** `constraints._excluded_genres` now
   matches singular *and* plural forms ("no horror", "avoid slow dramas",
   "not comedies") via `_genre_forms`.
+- **Pre-migration memory write fallback:** `insert_proposals` falls back to the
+  core columns + a legacy kind when the 0006 columns are absent, so ending a
+  reflection keeps working before the migration is applied.
+- **Discovery shows three picks:** `_discovery_reply` backfills up to three
+  distinct cards from the ranked, filtered pool when the provider returned
+  fewer, and `_SYSTEM_DISCOVERY` is biased toward three distinct picks.
+- **Instant user message:** `Assistant.tsx` renders the user's message
+  optimistically before the slow LLM round-trip, restoring it on failure.
+- **New memory kinds render everywhere:** `ReviewReflection` and `Profile` (and
+  their types) now render `aesthetic` / `narrative` / `emotional_response` /
+  `viewing_intention`; `/profile/summary` surfaces all seven kinds.
 
 ## 10. Remaining future work
 

@@ -13,17 +13,19 @@
 | Capability | Status | Verifiable evidence |
 |---|---|---|
 | Provider abstraction | **Implemented** | `server/app/llm/base.py`, `__init__.py` |
-| Reflective assistant replies | **Implemented, mocked** | `server/app/llm/mock.py` |
+| Reflective assistant replies | **Implemented** | `mock.py` (dev) + `openai.py` (production, `LLM_PROVIDER=openai`) |
 | Real external model calls | **Implemented (OpenAI)** | `server/app/llm/openai.py`, `LLM_PROVIDER=openai` (D33) |
 | Bounded chat context | **Implemented** | `server/app/context.py` |
+| Film knowledge in reflection | **Implemented** | `film_knowledge.film_context`, `resolve_film_mentions` (docs/08) |
 | Confirmed-memory retrieval | **Implemented (relevance-ranked)** | `user_context.relevant_memories`, `context.confirmed_memories` |
-| Memory extraction/review/edit/forget | **Implemented** | Kinds + evidence/scope/confidence in `memories.py`; review endpoints/UI |
+| Memory extraction/review/edit/forget | **Implemented** | 7 kinds + evidence/scope/confidence in `memories.py`; review endpoints/UI; `/profile/summary` groups all kinds |
 | Recommendations and explanations | **Implemented (deterministic)** | `server/app/recommendations.py`, Discover page (Phase 6, D35) |
 | Mood / intention-based recommendations | **Implemented (lexical)** | `constraints.parse_intent`, request-aware weights in `recommendations.py` (docs/08) |
 | Recommendation feedback + style slider | **Implemented** | `recommendation_feedback` table, `/profile/preferences` (Phase 6, D36/D37) |
 | Persisted Film Assistant (F10) | **Implemented** | saved as `type="discovery"` conversations via `/conversations`; `exclude_tmdb_ids` rotation on Regenerate/replies (Phase 7) |
 | Explicit-constraint recommendations (F12) | **Implemented** | `server/app/constraints.py`; director/title/genre parsing validated against TMDB (Phase 7) |
 | Named-film answers without refusal | **Implemented** | `_requested_title_cards`; already-logged films return close alternatives (Phase 7) |
+| Discovery serves three distinct picks | **Implemented** | `_discovery_reply` backfill + `_SYSTEM_DISCOVERY` bias (docs/08) |
 
 ## 2. Provider selection and interface
 
@@ -36,38 +38,52 @@ or `openai` (D33, key via `OPENAI_API_KEY`, model via `OPENAI_MODEL`, default
 The abstract `LLMProvider` defines:
 
 - `opening(context) -> str`: first assistant message for a new conversation.
-- `chat(messages, context) -> str`: reply to the latest user message.
+- `chat(messages, context) -> str`: reflection reply to the latest user message.
+- `chat_discovery(messages, context) -> dict`: recommender turn, returning
+  `{"reply", "films": [...]}` (the router grounds and backfills the films).
 - `extract_insights(messages, context) -> list[dict]`: memory-extraction seam,
   implemented in both providers — mock derives keyword proposals, OpenAI
   requests JSON mode (unparseable output raises so the conversation stays
   active for a retry).
 
-`ChatContext` is a dataclass containing conversation type, title, optional raw
-film row, watch type, confirmed-memory strings, display name, and user-turn
-count. There is no model-specific prompt type, embedding object, or system
-prompt field.
+`ChatContext` is a dataclass containing conversation type, title, the raw film
+row plus a compact `film_context` dossier, watch type, confirmed memories
+(`memories` strings plus `memories_detail` with kind/evidence/scope), display
+name, user-turn count, `mentioned_films`, `viewing_history` / `discussed_films`
+/ `recent_recommended`, and the discovery `suggestions` pool with the rendered
+`request` and `intent`. There is no model-specific prompt type or embedding.
 
 ## 3. How the chatbot receives film and user context
 
-For each new conversation, `_chat_context` in
+For each conversation turn, `_chat_context` in
 `server/app/routers/conversations.py` assembles:
 
 1. `conversation_type` and `title` from the conversation.
-2. The joined `films` row when linked: title, year, genres, poster path, and
-   metadata such as overview/runtime. TMDB data was cached earlier by
-   `_ensure_film`; the mock does not call TMDB itself.
+2. The linked `films` row plus a compact **film dossier** (`film_context`:
+   title, year, director, leading cast, genres, curated themes, synopsis,
+   runtime). TMDB data was cached earlier by `_ensure_film`, which backfills
+   keywords/director/cast via `film_knowledge.enrich_metadata`.
 3. `watch_type` (`seen` or `planning`).
-4. Up to five confirmed-memory contents, newest `updated_at` first.
+4. **Relevance-ranked** confirmed memories (up to `llm_context_memories` by
+   default) via `user_context.relevant_memories`; explicit preferences rank
+   above inferred readings, and `memories_detail` keeps kind/evidence/scope.
 5. The user’s `display_name` from `public.users`.
-6. A turn count, currently the number of user messages in the conversation.
+6. A turn count (number of user messages in the conversation).
+7. `mentioned_films` — other films named in the latest message, resolved by
+   `film_knowledge.resolve_film_mentions`.
+8. `viewing_history` (discovery) — watched/watchlist split with ratings — or
+   `discussed_films` + `recent_recommendations` + `recurring_themes`
+   (reflection).
 
 For a reply, `recent_messages` separately fetches at most 12 messages, newest
 first, then reverses them to oldest-first. The UI still receives full history;
-this limit applies only to the provider input. The two bounds can be changed
-with `LLM_CONTEXT_MESSAGES` and `LLM_CONTEXT_MEMORIES` settings (defaults 12/5).
+these limits apply only to the provider input. Bounds are configured with
+`LLM_CONTEXT_MESSAGES` / `LLM_CONTEXT_MEMORIES` (defaults 12/5) plus the
+personalisation caps in `config.py`.
 
-There is no watched-film lookup, rating aggregation, mood input, semantic
-search, or recommendation candidate list in `ChatContext`.
+`ChatContext` also carries the discovery candidate pool (`suggestions`) and the
+rendered current request (`request` for hard constraints, `intent` for soft
+mood/experience/exclusion signals).
 
 ## 4. Deterministic mock behavior step by step
 
@@ -117,67 +133,71 @@ reply, which is verified in the Phase 3 E2E script.
 - ordering is `updated_at DESC`;
 - at most K contents are returned (default five).
 
-Proposed and rejected memories are excluded by the query. The mock mentions a
-confirmed memory on every third applicable user turn. The memory index
-`memories_user_status_idx(user_id, status)` supports this lookup.
+The OpenAI path instead ranks memories for the current message via
+`user_context.relevant_memories` (lexical overlap, explicit over inferred),
+bounded by `llm_context_memories`. Proposed and rejected memories are always
+excluded. The memory index `memories_user_status_idx(user_id, status)` supports
+these lookups.
 
-### Not implemented
+### Extraction, review, and forget
 
-- **Create:** `extract_insights` returns `[]`; ending a conversation does not
-  call extraction or insert proposed memories.
-- **Confirm/reject:** no memory endpoints or Review & Edit page exist.
-- **Edit:** `content` is editable at the schema/RLS level, but there is no
-  application edit flow.
-- **Forget:** SQL has an owner delete policy, but there is no API or UI delete.
-- **Contradiction resolution:** no detection or comparison code exists.
-- **Provenance:** `source_message_ids` is stored by schema but not populated or
-  read by current code, so it cannot yet explain recommendations.
-
-The intended `proposed → confirmed | rejected` lifecycle is therefore a design
-constraint for future work, not a completed user-control feature.
+- **Create** — `end_conversation` calls `extract_insights`; `normalise_proposals`
+  validates and `insert_proposals` persists them as `status = 'proposed'`, with
+  `kind`, `evidence_type`, `scope`, `confidence`, `source_film_tmdb_id`.
+  Pre-migration schemas fall back to the core columns + legacy kinds.
+- **Review** — `proposed → confirmed | rejected`, with optional edit, via
+  `/memories/{id}` and the Review & Edit UI. Rejected is terminal.
+- **Forget** — owner delete (API + UI) and cascaded deletion when a reflection
+  is deleted, via `delete_for_messages`.
+- **Provenance** — `source_message_ids` is populated and read back, so memories
+  cite their source messages and recommendations attribute `source_memories`.
+- **Cross-film** — `recurring_themes` surfaces words recurring across distinct
+  films (descriptive only).
 
 ## 6. Recommendations: verified current behavior
 
-There is no step-by-step recommendation algorithm in the current repository.
-Specifically, there is no code that:
+The deterministic engine in `server/app/recommendations.py` (D35) implements the
+full pipeline:
 
-1. selects candidate films;
-2. scores them against watched films, ratings, watchlist status, or memories;
-3. accepts or extracts a mood;
-4. generates a “why” explanation;
-5. records “More like this” or “Not for me” feedback;
-6. adjusts recommendations using the Settings slider.
+1. **Load signals** — library rows (status/rating), `recommendation_feedback`
+   (more_like_this / not_for_me), confirmed memories, `recommendation_style`.
+2. **Candidates** — per-seed TMDB recommendations plus a genre `/discover`
+   pool; the Film Assistant uses a wider configurable pool
+   (`recommendation_pool_size_chat`, default 40).
+3. **Exclusions** — library films and `not_for_me` are removed, plus any genre
+   the user excludes in the current request. Explicit constraints
+   (director/title/genre) rebuild the pool.
+4. **Ranking** —
+   `w_m·mood + w_t·taste + w_r·reflection + w_e·experience + w_n·novelty`
+   (weights re-balanced toward a stated intention), plus a quality prior and a
+   popularity term weighted by the style slider.
+5. **Explain** — every card carries a `why` line, `source_memories`,
+   `match_dimensions` and `novelty_category` (`familiar`/`adjacent`/
+   `exploratory`).
+6. **Feedback** — "More like this" seeds and "Not for me" excludes, both
+   invalidating the per-user cache; served cards are recorded in
+   `recommendation_events`.
 
-The consequences for the requested preference inputs are:
+The Film Assistant (`chat_discovery`) selects from a verified candidate pool and
+is backfilled to up to three distinct cards, so it never fabricates films.
 
-| Input | How it is stored now | Effect on recommendations now |
+| Input | How it is stored | Effect on recommendations |
 |---|---|---|
-| Watched/watchlist films | `user_films.status` | **None** — no recommendation reader |
-| Ratings/dates/source | `user_films` fields | **None** |
-| Reflection history | Verbatim `messages` | **None** directly; only bounded mock-chat use |
-| Confirmed preferences | `memories.content` | **None** — no recommendation engine |
-| Mood | No dedicated field or extraction | **None**; mood handling is undesigned |
-| Recommendation style | Disabled UI slider | **None**; no persisted setting |
+| Watched/watchlist films | `user_films.status` + rating | Seeds the pool; watched films are excluded |
+| Ratings | `user_films.rating` | Rating-weighted seeds |
+| Reflection history | verbatim `messages` | Extracted into memories; discussed films cross-referenced |
+| Confirmed memories | `memories` | Keyword/genre affinity + reflection dimension |
+| Mood / intention | parsed from the request only | Re-balances ranking weights (never persisted) |
+| Recommendation style | `users.recommendation_style` | Popularity term (niche ↔ mainstream) |
 
-## 7. Intended recommendation approach (planned, not implemented)
+## 7. Recommendation approach
 
-Project notes propose reflection-informed, intention-based recommendations using
-confirmed memories and film history, with human-readable explanations and a
-feedback loop. The following is a **design outline, not verified behavior**:
-
-1. End a reflection and propose candidate memories.
-2. Let the user confirm/edit/reject them.
-3. Use confirmed memories plus library history to select/rank candidates.
-4. Show a “why” linked to source memories/messages.
-5. Record explicit feedback for later refinement.
-
-These questions were resolved in Phase 6: candidate sources (per-seed TMDB
-recommendations + genre `/discover` pool), scoring (D35's formula), explanation
-generation (per-card `why` + `source_memories`), feedback schema
-(`recommendation_feedback`, D36), and cold-start behavior (popular TMDB picks
-with an honest why-line). Mood representation is still unresolved and
-unimplemented. pgvector remains deferred until plain SQL retrieval is proven
-insufficient (D8); there is no embedding search today.
+Reflection-informed, intention-based recommendations are now implemented (see
+`docs/08-personalisation.md`): end a reflection → propose memories → confirm /
+edit / reject → confirmed memories + library history select and rank candidates
+→ show a why-line → record feedback. pgvector remains deferred (D8); there is
+no embedding search today, and mood/experience affinity is a deterministic
+lexical proxy rather than semantic retrieval.
 
 ## 8. Deterministic logic versus AI decisions
 
@@ -201,30 +221,40 @@ be documented separately.
 
 ### Model prompts
 
-There is no serialized system prompt or model request payload to quote. The
-mock’s “prompts” are Python template banks in `server/app/llm/mock.py`:
-`_QUESTIONS_FILM`, `_QUESTIONS_PLANNING`, `_QUESTIONS_FREE`, `_ACKS`, and
-`_REFLECTIONS`. Model name, temperature, token limits, and response-format
-instructions are therefore not applicable in the current implementation.
+The OpenAI provider defines serialised system prompts `_SYSTEM_BASE`
+(reflection), `_SYSTEM_DISCOVERY` (recommendation) and `_KIND_DEFINITIONS`
+(memory kinds) in `server/app/llm/openai.py`; the mock’s “prompts” are Python
+template banks in `server/app/llm/mock.py` (`_QUESTIONS_FILM`,
+`_QUESTIONS_PLANNING`, `_QUESTIONS_FREE`, `_ACKS`, `_REFLECTIONS`). The full
+prompt wording lives in those modules rather than this document.
 
 ### Retrieval
 
 - **Film context:** relational join from `conversations` to the cached `films`
-  row; TMDB is called only if a new film must first be cached.
+  row, plus a `film_context` dossier (director/cast/themes); TMDB is called only
+  if a film is new or missing keywords/director/cast.
 - **Conversation retrieval:** latest N rows by `created_at`, not semantic
   relevance.
-- **Memory retrieval:** latest K confirmed rows by `updated_at`, not embeddings
-  or similarity search.
-- **Library retrieval for chat:** not performed.
+- **Memory retrieval:** relevance-ranked confirmed memories via
+  `user_context.relevant_memories` (lexical overlap, explicit over inferred),
+  bounded by `llm_context_memories`; not embeddings or similarity search.
+- **Viewing-history / other-film retrieval:** `user_context.viewing_history`
+  (watched/watchlist) for discovery, `discussed_films` + `recent_recommendations`
+  for reflection, and `film_knowledge.resolve_film_mentions` for films named in
+  the current message.
 
-No pgvector, embeddings, RAG index, or recommendation-specific retrieval exists.
+No pgvector, embeddings, or RAG index exists.
 
 ### Fallbacks
 
 - TMDB metadata: catalogue first, then title+year search, then title-only
   search. Repeated TMDB transient errors receive bounded retries.
-- Chat provider: only `mock` is supported; there is no fallback to another model
-  or provider. A real-provider integration must define its own failure policy.
+- Discovery candidates: the provider's named films are grounded against TMDB and
+  backfilled from the ranked pool; an empty pool degrades to a clarifying
+  question, never a fabricated film.
+- Chat provider: `mock` (default) or `openai`. There is no automatic fallback
+  chain between providers; a model/API error in a discovery turn degrades to the
+  candidate pool (and reflection chat keeps the conversation active for a retry).
 - Import: failed rows are retained for resume instead of silently converting
   them to “unmatched” or dropping them.
 
